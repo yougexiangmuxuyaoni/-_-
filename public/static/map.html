@@ -1,0 +1,387 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+  <title>设置点标注的文本标签</title>
+  <style>
+    html,
+    body,
+    #container {
+      height: 100%;
+      width: 100%;
+    }
+
+    .amap-icon img {
+      width: 25px;
+      height: 34px;
+    }
+
+    .amap-marker-label {
+      border: 0;
+      background-color: transparent;
+    }
+
+    .li {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: #061a38;
+      color: #fff;
+      position: relative;
+      top: 0;
+      right: 0;
+      height: 86px;
+      width: 86px;
+      border-radius: 50%;
+      line-height: 1.5em;
+      text-align: center;
+    }
+
+    .jie {
+      background: #2289ec;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 16px;
+      position: relative;
+    }
+
+    .jie:hover .tip {
+      visibility: visible;
+    }
+
+    .jie .tip {
+      visibility: hidden;
+      position: absolute;
+      left: 96%;
+      background: #d8d8d8;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      border-radius: 0 10px 10px 10px;
+    }
+
+    .jie .tip>div img {
+      width: 80px;
+      height: 50px;
+      padding-right: 10px;
+    }
+
+    .jie .tip p {
+      color: #060606;
+      margin: 0;
+      line-height: 22px;
+    }
+
+    .jie .tip p:last-of-type {
+      color: #7a7a7a;
+    }
+
+    .jie .tip p span {
+      padding: 0 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container"></div>
+  <script type="text/javascript"
+    src="https://webapi.amap.com/maps?v=1.4.15&key=620069ed8a9bb90077dbcc699c0d087c"></script>
+  <script type="text/javascript">
+
+
+    var map = new AMap.Map('container', {
+      resizeEnable: true,
+      center: [116.397428, 39.90923],
+      zoom: 11
+    });
+    map.on('complete', function () {
+      // 地图图块加载完成后触发
+      city();
+      map.on('zoomend', mapZoomend);
+
+    });
+    var xueJson = [
+      {
+        "name": "北苑街道", "center":
+        {
+          "lng": 116.638058,
+          "lat": 39.930662
+        },
+        districtList: [{
+          "name": "北京物资学院",
+          "center": {
+            "lng": 116.638058,
+            "lat": 39.930662
+          },
+        }, {
+          "name": "南关小学",
+          "center": {
+            "lng": 116.670545,
+            "lat": 39.901894
+          },
+        }]
+      }
+    ];
+
+    var district;//查询对象
+    var cityArr = [];//所有区市
+    var polygons = [];//区域画像
+    var shi_marker = [];//市标记
+    var jie_marker = [];//街道标记
+    var xue_marker = [];//学校标记
+    var jilu_dian = [];
+
+    //鼠标缩放事件
+    function mapZoomend() {
+      if (10 >= map.getZoom()) {
+        show_shi();
+        jilu_dian = [];
+      } else if (12 >= map.getZoom()) {
+        if (jilu_dian[0]) {
+          show_jie();
+        }
+        // 隐藏学校
+        for (let val of xue_marker) {
+          val.hide();
+        }
+      } else if (14 >= map.getZoom()) {
+        if (!jilu_dian) {
+          show_xue();
+        }
+      }
+    }
+
+    AMap.plugin('AMap.DistrictSearch', function () {
+      // 创建行政区查询对象
+      district = new AMap.DistrictSearch({
+        // 返回行政区边界坐标等具体信息
+        extensions: 'all',
+        // 设置查询行政区级别为 区 
+        level: 'district',
+        //0：不返回下级行政区
+        //1：返回下一级行政区
+        subdistrict: 3
+      })
+    })
+
+    //列出所在省市 下一级目录
+    function city() {
+      district.search('北京市', function (status, result) {
+        cityArr = result.districtList[0].districtList[0].districtList;
+        console.log(JSON.stringify(cityArr));
+        
+        for (var i = 0; i < cityArr.length; i++) {
+          huanYuan(cityArr[i]);
+          quYuTu(cityArr[i]);
+          jieDao(cityArr[i]);
+        }
+      })
+      xueXiao(xueJson);
+    }
+    //显示市
+    function show_shi() {
+      // 隐藏市
+      for (let val of jie_marker) {
+        val.hide();
+      }
+      // 显示街道
+      for (let val of shi_marker) {
+        val.show();
+      }
+    }
+
+    //显示街道
+    function show_jie() {
+      // 隐藏市
+      for (let val of shi_marker) {
+        val.hide();
+      }
+      // 显示街道
+      for (let val of jie_marker) {
+        if (val.B.extData.id === jilu_dian[0].name) {
+          val.show();
+        }
+      }
+      map.setZoom(12); //设置地图层级
+      // map.setFitView()
+    }
+
+    //显示学校
+    function show_xue() {
+      // 隐藏街道
+      for (let val of jie_marker) {
+        val.hide();
+      }
+
+      // 显示学校
+      for (let val of xue_marker) {
+        if (val.B.extData.id === jilu_dian[1].name) {
+          val.show();
+        }
+      }
+      map.setZoom(14); //设置地图层级
+    }
+
+    // 画学校
+    function xueXiao(val) {
+      for (let i = 0; i < val[0].districtList.length; i++) {
+        // 构造点标记
+        var marker = new AMap.Marker({
+          icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+          position: [val[0].districtList[i].center.lng, val[0].districtList[i].center.lat],
+          extData: {
+            id: val[0].name
+          }
+        });
+        marker.setLabel({
+          offset: new AMap.Pixel(-20, -10),  //设置文本标注偏移量
+          content: `<div class='jie'>
+          <div>${val[0].districtList[i].name}</div>
+          <div class="tip">
+          <div>
+            <img src="https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3937942968,2587539882&fm=85&app=63&f=JPEG?w=121&h=75&s=B784F4484C05324D4EA81405010080D0"/>
+          </div>
+          <div>
+            <p>${val[0].districtList[i].name}</p>
+            <p>
+              <span>预警: 30次</span>
+              <span>报警: 30次</span>
+              <span>学校: 200所</span>
+            </p>
+            <p>北京市海淀区双榆树村西里16号白楼</p>
+          </div>
+          </div>
+          </div>
+      `, //设置文本标注内容
+        });
+        marker.hide();
+        map.add(marker);
+        xue_marker.push(marker);
+        console.log(xue_marker);
+
+        marker.on('click', function () {
+        }, val)
+      }
+    }
+
+    //画街道
+    function jieDao(val) {
+      for (let i = 0; i < val.districtList.length; i++) {
+        // 构造点标记
+        var marker = new AMap.Marker({
+          icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+          position: [val.districtList[i].center.lng, val.districtList[i].center.lat],
+          extData: {
+            id: val.name
+          }
+        });
+        marker.setLabel({
+          offset: new AMap.Pixel(-20, -10),  //设置文本标注偏移量
+          content: `<div class='jie'>
+          <div>${val.districtList[i].name}</div>
+          <div class="tip">
+          <div>
+            <img src="https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3937942968,2587539882&fm=85&app=63&f=JPEG?w=121&h=75&s=B784F4484C05324D4EA81405010080D0"/>
+          </div>
+          <div>
+            <p>${val.districtList[i].name}</p>
+            <p>
+              <span>预警: 30次</span>
+              <span>报警: 30次</span>
+              <span>学校: 200所</span>
+            </p>
+            <p>北京市海淀区双榆树村西里16号白楼</p>
+          </div>
+          </div>
+          </div>
+      `, //设置文本标注内容
+        });
+        marker.hide();
+        jie_marker.push(marker);
+        map.add(marker);
+        marker.on('click', function () {
+          jilu_dian[1] = this;
+          show_xue();
+          map.setCenter([this.center.lng, this.center.lat]); //同时设置地图层级与中心点
+        }, val.districtList[i])
+      }
+    }
+
+    // 画市区
+    function huanYuan(val) {
+      var marker = new AMap.Marker({
+        position: [val.center.lng, val.center.lat],
+        extData: {
+          id: val.name
+        }
+      });
+      // marker.setMap(map);
+      // 设置label标签
+      marker.setLabel({
+        offset: new AMap.Pixel(-27, -27),  //设置文本标注偏移量
+        content: `<div class='li'>  
+                  <div class="item">${val.name}</div>
+                  <div class="item">警示0次</div>
+                  <div class="item">0所</div>
+                </div>
+      `, //设置文本标注内容
+
+      });
+      marker.on('mouseover', function (e) {
+        for (const val of polygons) {
+          if (this.name === val.B.extData.id) {
+            val.show();
+          }
+        }
+      }, val)
+      marker.on('mouseout', function () {
+        for (const val of polygons) {
+          if (this.name === val.B.extData.id) {
+            val.hide();
+          }
+        }
+      }, val)
+      marker.on('click', function () {
+        jilu_dian[0] = this;
+        show_jie();
+        map.setCenter([val.center.lng, val.center.lat]); //设置中心点
+      }, val)
+      shi_marker.push(marker);
+      map.add(marker);
+    }
+
+    //画出行政区划
+    function quYuTu(val) {
+      district.search(val.name, function (status, result) {
+        // 获取边界信息
+        var bounds = result.districtList[0].boundaries
+        if (bounds) {
+          for (var i = 0, l = bounds.length; i < l; i++) {
+            //生成行政区划polygon
+            polygon = new AMap.Polygon({
+              map: map,
+              strokeWeight: 1,
+              path: bounds[i],
+              fillOpacity: 0.7,
+              extData: {
+                id: val.name
+              },
+              fillColor: '#CCF3FF',
+              strokeColor: '#CC66CC'
+            })
+            polygon.hide();
+            polygons.push(polygon);
+          }
+        }
+      })
+    }
+
+      // 地图自适应
+      // map.setFitView()
+  </script>
+</body>
+
+</html>

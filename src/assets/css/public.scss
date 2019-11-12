@@ -1,0 +1,172 @@
+//布局
+.flex {
+  display: flex;
+}
+.border {
+  border: 0.01rem solid rgba(47, 123, 255, 0.7);
+  border-radius: 0.02rem;
+}
+.gundongtiao {
+  &::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 4px; /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+  }
+  &::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 0 5px #616e97; //40f1fd
+    background: #616e97;
+  }
+  &::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    // -webkit-box-shadow: inset 0 0 5px #2159c00c; //2158c0
+    border-radius: 4px;
+    // background: #ededed0c;
+  }
+}
+.column {
+  flex-direction: column;
+}
+.justify_end {
+  justify-content: flex-end;
+}
+.justify_center {
+  justify-content: center;
+}
+
+.justify_between {
+  justify-content: space-between;
+}
+
+.justify_around {
+  justify-content: space-around;
+}
+
+.align_center {
+  align-items: center;
+}
+.align_end {
+  align-items: flex-end;
+}
+
+.align_content_between {
+  align-content: space-between;
+}
+
+.align_content_around {
+  align-content: space-around;
+}
+
+.pad_top_20 {
+  padding-top: 0.2rem;
+}
+//主色
+$text: #1f1f1f;
+
+$text-hover: #40f3ff;
+
+$bg_logo: #202a37;
+
+.menu_bg {
+  background: #2880bb;
+}
+$color_fff: #fff;
+
+$font_20: 0.2rem;
+.link {
+  color: #32bde5;
+}
+.pointer {
+  cursor: pointer;
+}
+.bg_364 {
+  background-color: #36465d;
+}
+
+.color_dfe {
+  color: #dfe1e5;
+}
+
+.color_fff {
+  color: #ffffff;
+}
+
+.color_f5b {
+  color: #f5be81;
+}
+
+.color_e06 {
+  color: #e06969;
+}
+
+.font_12 {
+  font-size: 0.12rem;
+}
+
+.font_14 {
+  font-size: 0.14rem;
+}
+
+.font_20 {
+  font-size: 0.2rem;
+}
+.font_30 {
+  font-size: 0.3rem;
+}
+
+.font_34 {
+  font-size: 0.34rem;
+}
+
+.font_36 {
+  font-size: 0.36rem;
+}
+
+.font_size {
+  font-size: 0.2rem;
+}
+
+$btn: linear-gradient(180deg, #227ee2 0%, #0646dd 100%);
+$btn-hover: linear-gradient(153deg, #016add, #003bc5);
+
+$border: 0.01rem solid rgba(47, 123, 255, 0.7);
+
+.hezi {
+  background: rgba(47, 123, 255, 0.08);
+  border: 1px solid rgba(47, 123, 255, 0.7);
+  border-radius: 2px;
+}
+
+.anniu {
+  color: #fff;
+  background-image: linear-gradient(180deg, #227ee2 0%, #0646dd 100%);
+  border-radius: 31px;
+  border-radius: 31px;
+}
+.anniu:hover {
+  cursor: pointer;
+  color: #40f3ff;
+  background-image: linear-gradient(153deg, #016add, #003bc5);
+}
+
+.tip-chuang {
+  background-image: linear-gradient(180deg, #0041b4 0%, #002e7f 100%);
+  box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.5);
+  border-radius: 2px;
+  border-radius: 2px;
+}
+
+$Main-color: #2ec5e7;
+$Main-color2: #0a1f3e;
+//多出变省略号
+.ellipsis {
+  overflow: hidden; /*超出部分隐藏*/
+  text-overflow: ellipsis; /* 超出部分显示省略号 */
+  white-space: nowrap; /*规定段落中的文本不进行换行 */
+}
+
+//文字
+.text-center {
+  text-align: center;
+}
