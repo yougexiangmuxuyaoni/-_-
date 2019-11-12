@@ -178,7 +178,7 @@
       >
         <input type="text" name="schoolId" value="1" />
         <input type="text" name="content" v-model="textarea" />
-        <input type="text" name="userId" value="11" />
+        <input type="text" name="userId" value="4" />
         <input type="text" name="type" value="1" />
         <input type="submit" value="tijiao" ref="btn" />
       </form>
