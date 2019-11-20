@@ -4,7 +4,7 @@
       <div class="title">基础信息</div>
       <div class="row2">
         <div class="title_warp">
-          <div class="title">学校名称:某某某外国语小学</div>
+          <div class="title">学校名称:叙永县外国语小学</div>
           <div>
             <div v-show="isShow" class="btn" @click="to('/positioning')">风险定位</div>
           </div>
@@ -19,7 +19,7 @@
             <div>预警信息内容：证件信息缺失</div>
           </div>
           <div>
-            <div>供应商名称：某某某有限公司</div>
+            <div>供应商名称：红双喜食品有限公司</div>
             <div>预警时间：2019-09-16</div>
           </div>
         </div>
