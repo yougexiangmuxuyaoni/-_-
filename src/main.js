@@ -1,6 +1,8 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
+// import VueAxios from 'vue-axios'
+// import axios from './router/axios'
 import store from "./store";
 import echarts from "echarts";
 import "./plugins/element.js";
@@ -17,8 +19,15 @@ VueAMap.initAMapApiLoader({
   v: '1.4.4'
 });
 
+import VideoPlayer from 'vue-video-player'
+require('video.js/dist/video-js.css')
+require('vue-video-player/src/custom-theme.css')
+import 'videojs-flash'
+
+Vue.use(VideoPlayer)
 
 Vue.use(VueAMap);
+// Vue.use(VueAxios, axios)
 
 const vm = new Vue({
   router,
@@ -37,7 +46,7 @@ Vue.config.productionTip = false;
 
 
 router.beforeEach((to, from, next) => {
-  console.log(to.name);
+  // console.log(to.name);
   if (to.name === "/") {
     this.$router.push("/login");
   }

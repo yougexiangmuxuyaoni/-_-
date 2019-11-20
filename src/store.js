@@ -15,16 +15,16 @@ export default new Vuex.Store({
     },
     SET_USER_INFO(state, user) {
       state.USER_INFO = user;
-      console.log('state');
+      // console.log('state');
 
-      console.log(user);
+      // console.log(user);
 
     },
     CHENGE_ACTIVE(state, e) {
-      console.log('jinglaile');
+      // console.log('jinglaile');
 
       state.YIBANSHIXIANG_ACTIVE = e;
-      console.log(e);
+      // console.log(e);
 
     }
   },
