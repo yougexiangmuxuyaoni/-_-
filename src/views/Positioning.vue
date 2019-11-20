@@ -94,23 +94,25 @@
                 </table>
               </div>
               <div style="width:40%;float:left; margin-top: 0.3rem">
-                <el-progress
-                  type="circle"
-                  :percentage="100"
-                  :show-text="false"
-                  style="position: absolute;"
-                ></el-progress>
-                <div
-                  class="score"
-                  style="width: 1.25rem;text-align: center;font-size: 0.24rem;font-weight: bold;color: #FFFFFF;margin-top: 0.5rem;"
-                >
-                  <span>100分</span>
-                </div>
-                <div
-                  class="score"
-                  style="width: 1.3rem;text-align: center;font-size: 0.16rem;color: #FFFFFF;margin-top: 0.7rem;"
-                >
-                  <span>量化评级：A级</span>
+                <div>
+                  <el-progress
+                    type="circle"
+                    :percentage="100"
+                    :show-text="false"
+                    style="position: absolute;"
+                  ></el-progress>
+                  <div
+                    class="score"
+                    style="width: 126px;text-align: center;font-size: 0.24rem;font-weight: bold;color: #FFFFFF;padding-top: 50px;"
+                  >
+                    <span>100分</span>
+                  </div>
+                  <div
+                    class="score"
+                    style="width: 126px;text-align: center;font-size: 0.16rem;color: #FFFFFF;margin-top: 65px;"
+                  >
+                    <span>量化评级：A级</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -122,7 +124,9 @@
                 <div style="width: 20%; float: left">
                   <span style="font-size: 16px">
                     供应商总数：
-                    <span style="color:#31c9f2; font-size: 20px;padding-right: 5px">20</span>家
+                    <span
+                      style="color:#31c9f2; font-size: 20px;padding-right: 5px"
+                    >{{gongyingshangshuJson.zongshu}}</span>家
                   </span>
                 </div>
                 <div style="width: 40%; float: left">
@@ -132,7 +136,7 @@
                       :text-inside="true"
                       :width="20"
                       :stroke-width="18"
-                      :percentage="100"
+                      :percentage="gongyingshangshuJson.yingyeshu"
                     ></el-progress>
                   </div>
                 </div>
@@ -143,7 +147,7 @@
                       :text-inside="true"
                       :width="20"
                       :stroke-width="18"
-                      :percentage="80"
+                      :percentage="gongyingshangshuJson.xukeshu"
                       background="#ff9900"
                     ></el-progress>
                   </div>
@@ -155,7 +159,7 @@
               >
                 <div class="flex justify_between">
                   <div class="item">
-                    <p class="r1">某某某粮油食品有限公司</p>
+                    <p class="r1">红双喜粮油食品有限公司</p>
                     <p class>食品经营许可证：7343948394544</p>
                     <div class="bot">
                       <p class="ellipsis">同时供应：第二外国语小学，清华附中</p>
@@ -164,7 +168,7 @@
                   </div>
 
                   <div class="item">
-                    <p class="r1">某某某粮油食品有限公司</p>
+                    <p class="r1">红双喜粮油食品有限公司</p>
                     <p class>食品经营许可证：7343948394544</p>
                     <div class="bot">
                       <p class="ellipsis">同时供应：第二外国语小学，清华附中</p>
@@ -173,7 +177,7 @@
                   </div>
 
                   <div class="item">
-                    <p class="r1">某某某粮油食品有限公司</p>
+                    <p class="r1">红双喜粮油食品有限公司</p>
                     <p class>食品经营许可证：7343948394544</p>
                     <div class="bot">
                       <p class="ellipsis">同时供应：第二外国语小学，清华附中</p>
@@ -183,7 +187,7 @@
                 </div>
                 <div class="flex justify_between">
                   <div class="item">
-                    <p class="r1">某某某粮油食品有限公司</p>
+                    <p class="r1">红双喜粮油食品有限公司</p>
                     <p class>食品经营许可证：7343948394544</p>
                     <div class="bot">
                       <p class="ellipsis">同时供应：第二外国语小学，清华附中</p>
@@ -192,7 +196,7 @@
                   </div>
 
                   <div class="item">
-                    <p class="r1">某某某粮油食品有限公司</p>
+                    <p class="r1">红双喜粮油食品有限公司</p>
                     <p class>食品经营许可证：7343948394544</p>
                     <div class="bot">
                       <p class="ellipsis">同时供应：第二外国语小学，清华附中</p>
@@ -201,7 +205,7 @@
                   </div>
 
                   <div class="item">
-                    <p class="r1">某某某粮油食品有限公司</p>
+                    <p class="r1">红双喜粮油食品有限公司</p>
                     <p class>食品经营许可证：7343948394544</p>
                     <div class="bot">
                       <p class="ellipsis">同时供应：第二外国语小学，清华附中</p>
@@ -689,7 +693,7 @@
       </div>
     </div>
 
-    <div class="video_wrap" v-show="isVideo" @click.self="hideVideo">
+    <div class="video_wrap" :class="{hidden:isHidden}" @click.self="hideVideo">
       <div class="video_box" style="padding: .8rem .2rem;position:relative;">
         <div
           @click="hideVideo"
@@ -698,34 +702,40 @@
         <div class="video">
           <div style="font-size:.24rem;padding: 0 0 .1rem .1rem;">校园直播</div>
           <!-- <video controls="controls" width="100%" height="100%" :src="videoSrc"></video> -->
-          <video controls="controls" width="100%" height="100%" src="/static/shi.mp4"></video>
+          <!-- <video controls="controls" width="100%" height="100%" src="/static/shi.mp4"></video> -->
+          <video-player
+            :class="{hidden:isHidden}"
+            class="video-player vjs-custom-skin"
+            style="height:100%;"
+            ref="videoPlayer"
+            :playsinline="true"
+            :options="playerOptions"
+          ></video-player>
         </div>
         <div class="video_list">
           <ul>
-            <li
-              @click="changeVideo('//f.video.weibocdn.com/003zzxrslx07wzQN2yPu01041200ba4R0E010.mp4?label=mp4_ld&template=640x360.24.0&trans_finger=78679548d3dda0964ec12b81fbdd99c2&Expires=1568969283&ssig=alvhOzoJfy&KID=unistore,video')"
-            >
-              <img src="http://pmtb146d9.pic42.websiteonline.cn/upload/11y.jpg" alt />
-              <div class="title">后厨区</div>
+            <li @click="changeVideo(val.eqId)" v-for="val of zhiboliebiaoJson" :key="val.id">
+              <img :src="val.imageUrl" alt />
+              <div class="title">{{val.eqarea}}</div>
             </li>
-            <li
-              @click="changeVideo('//locallimit.us.sinaimg.cn/001D4rkYlx07xapBDedi010412019vbd0E010.mp4?label=mp4_ld&template=640x360.24.0&trans_finger=78679548d3dda0964ec12b81fbdd99c2&Expires=1568976386&ssig=gBamF9dvDe&KID=unistore,video')"
-            >
-              <img src="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2721259920,2245504677&fm=26&gp=0.jpg" alt />
+            <!-- <li @click="changeVideo('rtmp://58.200.131.2:1935/livetv/hunantv')">
+              <img
+                src="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2721259920,2245504677&fm=26&gp=0.jpg"
+                alt
+              />
               <div class="title">洗菜区</div>
             </li>
-            <li
-              @click="changeVideo('//f.video.weibocdn.com/003zzxrslx07wzQN2yPu01041200ba4R0E010.mp4?label=mp4_ld&template=640x360.24.0&trans_finger=78679548d3dda0964ec12b81fbdd99c2&Expires=1568969283&ssig=alvhOzoJfy&KID=unistore,video')"
-            >
-              <img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2395256036,2172655875&fm=15&gp=0.jpg" alt />
+            <li @click="changeVideo('rtmp://58.200.131.2:1935/livetv/gdtv')">
+              <img
+                src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2395256036,2172655875&fm=15&gp=0.jpg"
+                alt
+              />
               <div class="title">饮料区</div>
             </li>
-            <li
-              @click="changeVideo('//locallimit.us.sinaimg.cn/001D4rkYlx07xapBDedi010412019vbd0E010.mp4?label=mp4_ld&template=640x360.24.0&trans_finger=78679548d3dda0964ec12b81fbdd99c2&Expires=1568976386&ssig=gBamF9dvDe&KID=unistore,video')"
-            >
-              <img src="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=3714197024,3455259145&fm=26&gp=0.jpg" alt />
-              <div class="title">就餐区</div>
-            </li>
+            <li @click="changeVideo('rtmp://58.200.131.2:1935/livetv/dftv')">
+              <img src="http://pmtb146d9.pic42.websiteonline.cn/upload/11y.jpg" alt />
+              <div class="title">后厨区</div>
+            </li>-->
           </ul>
         </div>
       </div>
@@ -984,11 +994,40 @@
 </template>
 <script>
 import Detail from "@/components/ComAlertDetails";
+import {
+  zhiboliebiao,
+  zhiboliu,
+  gongyingshangshu,
+  gongyingshang
+} from "@/api/xuexiaoxiangqing";
 import { log } from "util";
 export default {
   name: "positioning",
   data() {
     return {
+      gongyingshangJson: {},
+      gongyingshangshuJson: {
+        zongshu: 30,
+        yingyeshu: 100,
+        xukeshu: 100
+      },
+      zhiboliebiaoJson: [],
+      playerOptions: {
+        // height: "500",
+        sources: [
+          {
+            type: "rtmp/mp4",
+            src: ""
+          }
+        ],
+        techOrder: ["flash"],
+        autoplay: true,
+        controls: true,
+        // preload: 'auto', // 视频预加载
+        notSupportedMessage: "此视频暂无法播放，请切换视频",
+        poster:
+          "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1572970305962&di=acd0edc70f15012acd5078e46d7a8e33&imgtype=0&src=http%3A%2F%2Fimg01.cztv.com%2F201903%2F22%2Ff27ad9f1c0c7819a885a7190b96d726c.jpg"
+      },
       shicai_date: "",
       tableData: [
         {
@@ -1084,7 +1123,7 @@ export default {
       isZhezhao: false,
       recordsPanelIsShow: false,
       yuJing_active: "资质信息",
-      isVideo: false,
+      isHidden: true,
       videoSrc:
         "//f.video.weibocdn.com/003zzxrslx07wzQN2yPu01041200ba4R0E010.mp4?label=mp4_ld&template=640x360.24.0&trans_finger=78679548d3dda0964ec12b81fbdd99c2&Expires=1568969283&ssig=alvhOzoJfy&KID=unistore,video"
     };
@@ -1093,19 +1132,65 @@ export default {
     Detail
   },
   methods: {
+    getgongyingshang() {
+      gongyingshang({
+        schoolid: 1
+      }).then(res => {
+        console.log(res.data);
+        this.gongyingshangJson = res.data;
+      });
+    },
+    getgongyingshangshu() {
+      gongyingshangshu({
+        schoolid: 1
+      }).then(res => {
+        console.log(res.data);
+        this.gongyingshangshuJson = res.data;
+      });
+    },
+    getzhiboliebiao() {
+      console.log("zhiboliebiao");
+
+      zhiboliebiao({ schoolId: 1 }).then(res => {
+        this.zhiboliebiaoJson = res.data.data;
+        zhiboliu({ eqId: res.data.data[0].eqId }).then(res => {
+          console.log(res.data.data);
+
+          if (res.data.data.path) {
+            this.$refs.videoPlayer.player.src(res.data.data.path);
+            this.$refs.videoPlayer.player.load();
+            setTimeout(res => {
+              this.$refs.videoPlayer.player.play();
+            }, 2000);
+          }
+        });
+      });
+    },
     rowClass({ row, rowIndex }) {
       // console.log(rowIndex); //表头行标号为0
       return "background:#6e72792a;color:#fff; font-size:16px; font-weight:normal";
     },
     hideVideo() {
-      this.isVideo = false;
+      this.isHidden = true;
+      try {
+        document.querySelector(".vjs-control-bar").style.display = "none";
+      } catch {}
     },
     getYuJing(type) {
-      console.log(type);
+      // console.log(type);
       this.yuJing_active = type;
     },
     changeVideo(e) {
-      this.videoSrc = e;
+      zhiboliu({ eqId: e }).then(res => {
+        console.log(res.data.data.path);
+        if (res.data.data.path) {
+          this.$message("直播切换中请稍等");
+          this.$refs.videoPlayer.player.src(res.data.data.path);
+          this.$refs.videoPlayer.player.load();
+        } else {
+          this.$message("该直播本时段暂未开放");
+        }
+      });
     },
     back() {
       this.$router.go(-1);
@@ -1114,17 +1199,30 @@ export default {
       this.$router.push(uri);
     },
     VideShow() {
-      this.isVideo = true;
+      this.isHidden = false;
+      try {
+        document.querySelector(".vjs-control-bar").style.display = "flex";
+      } catch {}
     },
     showRecoedsDetail() {
       this.recordsPanelIsShow = true;
     }
   },
-  mounted() {}
+  mounted() {
+    this.getzhiboliebiao();
+    this.getgongyingshang();
+    // this.getgongyingshangshu();
+  }
 };
 </script>
 <style lang="scss" scope>
 @import "@/assets/css/public.scss";
+.hidden {
+  visibility: hidden;
+}
+.video-js {
+  height: 100%;
+}
 .el-table__row {
   background-color: #1b1f2b;
 }
