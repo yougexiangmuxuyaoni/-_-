@@ -1172,9 +1172,7 @@ export default {
     },
     hideVideo() {
       this.isHidden = true;
-      try {
         document.querySelector(".vjs-control-bar").style.display = "none";
-      } catch {}
     },
     getYuJing(type) {
       // console.log(type);
