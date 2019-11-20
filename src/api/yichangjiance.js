@@ -5,15 +5,7 @@ import request from 'axios'
 
 export function yujingList(query) {
     return request({
-        url: '/api/manageWat/statistics/getEarlywarningListYear1',
-        method: 'get',
-        params: query
-    })
-}
-
-export function yujingdaichuli(query) {
-    return request({
-        url: '/api/manageWat/statistics/getsum',
+        url: '/api/manageWat/statistics/getEarlywarningListYear',
         method: 'get',
         params: query
     })
@@ -22,14 +14,6 @@ export function yujingdaichuli(query) {
 export function baojingList(query) {
     return request({
         url: '/api/manageWat/statistics/getAlarmListYear',
-        method: 'get',
-        params: query
-    })
-}
-
-export function baojingdaichuli(query) {
-    return request({
-        url: '/api/manageWat/statistics/getsumb',
         method: 'get',
         params: query
     })
