@@ -70,15 +70,11 @@ export default {
   },
   methods: {
     previousPage() {
-      console.log("上一页");
-
       this.current = this.current - 1;
 
       this.getJGList();
     },
     nextPage() {
-      console.log("下一页");
-
       this.current = this.current + 1;
 
       this.getJGList();
@@ -93,7 +89,6 @@ export default {
           current: this.current
         }
       }).then(res => {
-        console.log(res.data);
         this.com_size = res.data.data.total;
         this.com_current = res.data.data.pages;
         this.TZList = res.data.data.records;

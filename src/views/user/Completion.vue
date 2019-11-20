@@ -539,31 +539,26 @@ export default {
   methods: {
     ...mapMutations(["CHENGE_ACTIVE"]),
     handleEdit(index, row) {
-      console.log(index, row);
     },
     tz_previousPage() {
-      console.log("上一页");
 
       this.tz_current = this.tz_current - 1;
 
       this.getTZ();
     },
     tz_nextPage() {
-      console.log("下一页");
 
       this.tz_current = this.tz_current + 1;
 
       this.getTZ();
     },
     previousPage() {
-      console.log("上一页");
 
       this.current = this.current - 1;
 
       this.getJGList();
     },
     nextPage() {
-      console.log("下一页");
 
       this.current = this.current + 1;
 
@@ -579,9 +574,7 @@ export default {
           current: this.tz_current
         }
       }).then(res => {
-        console.log('userId');
         
-        console.log(res.data);
         this.tz_com_size = res.data.data.total;
         this.tz_com_current = res.data.data.pages;
         let arr = [];
@@ -606,16 +599,12 @@ export default {
       });
     },
     getJGList() {
-      console.log(this.current);
-      console.log(this.size);
       this.$http
         .get("/api/manageWat/supervision/findPageForOp", {
           params: { userId: 4, size: this.size, current: this.current }
         })
         .then(res => {
-          console.log('userId');
           
-          console.log(res.data.data.records);
           this.com_size = res.data.data.total;
           this.com_current = res.data.data.pages;
           let arr = [];
@@ -632,15 +621,12 @@ export default {
             }
             arr.push(val);
           });
-          // console.log(JSON.stringify(arr));
 
           this.tableData = arr;
         });
     }
   },
   mounted() {
-    console.log(this.YIBANSHIXIANG_ACTIVE);
-
     if (this.YIBANSHIXIANG_ACTIVE) {
       this.active = this.YIBANSHIXIANG_ACTIVE;
       this.CHENGE_ACTIVE("");

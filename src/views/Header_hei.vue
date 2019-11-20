@@ -1,9 +1,20 @@
 <template>
   <div id="header_hei" v-loading.fullscreen.lock="fullscreenLoading">
     <div id="heder">
-      <div class="link">
+      <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item
+          :to="{ path: val.url }"
+          v-for="val of lujing"
+          :key="val.name"
+        >{{val.name}}</el-breadcrumb-item>
+      </el-breadcrumb>
+      <!-- <div class="link">
         <span @click="to('/')" class="pointer">首页</span>
-        <span class="pointer" v-show="this.$store.state.status !=='Positioning'">
+        ==={{this.$store.state.status}}===
+        <span
+          class="pointer"
+          v-show="this.$store.state.status !=='Positioning'"
+        >
           <span @click="to('/header_hei')">
             <span class="yjxx" v-show="this.$store.state.status ==='Certificates'">
               <i class="el-icon-arrow-right"></i>预警信息
@@ -22,12 +33,13 @@
             </span>
           </span>
         </span>
+
         <span class="pointer" v-show="this.$store.state.status === 'Positioning'">
           <span class="yjxx">
             <i class="el-icon-arrow-right"></i>学校详情页
           </span>
         </span>
-      </div>
+      </div>-->
       <div class="title">
         <img src="/img/logo.d722d696.png" alt />
         <div>校园食品安全监测云平台</div>
@@ -98,17 +110,55 @@
 </template>
 <script>
 import { mapState, mapMutations } from "vuex";
+import { xinxiaoxi } from "@/api/home";
 export default {
   name: "header_hei",
   data() {
     return {
+      lujing: [],
+      yujinglujing: [
+        { url: "/", name: "首页" },
+        { url: "/header_hei", name: "预警信息" },
+        { url: "/header_hei", name: "预警信息详情页" }
+      ],
+      baojinglujing: [
+        { url: "/", name: "首页" },
+        { url: "/header_hei", name: "报警信息" },
+        { url: "/header_hei", name: "报警信息详情页" }
+      ],
+
       TZList: [],
       TZId: Number,
       fullscreenLoading: false
     };
   },
+  watch: {
+    $route(to, from) {
+      this.mianbaioxie();
+    }
+  },
   methods: {
     ...mapMutations(["CHENGE_ACTIVE"]),
+    mianbaioxie() {
+      let path = this.$route.path;
+      if (path === "/alertDetails") {
+        this.lujing = [
+          { url: "/", name: "首页" },
+          { url: "/header_hei", name: "预警信息" },
+          { url: "/header_hei", name: "预警信息详情页" }
+        ];
+      } else if (path === "/positioning") {
+        this.lujing = [
+          { url: "/", name: "首页" },
+          { url: "/header_hei", name: "学校详情页" }
+        ];
+      } else {
+        this.lujing = [
+          { url: "/", name: "首页" },
+          { url: "/header_hei", name: "预警信息" }
+        ];
+      }
+    },
     change(e) {
       this.fullscreenLoading = true;
 
@@ -142,18 +192,22 @@ export default {
       this.to("completion");
     },
     getHongList() {
-      console.log(1111);
-
-      this.$http
-        .get("/api/manageWat/supervision/findForStatus", {
-          params: { userId: 4, supStatus: 2 }
-        })
-        .then(res => {
-          console.log('userId');
-          
-          console.log(res.data.data.records);
-          this.TZList = res.data.data.records;
-        });
+      xinxiaoxi({
+        userId: 4,
+        supStatus: 2
+      }).then(res => {
+        console.log("header-hei");
+        this.TZList = res.data.data.records;
+      });
+      // this.$http
+      //   .get("/api/manageWat/supervision/findForStatus", {
+      //     params: { userId: 4, supStatus: 2 }
+      //   })
+      //   .then(res => {
+      //     // console.log("userId");
+      //     // console.log(res.data.data.records);
+      //     this.TZList = res.data.data.records;
+      //   });
     },
     back() {
       this.$router.go(-1);
@@ -163,21 +217,26 @@ export default {
     }
   },
   mounted() {
-    // console.log(this.$store.state.status);
-    setTimeout(() => {
-      this.getHongList();
-    }, 0);
+    console.log(this.$store.state.status);
+    this.getHongList();
 
-    setInterval(() => {
-      console.log("新通知");
+    this.mianbaioxie();
+    // setInterval(() => {
+    //   console.log("新通知");
 
-      this.getHongList();
-    }, 1000 * 3);
+    //   this.getHongList();
+    // }, 1000 * 5);
   }
 };
 </script>
 <style lang="scss" scope>
 @import "@/assets/css/public.scss";
+.el-breadcrumb__inner.is-link {
+  color: rgb(64, 241, 253) !important;
+}
+.el-breadcrumb__inner {
+  color: rgb(197, 215, 247) !important;
+}
 #header_hei {
   font-size: 0.14rem;
   // padding: 0.3rem;
@@ -189,6 +248,7 @@ export default {
     padding: 0 0.2rem;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     line-height: 0.7rem;
     color: #fff;
     border-bottom: 0.01rem solid #2156b9;

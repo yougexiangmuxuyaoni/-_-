@@ -86,6 +86,7 @@
 </template>
 
 <script>
+import { xinxiaoxi } from "@/api/home";
 import { mapState, mapMutations } from "vuex";
 import { setInterval } from "timers";
 export default {
@@ -112,7 +113,7 @@ export default {
       console.log("改变状态");
       this.TZId = e;
       setTimeout(() => {
-        console.log(this.TZId);
+        // console.log(this.TZId);
 
         this.$refs.changeId.click();
 
@@ -120,10 +121,6 @@ export default {
       }, 0);
 
       setTimeout(() => {
-        console.log(
-          this.$el.getElementsByTagName("iframe")[0].contentWindow.document.body
-            .innerText
-        );
         let html = this.$el.getElementsByTagName("iframe")[0].contentWindow
           .document.body.innerText;
         let moban =
@@ -139,18 +136,32 @@ export default {
       this.to("completion");
     },
     getHongList() {
-      console.log(1111);
+      xinxiaoxi({
+         userId: 4,
+        supStatus: 2
+      }).then(res => {
+        console.log('home');
+         this.TZList = res.data.data.records;
+      });
 
-      this.$http
-        .get("/api/manageWat/supervision/findForStatus", {
-          params: { userId: 4, supStatus: 2 }
-        })
-        .then(res => {
-          console.log('userId');
-          
-          console.log(res.data.data.records);
-          this.TZList = res.data.data.records;
-        });
+      // h_tongzhiliebiao({
+      //   userId: 4,
+      //   supStatus: 2
+      // }).then(res => {
+      //   console.log(res.data);
+      //   this.TZList = res.data.data.records;
+      // });
+
+      // this.$http
+      //   .get("/api/manageWat/supervision/findForStatus", {
+      //     params: { userId: 4, supStatus: 2 }
+      //   })
+      //   .then(res => {
+      //     // console.log('userId');
+
+      //     // console.log(res.data.data.records);
+      //     this.TZList = res.data.data.records;
+      //   });
     },
     to(url) {
       if (url === "/login") {
@@ -172,11 +183,11 @@ export default {
   },
   mounted() {
     this.linkActive = this.$route.path;
-    console.log("HOME");
+    // console.log("HOME");
 
-    console.log(localStorage.getItem("user_info"));
+    // console.log(localStorage.getItem("user_info"));
     this.SET_USER_INFO(localStorage.getItem("user_info"));
-    console.log(this.USER_INFO);
+    // console.log(this.USER_INFO);
 
     if (this.USER_INFO == "shengjiaoyu") {
       this.title = "四川省教育局";
@@ -191,16 +202,14 @@ export default {
     } else if (this.USER_INFO === "qujianguan") {
       this.title = "叙永县市场监督管理局";
     }
-    // this.$router.push("/login");
     setTimeout(() => {
       this.getHongList();
     }, 0);
 
-    setInterval(() => {
-      console.log("新通知");
-
-      this.getHongList();
-    }, 1000 * 3);
+    // setInterval(() => {
+    //   console.log("新通知");
+    //   this.getHongList();
+    // }, 1000*5);
   }
 };
 
