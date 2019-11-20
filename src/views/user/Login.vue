@@ -5,14 +5,17 @@
       <div class="main">
         <div class="form">
           <div class="title">用户登录</div>
-          <el-input v-model="zhanghu" placeholder="账户"></el-input>
-          <el-input v-model="mima" placeholder="密码"></el-input>
+          <el-input v-model="loginForm.username" placeholder="账户"></el-input>
+          <el-input v-model="loginForm.password" placeholder="密码"></el-input>
           <div class="ma">
-            <el-input v-model="yanzheng" placeholder="验证码"></el-input>
-            <img src="@/assets/yanzhengma.jpg" alt />
+            <el-input v-model="loginForm.code" placeholder="验证码"></el-input>
+            <img @click="geterweima()" :src="chuan+loginForm.randomStr " alt />
           </div>
 
           <el-button type="primary" @click="toHome">登录</el-button>
+
+          <!-- <el-button type="primary" @click="gohome">登录</el-button> -->
+
           <div class="wj">
             <span @click="toForget">忘记密码</span>
           </div>
@@ -23,6 +26,7 @@
   </div>
 </template>
 <script>
+import { denglu } from "@/api/denglu";
 import Foote from "@/components/Foote";
 import Header from "@/components/Header";
 import { mapState, mapMutations } from "vuex";
@@ -35,30 +39,59 @@ export default {
   },
   data() {
     return {
-      zhanghu: "",
-      mima: "",
-      yanzheng: ""
+      loginForm: {
+        username: "xyCXAdmin",
+        password: "123456",
+        code: "",
+        redomStr: "",
+        randomStr: ""
+      },
+      chuan: "/api/code?randomStr="
     };
+  },
+  created() {
+    this.geterweima();
   },
   methods: {
     ...mapMutations(["SET_USER_INFO"]),
     toForget() {
       this.$router.push("/Forget");
     },
+    geterweima() {
+      let random = "";
+      random = Math.ceil(Math.random() * 100000000000000)
+        .toString()
+        .substr(0, 4);
+      if (true) random = random + Date.now();
+      this.loginForm.randomStr = random;
+    },
+    gohome() {
+      denglu(this.loginForm)
+        .then(res => {
+          console.log("=======");
+
+          console.log(res.data);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
     toHome() {
+      console.log("denglu");
+
       let userinfo = "";
 
-      if (this.zhanghu === "shengjiaoyu") {
+      if (this.loginForm.username === "shengjiaoyu") {
         userinfo = "shengjiaoyu";
-      } else if (this.zhanghu === "shijiaoyu") {
+      } else if (this.loginForm.username === "shijiaoyu") {
         userinfo = "shijiaoyu";
-      } else if (this.zhanghu === "qujiaoyu") {
+      } else if (this.loginForm.username === "qujiaoyu") {
         userinfo = "qujiaoyu";
-      } else if (this.zhanghu === "shengjianguan") {
+      } else if (this.loginForm.username === "shengjianguan") {
         userinfo = "shengjianguan";
-      } else if (this.zhanghu === "shijianguan") {
+      } else if (this.loginForm.username === "shijianguan") {
         userinfo = "shijianguan";
-      } else if (this.zhanghu === "qujianguan") {
+      } else if (this.loginForm.username === "qujianguan") {
         userinfo = "qujianguan";
       } else {
         // this.$message({
