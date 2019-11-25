@@ -9,16 +9,20 @@
           <el-input v-model="loginForm.password" placeholder="密码"></el-input>
           <div class="ma">
             <el-input v-model="loginForm.code" placeholder="验证码"></el-input>
-            <img @click="geterweima()" :src="chuan+loginForm.randomStr " alt />
+            <img
+              @click="geterweima()"
+              :src="chuan+loginForm.randomStr+'&client_type=SUPERVISION_CLIENT'"
+              alt
+            />
           </div>
 
-          <el-button type="primary" @click="toHome">登录</el-button>
+          <!-- <el-button type="primary" @click="toHome">直接登录</el-button> -->
 
-          <!-- <el-button type="primary" @click="gohome">登录</el-button> -->
+          <el-button type="primary" @click="gohome">登录</el-button>
 
-          <div class="wj">
+          <!-- <div class="wj">
             <span @click="toForget">忘记密码</span>
-          </div>
+          </div>-->
         </div>
       </div>
     </div>
@@ -26,11 +30,13 @@
   </div>
 </template>
 <script>
-import { denglu } from "@/api/denglu";
+import { denglu, getUserInfo } from "@/api/denglu";
 import Foote from "@/components/Foote";
 import Header from "@/components/Header";
 import { mapState, mapMutations } from "vuex";
 import { log } from "util";
+import { userInfo } from "os";
+import { setInterval, clearInterval } from "timers";
 export default {
   name: "login",
   components: {
@@ -40,13 +46,19 @@ export default {
   data() {
     return {
       loginForm: {
-        username: "xyCXAdmin",
+        username: "xyEduAdmin",
         password: "123456",
         code: "",
         redomStr: "",
         randomStr: ""
       },
-      chuan: "/api/code?randomStr="
+      chuan: "/api/code?randomStr=",
+      userInfo: {
+        roleCodes: null,
+        areaCode: "",
+        userLevel: "",
+        areaName: ""
+      }
     };
   },
   created() {
@@ -66,14 +78,84 @@ export default {
       this.loginForm.randomStr = random;
     },
     gohome() {
+      const _this = this;
       denglu(this.loginForm)
         .then(res => {
-          console.log("=======");
+          const token = res.data.access_token;
+          localStorage.setItem("token", token);
+          getUserInfo().then(res => {
+            let json = res.data.data;
+            this.geterweima();
+            let isdenglu = json.sysUser.userType;
+            this.userInfo.areaName = json.sysUser.areaName;
+            this.userInfo.areaCode = json.sysUser.areaCode;
+            this.userInfo.userLevel = json.sysUser.userLevel;
+            this.userInfo.roleCodes = json.roleCodes;
+            if (isdenglu !== "3") {
+              localStorage.removeItem("token");
+              this.$message({
+                showClose: true,
+                message: "账号错误，请重试111",
+                type: "error"
+              });
+              return;
+            }
 
-          console.log(res.data);
+            if (
+              this.userInfo.roleCodes === null &&
+              this.userInfo.roleCodes.length !== 0
+            ) {
+              localStorage.removeItem("token");
+              this.$message({
+                showClose: true,
+                message: "无权限访问",
+                type: "error"
+              });
+              return;
+            }
+
+            if (this.userInfo.roleCodes[0] === "shichangjianguan") {
+              if (this.userInfo.userLevel === "2") {
+                //省
+                this.userInfo.userLevel = "shengjianguan";
+              } else if (this.userInfo.userLevel === "3") {
+                //市
+                this.userInfo.userLevel = "shijianguan";
+              } else if (this.userInfo.userLevel === "4") {
+                //区
+                this.userInfo.userLevel = "qujianguan";
+              }
+            } else if (this.userInfo.roleCodes[0] === "jiaoyujuguanli") {
+              if (this.userInfo.userLevel === "2") {
+                //省
+                this.userInfo.userLevel = "shengjiaoyu";
+              } else if (this.userInfo.userLevel === "3") {
+                //市
+                this.userInfo.userLevel = "shijiaoyu";
+              } else if (this.userInfo.userLevel === "4") {
+                //区
+                this.userInfo.userLevel = "qujiaoyu";
+              }
+            }
+            this.SET_USER_INFO(this.userInfo);
+            this.$router.push("/");
+          });
         })
         .catch(function(error) {
-          console.log(error);
+          const arr = error.toString().split(" ");
+          let code = arr[arr.length - 1];
+          let msg = "";
+          if (code === "428") {
+            msg = "验证码错误";
+          } else if (code === "426") {
+            msg = "用户密码错误";
+          }
+          _this.$message({
+            showClose: true,
+            message: msg,
+            type: "error"
+          });
+          _this.geterweima();
         });
     },
     toHome() {
@@ -81,7 +163,9 @@ export default {
 
       let userinfo = "";
 
-      if (this.loginForm.username === "shengjiaoyu") {
+      if (this.loginForm.username === "xySupAdmin") {
+        userinfo = "shengjianguan";
+      } else if (this.loginForm.username === "shengjiaoyu") {
         userinfo = "shengjiaoyu";
       } else if (this.loginForm.username === "shijiaoyu") {
         userinfo = "shijiaoyu";
