@@ -1,14 +1,11 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
-// import VueAxios from 'vue-axios'
-// import axios from './router/axios'
 import store from "./store";
 import echarts from "echarts";
 import "./plugins/element.js";
 import Router from "vue-router";
 import axios from 'axios';
-// import api from './api' // 导入api接口
 import VueAMap from 'vue-amap';//高德地图
 
 

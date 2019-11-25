@@ -18,6 +18,7 @@ export function jianguanxidajilu(query) {
         params: query
     })
 }
+
 export function tongzhigonggao(query) {
     return request({
         url: '/api/manageWat/supervision/findPage',
@@ -26,6 +27,13 @@ export function tongzhigonggao(query) {
     })
 }
 
+export function xiaoxitingxin(query) {
+    return request({
+        url: '/api/manageWat/supervision/findPage',
+        method: 'get',
+        params: query
+    })
+}
 // export function baojingList(query) {
 //     return request({
 //         url: '/api/baojingList',

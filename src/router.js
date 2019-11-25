@@ -2,7 +2,9 @@ import Vue from "vue";
 import Router from "vue-router";
 import Home from "./views/Home.vue";
 
-import Trend from "./views/index/qushifenxi/Trend.vue";//趋势分析 1
+// import Trend from "./views/index/qushifenxi/Trend.vue";//趋势分析 1
+import Trend from "./views/index/Trend.vue";//趋势分析 1
+
 import Abnormal from "./views//index/Abnormal.vue";//异常检测 2
 import Risk from "./views//index/Risk.vue";//风险定位 3
 

@@ -2,6 +2,7 @@ import request from 'axios'
 /*
 登录 API
 */
+
 const scope = 'server'
 export function denglu(userInfo) {
     const user = encryption({
@@ -9,7 +10,6 @@ export function denglu(userInfo) {
         key: 'thanks,pig4cloud',
         param: ['password']
     })
-    console.log(user);
     const grant_type = 'password'
     return request({
         url: '/api/auth/oauth/token',
@@ -22,7 +22,16 @@ export function denglu(userInfo) {
     })
 }
 
-
+export const getUserInfo = () => {
+    let token = localStorage.getItem('token');
+    return request({
+        url: '/api/admin/user/getUserInfo',
+        method: 'get',
+        headers: {
+            'Authorization': 'Bearer ' + token
+        }
+    })
+}
 
 // export function baojingList(query) {
 //     return request({
