@@ -55,6 +55,7 @@
   </div>
 </template>
 <script>
+import { xiaoxitingxin } from "@/api/home";
 import axios from "axios";
 export default {
   name: "remind",
@@ -80,19 +81,29 @@ export default {
       this.getJGList();
     },
     getJGList() {
-      this.$http({
-        url: "/api/manageWat/supervision/findPage",
-        method: "get",
-        params: {
-          userId: 4,
-          size: this.size,
-          current: this.current
-        }
+      xiaoxitingxin({
+        userId: 4,
+        size: this.size,
+        current: this.current
       }).then(res => {
         this.com_size = res.data.data.total;
         this.com_current = res.data.data.pages;
         this.TZList = res.data.data.records;
       });
+      
+      // this.$http({
+      //   url: "/api/manageWat/supervision/findPage",
+      //   method: "get",
+      //   params: {
+      //     userId: 4,
+      //     size: this.size,
+      //     current: this.current
+      //   }
+      // }).then(res => {
+      //   this.com_size = res.data.data.total;
+      //   this.com_current = res.data.data.pages;
+      //   this.TZList = res.data.data.records;
+      // });
     }
   },
   mounted() {
