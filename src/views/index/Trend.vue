@@ -3,22 +3,47 @@
     <div class="main-left">
       <div>
         <div class="xuexiao hezi">
-          <div class="title">
+          <div class="title" style="line-height: 3em;">
             <p class="tongji">学校统计</p>
             <p></p>
             <p>学校总量</p>
-            <p>45,498</p>
+            <p>{{xuexiaotongjiJson.schoolNum}}</p>
             <p>学生总量</p>
-            <p>5,264,498</p>
+            <p>{{xuexiaotongjiJson.stuNum}}</p>
           </div>
-
           <div class="tu" ref="xx"></div>
         </div>
       </div>
 
+      <div style="display: flex;height: 57%;align-items: center;">
+        <!-- 市监管/省监管/区监管/市教育/区教育  -->
+        <div
+          v-if="USER_INFO.userLevel !== 'shengjiaoyu'"
+          class="hezi"
+          style="width: 100%;display: flex;height: 30%;justify-content: center;align-items: center;"
+        >
+          <!-- style="position:absolute;top:60%;width:4.65rem;padding:.2rem 0;" -->
+          <div class="shitang">
+            <div class="title">
+              <p>食材供应商总量</p>
+              <p>{{shitangJson.foodSupplier}}</p>
+              <p>食堂从业者数量/健康证占比</p>
+              <p>{{shitangJson.proportionHealth}}%</p>
+            </div>
+          </div>
+          <div class="jiangguan">
+            <div class="title">
+              <p>学校食堂总量</p>
+              <p>{{shitangJson.schoolCanteen}}</p>
+              <p>食品抽检频次总数</p>
+              <p>{{shitangJson.spotCheck}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
- <!-- 省教育局 -->
-      <div v-if="active_show === 'shengjiaoyu'" style="height:4.5rem;">
+      <!-- 省教育局 -->
+      <div v-if="USER_INFO.userLevel === 'shengjiaoyu'" style="height:4.5rem;">
         <div class="zhengzhao hezi">
           <div class="title">
             <p>营业证照持有率</p>
@@ -65,7 +90,10 @@
 
       <!-- 市教育局 -->
       <div
-        class="hezi" v-if="active_show === 'shijiaoyu'" style="display: flex;justify-content: center;">
+        class="hezi"
+        v-if="USER_INFO.userLevel === 'shijiaoyu'"
+        style="display: flex;justify-content: center;"
+      >
         <div class="shitang">
           <div class="title">
             <p>食材供应商总量</p>
@@ -73,7 +101,7 @@
           </div>
         </div>
       </div>
-      <div v-if="active_show === 'shijiaoyu'">
+      <div v-if="USER_INFO.userLevel === 'shijiaoyu'">
         <div class="zhengzhao hezi">
           <div class="title">
             <p>营业证照持有率</p>
@@ -119,7 +147,7 @@
       </div>
 
       <!-- 区教育局 -->
-      <div class="hezi" v-if="active_show === 'qujiaoyu'">
+      <div class="hezi" v-if="USER_INFO.userLevel === 'qujiaoyu'">
         <div class="shitang">
           <div class="title">
             <p>食材供应商总量</p>
@@ -135,7 +163,7 @@
           </div>
         </div>
       </div>
-      <div v-if="active_show === 'qujiaoyu'">
+      <div v-if="USER_INFO.userLevel === 'qujiaoyu'">
         <div class="zhengzhao hezi">
           <div class="title">
             <p>营业证照持有率</p>
@@ -181,7 +209,7 @@
       </div>
 
       <!-- 区监管 -->
-      <div class="hezi" v-if="active_show === 'qujianguan'">
+      <div class="hezi" v-if="USER_INFO.userLevel === 'qujianguan'">
         <div class="shitang">
           <div class="title">
             <p>食材供应商总量</p>
@@ -199,7 +227,7 @@
           </div>
         </div>
       </div>
-      <div v-if="active_show === 'qujianguan'">
+      <div v-if="USER_INFO.userLevel === 'qujianguan'">
         <div class="zhengzhao hezi">
           <div class="title">
             <p>营业证照持有率</p>
@@ -243,39 +271,17 @@
           <!-- <div class="tu" ref="gys"></div> -->
         </div>
       </div>
-      <!-- 市监管/省监管  -->
-      <div
-        class="hezi"
-        v-if="active_show === 'shijianguan'|| active_show === 'shengjianguan'"
-        style="position:absolute;top:60%;width:4.65rem;padding:.2rem 0;"
-      >
-        <div class="shitang">
-          <div class="title">
-            <p>食材供应商总量</p>
-            <p>4,498</p>
-            <p>食堂从业者数量/健康证占比</p>
-            <p>56%</p>
-          </div>
-        </div>
-        <div class="jiangguan">
-          <div class="title">
-            <p>学校食堂总量</p>
-            <p>2,356</p>
-            <p>食品抽检频次总数</p>
-            <p>28,615</p>
-          </div>
-        </div>
-      </div>
     </div>
     <div class="main-mid">
       <div class="top hezi">
         <el-input class="el-input1" v-model="keys" placeholder="请输入关键字查找"></el-input>
-        <!-- <el-cascader
+        <el-cascader
           v-model="area_value"
           placeholder="区域查找"
-          :options="area_options"
+          :options="quyu_options"
           @change="handleChange"
         ></el-cascader>
+
         <el-select v-model="yj_value" placeholder="预警程度">
           <el-option
             v-for="item in yj_options"
@@ -283,15 +289,15 @@
             :label="item.label"
             :value="item.value"
           ></el-option>
-        </el-select>-->
-        <div class="anniu btn">搜索</div>
+        </el-select>
+        <div class="anniu btn" @click="find()">搜索</div>
       </div>
       <div class="map hezi">
         <div class="title">
-          <span>四川省地域分布图</span>
+          <span>{{USER_INFO.areaName}}地域分布图</span>
           <!-- <span class="time">2019-08-16 18:00</span> -->
         </div>
-        <div class="tu" ref="beijing"></div>
+        <div class="tu" ref="sheng"></div>
       </div>
     </div>
     <div class="main-right">
@@ -313,22 +319,36 @@
         <div class="y-duibi hezi">
           <div class="title">
             <p>预警环节数量对比</p>
-            <div class="btn anniu">
+            <!-- <div class="btn anniu">
               季度
               <i class="el-icon-arrow-down"></i>
-            </div>
+            </div>-->
           </div>
-          <div class="tu" ref="ydb"></div>
+          <div
+            v-loading="loading_yujinghuanjie"
+            element-loading-text="拼命加载中"
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.1)"
+            class="tu"
+            ref="ydb"
+          ></div>
         </div>
         <div class="b-duibi hezi">
           <div class="title">
             <p>报警环节数量对比</p>
-            <div class="btn anniu">
+            <!-- <div class="btn anniu">
               月
               <i class="el-icon-arrow-down"></i>
-            </div>
+            </div>-->
           </div>
-          <div class="tu" ref="bdb"></div>
+          <div
+            v-loading="loading_baojinghuanjie"
+            element-loading-text="拼命加载中"
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.1)"
+            class="tu"
+            ref="bdb"
+          ></div>
         </div>
       </div>
       <div>
@@ -337,14 +357,28 @@
             <p>学校预警总数 TOP5</p>
             <p>本月</p>
           </div>
-          <div class="tu" ref="yzs"></div>
+          <div
+            v-loading="loading_yujingtop"
+            element-loading-text="拼命加载中"
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.1)"
+            class="tu"
+            ref="yzs"
+          ></div>
         </div>
         <div class="b-zongshu hezi">
           <div class="title">
             <p>学校报警总数 TOP5</p>
             <p>本月</p>
           </div>
-          <div class="tu" ref="bzs"></div>
+          <div
+            v-loading="loading_baojingtop"
+            element-loading-text="拼命加载中"
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.1)"
+            class="tu"
+            ref="bzs"
+          ></div>
         </div>
       </div>
     </div>
@@ -354,32 +388,88 @@
 <script>
 import axios from "axios";
 import { setTimeout } from "timers";
+import {
+  xuexiaotongji,
+  xuexiaobaojingpaiming,
+  xuexiaoyujingpaiming,
+  yujinghuanjie,
+  baojinghuanjie,
+  shitangxinxi
+} from "@/api/qushifengxi";
+import { mapState, mapMutations } from "vuex";
 export default {
   name: "trend",
   data() {
     return {
+      loading_yujinghuanjie: true, //预警环节loading
+      loading_baojinghuanjie: true, //报警环节loading
+      loading_baojingtop: true, //报警toploading
+      loading_yujingtop: true, //预警toploading
+
       mapOption: "",
+      quyu_options: [
+        {
+          value: "全部区域",
+          label: "全部区域"
+        },
+        {
+          value: "泸州市",
+          label: "泸州市"
+        },
+        {
+          value: "张家口市",
+          label: "张家口市"
+        },
+        {
+          value: "承德市",
+          label: "承德市"
+        },
+        {
+          value: "秦皇岛市",
+          label: "秦皇岛市"
+        },
+        {
+          value: "唐山市",
+          label: "唐山市"
+        },
+        {
+          value: "廊坊市",
+          label: "廊坊市"
+        },
+        {
+          value: "保定市",
+          label: "保定市"
+        },
+        {
+          value: "沧州市",
+          label: "沧州市"
+        },
+        {
+          value: "衡水市",
+          label: "衡水市"
+        },
+        {
+          value: "邢台市",
+          label: "邢台市"
+        },
+        {
+          value: "邯郸市",
+          label: "邯郸市"
+        }
+      ],
       yj_options: [
-        // {
-        //   value: "选项1",
-        //   label: "黄金糕"
-        // },
-        // {
-        //   value: "选项2",
-        //   label: "双皮奶"
-        // },
-        // {
-        //   value: "选项3",
-        //   label: "蚵仔煎"
-        // },
-        // {
-        //   value: "选项4",
-        //   label: "龙须面"
-        // },
-        // {
-        //   value: "选项5",
-        //   label: "北京烤鸭"
-        // }
+        {
+          value: "全部警报",
+          label: "全部警报"
+        },
+        {
+          value: "预警",
+          label: "预警"
+        },
+        {
+          value: "报警",
+          label: "报警"
+        }
       ],
       value: "",
       keys: "",
@@ -428,29 +518,167 @@ export default {
         //     }
         //   ]
         // }
-      ],
-      active_show: ""
+      ], //学校报警top5
+      baojingxuexiaoArr: {
+        schoolNameArr: [],
+        baiArr: [],
+        kuangArr: [],
+        baojingArr: []
+      }, //学校预警top5
+      yujingxuexiaoArr: {
+        schoolNameArr: [],
+        baiArr: [],
+        kuangArr: [],
+        baojingArr: []
+      }, //预警环节
+      yujinghuanjie: {
+        type: [],
+        total: [],
+        baiArr: [],
+        kuangArr: []
+      }, //报警环节
+      baojinghuanjie: {
+        type: [],
+        total: [],
+        baiArr: [],
+        kuangArr: []
+      }, //学校统计
+      xuexiaotongjiJson: {
+        schoolArr: [],
+        zhanbiArr: [],
+        schoolNum: "",
+        stuNum: ""
+      },
+      //食堂统计
+      shitangJson: {
+        // foodSupplier:'',
+        // proportionHealth:'',
+        // schoolCanteen:"",
+        // spotCheck:''
+      },
+      //地域图
+      map: {
+        nameMap: "四川省"
+      }
     };
   },
+  computed: {
+    ...mapState(["USER_INFO"])
+  },
   methods: {
-    init1() {
-      this.initEcharts();
-      // this.initEcharts2();
-      // this.initEcharts3();
-      this.initEcharts4();
-      this.initEcharts5();
-      this.initEcharts6();
-      this.initEcharts7();
-      this.initEcharts8();
+    ...mapMutations(["SET_USER_INFO"]),
+    //获取学校统计
+    getxuexiaotongji() {
+      xuexiaotongji().then(res => {
+        const json = res.data.data;
+        this.xuexiaotongjiJson.schoolNum = json.schoolNum;
+        this.xuexiaotongjiJson.stuNum = json.stuNum;
+        json.place.forEach(item => {
+          this.xuexiaotongjiJson.schoolArr.push(
+            `${item.schoolType}(${item.schoolNum}所)`
+          );
+          this.xuexiaotongjiJson.zhanbiArr.push(
+            parseInt((item.schoolNum / json.schoolNum) * 100)
+          );
+        });
+        this.initEcharts();
+      });
     },
+    getshitangxinxi() {
+      // console.log("食堂");
+      shitangxinxi().then(res => {
+        this.shitangJson = res.data.data;
+        console.log(res.data.data);
+        console.log(this.shitangJson);
+      });
+    },
+    //获取预警环节
+    getyujinghuangjie() {
+      yujinghuanjie({
+        month: "2019-11",
+        regionalLevel: "2",
+        areaCode: "510000"
+      }).then(res => {
+        const json = res.data.data;
+        json.forEach(item => {
+          this.yujinghuanjie.type.push(item.type);
+          this.yujinghuanjie.total.push(item.total);
+          this.yujinghuanjie.baiArr.push(99.9);
+          this.yujinghuanjie.kuangArr.push(100);
+        });
+        // console.log(this.yujinghuanjie);
+        // console.log(json);
+
+        this.initEcharts6();
+      });
+    },
+    //获取报警环节
+    getbaojinghuangjie() {
+      baojinghuanjie({
+        month: "2019-11",
+        regionalLevel: "2",
+        areaCode: "510000"
+      }).then(res => {
+        const json = res.data.data;
+        json.forEach(item => {
+          this.baojinghuanjie.type.push(item.type);
+          this.baojinghuanjie.total.push(item.total);
+
+          this.baojinghuanjie.baiArr.push(99.9);
+          this.baojinghuanjie.kuangArr.push(100);
+        });
+        // console.log(this.yujinghuanjie);
+        // console.log(json);
+
+        this.initEcharts7();
+      });
+    },
+    //获取预警排名
+    getxuexiaoyujingpaiming() {
+      xuexiaoyujingpaiming({
+        month: "2019-11",
+        regionalLevel: "2",
+        areaCode: "510000"
+      }).then(res => {
+        const json = res.data.data;
+        json.forEach(item => {
+          this.yujingxuexiaoArr.schoolNameArr.push(item.schoolName);
+          this.yujingxuexiaoArr.baojingArr.push(item.total);
+          this.yujingxuexiaoArr.baiArr.push(99.9);
+          this.yujingxuexiaoArr.kuangArr.push(100);
+        });
+        // console.log("预警");
+
+        // console.log(this.yujingxuexiaoArr);
+
+        this.initEcharts4();
+      });
+    },
+    //获取报警排名
+    getxuexiaobaojingpaiming() {
+      xuexiaobaojingpaiming({
+        month: "2019-11",
+        regionalLevel: "2",
+        areaCode: "510000"
+      }).then(res => {
+        const json = res.data.data;
+        json.forEach(item => {
+          this.baojingxuexiaoArr.schoolNameArr.push(item.schoolName);
+          this.baojingxuexiaoArr.baojingArr.push(item.total);
+          this.baojingxuexiaoArr.baiArr.push(99.9);
+          this.baojingxuexiaoArr.kuangArr.push(100);
+        });
+        // console.log(this.baojingxuexiaoArr);
+        this.initEcharts5();
+      });
+    },
+
     handleChange(e) {
       console.log(e);
     },
     // Echarts 的 resize 方法
     resizeHandler() {
       this.myChart.resize();
-      // this.myChart2.resize();
-      // this.myChart3.resize();
       this.myChart4.resize();
       this.myChart5.resize();
       this.myChart6.resize();
@@ -458,15 +686,18 @@ export default {
     }, //学校数量统计
     initEcharts() {
       const _this = this;
-
       _this.myChart = this.$echarts.init(this.$refs.xx);
       // 指定图表的配置项和数据
-
       var data = {
         color: "#29b4db",
-        xAxis: ["幼儿园", "小学", "中学", "大学"],
-        wz: [["25%", "25%"], ["75%", "25%"], ["25%", "70%"], ["75%", "70%"]],
-        values: ["56", "25", "20", "9"]
+        xAxis: this.xuexiaotongjiJson.schoolArr,
+        wz: [
+          ["25%", "25%"],
+          ["75%", "25%"],
+          ["25%", "70%"],
+          ["75%", "70%"]
+        ],
+        values: this.xuexiaotongjiJson.zhanbiArr
       };
 
       var seriesData = [];
@@ -486,6 +717,8 @@ export default {
         });
         seriesData.push({
           type: "pie",
+          // text:'121',
+          // subtext:'120人',
           radius: ["30%", "35%"],
           center: data.wz[index],
           hoverAnimation: false,
@@ -547,132 +780,21 @@ export default {
         series: seriesData
       };
       _this.myChart.setOption(option);
-    }, //证照数量
-    initEcharts2() {
-      const _this = this;
-      _this.myChart2 = this.$echarts.init(this.$refs.zhengzhao);
-      // 指定图表的配置项和数据
-      let option = {
-        // backgroundColor: "#0a1f3e",
-        legend: {
-          bottom: "6%",
-          itemWidth: 14,
-          textStyle: {
-            color: "white"
-          },
-          data: ["许可证", "身份证", "营业执照"]
-        },
-        color: ["#0c6c9f", "#248384", "#1890ff"],
-        series: [
-          {
-            name: "证照数量统计",
-            type: "pie",
-            radius: "74%",
-            center: ["50%", "40%"],
-            startAngle: 116,
-            data: [
-              {
-                value: 16,
-                name: "许可证"
-              },
-              {
-                value: 42,
-                name: "身份证"
-              },
-              {
-                value: 42,
-                name: "营业执照"
-              }
-            ],
-            label: {
-              normal: {
-                formatter: params => {
-                  return `${params.value}{a|%}`;
-                },
-                position: "inner",
-                textStyle: {
-                  fontSize: 22,
-                  color: "white",
-                  lineHeight: 16
-                },
-                rich: {
-                  a: {
-                    color: "white",
-                    fontSize: 12,
-                    verticalAlign: "bottom"
-                  }
-                }
-              }
-            }
-          }
-        ]
-      };
-      _this.myChart2.setOption(option);
-    }, //供应商数量
-    initEcharts3() {
-      const _this = this;
-      _this.myChart3 = this.$echarts.init(this.$refs.gys);
-      // 指定图表的配置项和数据
-      let option = {
-        // backgroundColor: "#0a1f3e",
-        legend: {
-          bottom: "6%",
-          itemWidth: 14,
-          textStyle: {
-            color: "white"
-          },
-          data: ["个体工商", "企业工商"]
-        },
-        color: ["#248384", "#1890ff", "#0c6c9f"],
-        series: [
-          {
-            name: "供应商数量统计",
-            type: "pie",
-            radius: "74%",
-            center: ["50%", "40%"],
-            startAngle: 116,
-            data: [
-              {
-                value: 66,
-                name: "个体工商"
-              },
-              {
-                value: 38,
-                name: "企业工商"
-              }
-            ],
-            label: {
-              normal: {
-                formatter: params => {
-                  return `${params.value}{a|%}`;
-                },
-                position: "inner",
-                textStyle: {
-                  fontSize: 22,
-                  color: "white",
-                  lineHeight: 16
-                },
-                rich: {
-                  a: {
-                    color: "white",
-                    fontSize: 12,
-                    verticalAlign: "bottom"
-                  }
-                }
-              }
-            }
-          }
-        ]
-      };
-      _this.myChart3.setOption(option);
     }, //学校预警总数 top5
     initEcharts4() {
       const _this = this;
       _this.myChart4 = this.$echarts.init(this.$refs.yzs);
       // 指定图表的配置项和数据
-      var dataLine = [50, 66, 33, 25];
+      var dataLine = this.yujingxuexiaoArr.baojingArr;
       var option = {
-        // backgroundColor: "#0a1f3e",
+        tooltip: {
+          formatter: e => {
+            if (e.seriesName === "条") {
+              return `${e.name}:${e.value}`;
+            }
+            return;
+          }
+        },
         grid: [
           {
             left: "6%",
@@ -709,7 +831,7 @@ export default {
                 fontSize: "12"
               }
             },
-            data: ["学校名称", "学校名称", "学校名称", "学校名称"]
+            data: this.yujingxuexiaoArr.schoolNameArr
           },
           {
             axisTick: "none",
@@ -721,7 +843,7 @@ export default {
                 fontSize: "12"
               }
             },
-            data: [1, 1, 1, 1]
+            data: []
           },
           {
             axisLine: {
@@ -753,7 +875,7 @@ export default {
             type: "bar",
             yAxisIndex: 1,
             barGap: "-100%",
-            data: [99.8, 99.9, 99.9, 99.9],
+            data: this.yujingxuexiaoArr.baiArr,
             barWidth: 12,
             itemStyle: {
               normal: {
@@ -768,7 +890,7 @@ export default {
             type: "bar",
             yAxisIndex: 2,
             barGap: "-100%",
-            data: [100, 100, 100, 100],
+            data: this.yujingxuexiaoArr.kuangArr,
             barWidth: 12,
             label: {
               normal: {
@@ -799,10 +921,17 @@ export default {
     initEcharts5() {
       const _this = this;
       _this.myChart5 = this.$echarts.init(this.$refs.bzs);
-      // 指定图表的配置项和数据
-      var dataLine = [50, 66, 33, 25];
+      var dataLine = this.baojingxuexiaoArr.baojingArr;
       var option = {
         // backgroundColor: "#0a1f3e",
+        tooltip: {
+          formatter: e => {
+            if (e.seriesName === "条") {
+              return `${e.name}:${e.value}`;
+            }
+            return;
+          }
+        },
         grid: [
           {
             left: "6%",
@@ -839,7 +968,7 @@ export default {
                 fontSize: "12"
               }
             },
-            data: ["学校名称", "学校名称", "学校名称", "学校名称"]
+            data: this.baojingxuexiaoArr.schoolNameArr
           },
           {
             axisTick: "none",
@@ -851,7 +980,7 @@ export default {
                 fontSize: "12"
               }
             },
-            data: [1, 1, 1, 1]
+            data: []
           },
           {
             axisLine: {
@@ -883,7 +1012,7 @@ export default {
             type: "bar",
             yAxisIndex: 1,
             barGap: "-100%",
-            data: [99.8, 99.9, 99.9, 99.9],
+            data: this.baojingxuexiaoArr.baiArr,
             barWidth: 12,
             itemStyle: {
               normal: {
@@ -898,7 +1027,7 @@ export default {
             type: "bar",
             yAxisIndex: 2,
             barGap: "-100%",
-            data: [100, 100, 100, 100],
+            data: this.baojingxuexiaoArr.kuangArr,
             barWidth: 12,
             label: {
               normal: {
@@ -924,15 +1053,24 @@ export default {
           }
         ]
       };
+
       _this.myChart5.setOption(option);
     }, //预警环节数量对比
     initEcharts6() {
       const _this = this;
       _this.myChart6 = this.$echarts.init(this.$refs.ydb);
       // 指定图表的配置项和数据
-      var dataLine = [50, 66, 33];
+      var dataLine = this.yujinghuanjie.total;
       var option = {
         // backgroundColor: "#0a1f3e",
+        tooltip: {
+          formatter: e => {
+            if (e.seriesName === "条") {
+              return `${e.name}:${e.value}`;
+            }
+            return;
+          }
+        },
         grid: [
           {
             left: "6%",
@@ -984,7 +1122,7 @@ export default {
                 fontSize: "12"
               }
             },
-            data: ["人员预警", "证照预警", "食材预警"]
+            data: this.yujinghuanjie.type
           },
           {
             axisTick: "none",
@@ -1027,7 +1165,7 @@ export default {
             type: "bar",
             xAxisIndex: 1,
             barGap: "-100%",
-            data: [99.8, 99.9, 99.9],
+            data: this.yujinghuanjie.baiArr,
             barWidth: 12,
             itemStyle: {
               normal: {
@@ -1041,7 +1179,7 @@ export default {
             type: "bar",
             xAxisIndex: 2,
             barGap: "-100%",
-            data: [100, 100, 100],
+            data: this.yujinghuanjie.kuangArr,
             barWidth: 12,
             label: {
               normal: {
@@ -1072,9 +1210,16 @@ export default {
       const _this = this;
       _this.myChart7 = this.$echarts.init(this.$refs.bdb);
       // 指定图表的配置项和数据
-      var dataLine = [50, 66, 33];
+      var dataLine = this.baojinghuanjie.total;
       var option = {
-        // backgroundColor: "#0a1f3e",
+        tooltip: {
+          formatter: e => {
+            if (e.seriesName === "条") {
+              return `${e.name}:${e.value}`;
+            }
+            return;
+          }
+        },
         grid: [
           {
             left: "6%",
@@ -1126,7 +1271,7 @@ export default {
                 fontSize: "12"
               }
             },
-            data: ["人员预警", "证照预警", "食材预警"]
+            data: this.baojinghuanjie.type
           },
           {
             axisTick: "none",
@@ -1169,7 +1314,7 @@ export default {
             type: "bar",
             xAxisIndex: 1,
             barGap: "-100%",
-            data: [99.8, 99.9, 99.9],
+            data: this.baojinghuanjie.baiArr,
             barWidth: 12,
             itemStyle: {
               normal: {
@@ -1183,7 +1328,7 @@ export default {
             type: "bar",
             xAxisIndex: 2,
             barGap: "-100%",
-            data: [100, 100, 100],
+            data: this.baojinghuanjie.kuangArr,
             barWidth: 12,
             label: {
               normal: {
@@ -1213,574 +1358,212 @@ export default {
     initEcharts8() {
       const _this = this;
       var i = 0;
-      _this.myChart8 = this.$echarts.init(this.$refs.beijing);
+      _this.myChart8 = this.$echarts.init(this.$refs.sheng);
+      //地图放大
       this.myChart8.on("click", params => {
-        if (params.componentSubType === "scatter") {
-          let model = params.value;
-          model.pop();
-          this.mapOption2.geo.center = model;
-          // this.myChart8.clear();
-          _this.myChart8.setOption(this.mapOption2);
-          i = 0;
+        console.log(params);
+        if (params.componentType === "series") {
+          this.map.nameMap = params.name;
+          console.log(this.map.nameMap);
+
+          this.initEcharts8();
         }
+        // let userinfo = "shijianguan";
+        // this.SET_USER_INFO(userinfo);
+        // localStorage.setItem("user_info", userinfo);
       });
-      this.myChart8.on("georoam", params => {
-        let zoom = this.myChart8.getOption().geo[0].zoom;
-        if (params.zoom) {
-          if (zoom > 6) {
-            i = 0;
-            _this.myChart8.setOption(this.mapOption2);
-          } else {
-            this.myChart8.clear();
-            _this.myChart8.setOption(this.mapOption);
-          }
-        }
-      });
-      // axios.get("/static/beijing.json").then(response => {
-      axios.get("/static/北京市/通州区/datas.json").then(response => {
-        this.$echarts.registerMap("北京", response.data);
-        var geoCoordMap = {
-          西城区: [116.366794, 39.915309],
-          东城区: [116.418757, 39.917544],
-          海淀区: [116.310316, 39.956074],
-          昌平区: [116.23786, 40.226799],
-          通州区: [116.699166, 39.917139],
-          朝阳区: [116.449767, 39.927254],
-          平谷区: [117.12805, 40.147034],
-          延庆区: [115.981186, 40.462693],
-          怀柔区: [116.638526, 40.322545],
-          密云区: [116.849427, 40.382955],
-          顺义区: [116.653525, 40.128936],
-          门头沟区: [116.105381, 39.937183],
-          房山区: [116.139157, 39.735535],
-          大兴区: [116.338033, 39.728908]
-        };
-        var b_data = [
-          {
-            name: "通州区",
-            value: 5
-          }
 
-          // {
-          //   name: "朝阳区",
-          //   value: 2
-          // }
-        ];
-        var y_data = [
-          // {
-          //   name: "昌平区",
-          //   value: 2
-          // },
-          // {
-          //   name: "海淀区",
-          //   value: 1
-          // },
-          // {
-          //   name: "平谷区",
-          //   value: 2
-          // }
-        ];
-        var convertData = function(data) {
-          var res = [];
-          for (var i = 0; i < data.length; i++) {
-            var geoCoord = geoCoordMap[data[i].name];
-            if (geoCoord) {
-              res.push({
-                name: data[i].name,
-                value: geoCoord.concat(data[i].value)
-              });
-            }
-          }
-          return res;
-        };
+      // axios.get(`/static/map/${this.map.nameMap}.json`).then(response => {
+      axios
+        .get("https://geo.datav.aliyun.com/areas/bound/130100_full.json")
+        .then(response => {
+          // response.features.forEach(item => {
+            // item.properties
+          // });
+          console.log(response.data);
 
-        var schoolMap = {
-          北京市通州区后南仓小学: [116.655436, 39.908359],
-          北京通州芙蓉小学: [116.699166, 39.917139],
-          北京第二实验小学: [116.709337, 39.879582],
-          通州区陆辛庄学校: [116.68312, 39.800572],
-          北京市通州区牛堡屯学校: [116.697762, 39.766013]
-        };
-        var b_list = [
-          {
-            name: "北京市通州区后南仓小学",
-            value:
-              "1 20 和平路20号 https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=4277716146,1964854247&fm=26&gp=0.jpg"
-          },
-          {
-            name: "北京通州芙蓉小学",
-            value:
-              "1 20 和平路12号 https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=4277716146,1964854247&fm=26&gp=0.jpg"
-          },
-          {
-            name: "北京第二实验小学",
-            value:
-              "1 20 和平路26号 https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=4277716146,1964854247&fm=26&gp=0.jpg"
-          },
-          {
-            name: "通州区陆辛庄学校",
-            value:
-              "1 20 和平路25号 https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=4277716146,1964854247&fm=26&gp=0.jpg"
-          },
-          {
-            name: "北京市通州区牛堡屯学校",
-            value:
-              "1 20 和平路27号 https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=4277716146,1964854247&fm=26&gp=0.jpg"
-          }
-        ];
-        var y_list = [];
+          this.$echarts.registerMap(this.map.nameMap, response.data);
 
-        var schollData = function(data) {
-          var res = [];
-          for (var i = 0; i < data.length; i++) {
-            var geoCoord = schoolMap[data[i].name];
-            if (geoCoord) {
-              res.push({
-                name: data[i].name,
-                value: geoCoord.concat(data[i].value)
-              });
-            }
-          }
-          return res;
-        };
-        this.mapOption = {
-          legend: {
-            bottom: 10,
-            borderRadius: 0,
-            itemGap: 100,
-            textStyle: {
-              color: "white"
-            }
-          },
-          geo: {
-            map: "北京",
-            roam: false,
-            itemStyle: {
-              normal: {
-                areaColor: "#26a3d2"
-              }
-            },
-            label: {
-              normal: {
-                show: true, //是否显示标签
-                position: "insideTopLeft",
-                align: "center",
-                offset: [10, 20],
-                formatter: "{b}:"
-              }
-            },
-            regions: [
-              {
-                name: "丰台区",
-                itemStyle: {
-                  areaColor: "#27b1de"
-                }
-              },
-              {
-                name: "房山区",
-                itemStyle: {
-                  areaColor: "#216ca3"
-                }
-              },
-              {
-                name: "朝阳区",
-                itemStyle: {
-                  areaColor: "#0c6c9f"
-                }
-              },
-              {
-                name: "大兴区",
-                itemStyle: {
-                  areaColor: "#0c6c9f"
-                }
-              },
-              {
-                name: "东城区",
-                itemStyle: {
-                  areaColor: "#2490c2"
-                }
-              },
-              {
-                name: "西城区",
-                itemStyle: {
-                  areaColor: "#0c6c9f"
-                }
-              },
-              {
-                name: "海淀区",
-                itemStyle: {
-                  areaColor: "#2490c2"
-                }
-              },
-              // {
-              //   name: "门头沟区",
-              //   itemStyle: {
-              //     areaColor: "#26a2d1",
-              //   }
-              // },
-              {
-                name: "顺义区",
-                itemStyle: {
-                  areaColor: "#206199"
-                }
-              },
-              // {
-              //   name: "昌平区",
-              //   itemStyle: {
-              //     areaColor: "#2490c2",
-              //   }
-              // },
-              {
-                name: "密云区",
-                itemStyle: {
-                  areaColor: "#206199"
-                }
-              },
-              {
-                name: "怀柔区",
-                itemStyle: {
-                  areaColor: "#2384b7"
-                }
-              },
-              {
-                name: "延庆区",
-                itemStyle: {
-                  areaColor: "#0c6c9f"
-                }
-              }
-            ]
-          },
-          series: [
+          var geoCoordMap = {
+            泸州市: [105.443348, 28.889138],
+            巴中市: [106.753669, 31.858809]
+          };
+          var b_data = [
             {
-              name: "报警",
-              type: "scatter",
-              coordinateSystem: "geo",
-              data: convertData(b_data),
-              symbolSize: function(val) {
-                return 60;
-              },
-              label: {
-                normal: {
-                  show: true,
-                  formatter: function(value) {
-                    var str = `${value.name} ${value.value[2]}个报警`;
-                    return str.split(" ").join("\n");
-                  },
-                  align: "center",
-                  textStyle: {
-                    color: "white",
-                    fontSize: 12,
-                    lineHeight: 16
-                  },
-                  rich: {
-                    a: {}
-                  }
-                }
+              name: "巴中市",
+              value: 1
+            }
+          ];
+          var y_data = [
+            {
+              name: "泸州市",
+              value: 4
+            }
+          ];
+          var convertData = function(data) {
+            var res = [];
+            for (var i = 0; i < data.length; i++) {
+              var geoCoord = geoCoordMap[data[i].name];
+              if (geoCoord) {
+                res.push({
+                  name: data[i].name,
+                  value: geoCoord.concat(data[i].value)
+                });
+              }
+            }
+            return res;
+          };
+
+          this.mapOption = {
+            legend: {
+              bottom: 10,
+              borderRadius: 0,
+              itemGap: 100,
+              textStyle: {
+                color: "white"
               }
             },
-            {
-              name: "预警",
-              type: "scatter",
-              coordinateSystem: "geo",
-              data: convertData(y_data),
-              symbolSize: function(val) {
-                return 70;
-              },
-              symbolOffset: ["-60%", 0],
-              label: {
-                normal: {
-                  show: true,
-                  formatter: function(value) {
-                    // console.log(value);
-                    var str = `${value.name} ${value.value[2]}个预警`;
-                    return str.split(" ").join("\n");
-                  },
-                  align: "center",
-                  textStyle: {
-                    color: "white",
-                    fontSize: 12,
-                    lineHeight: 16
-                  },
-                  rich: {
-                    a: {}
-                  }
-                }
-              },
+            geo: {
+              map: this.map.nameMap,
+              zoom: 1.1,
+              roam: true,
               itemStyle: {
-                color: "#a96c00"
-              }
-            }
-          ]
-        };
-
-        this.mapOption2 = {
-          tooltip: {
-            formatter: function(params) {
-              var tipHtml = "";
-              tipHtml = `<div style="width: 280px;height: 80px;;display: flex;justify-content: space-around;align-items: center;border-radius: 10px;">
-                          <div style="width: 80px;height: 50px;">
-                            <img width="100%" height="100%" src="${
-                              params.value[2].split(" ")[3]
-                            }" />
-                          </div>
-                          <div style="width: 160px;font-size: 12px;line-height: 22px">
-                            <div style="font-weight: 700">${params.name}</div>
-                            <div style="display: flex;">
-                              <div style="font-weight: 700;margin-right: 12px;">报警：${
-                                params.value[2].split(" ")[0]
-                              }次</div>
-                              <div style="font-weight: 700">预警：${
-                                params.value[2].split(" ")[1]
-                              }次</div>
-                            </div>
-                            <span style="color: #848484">${
-                              params.value[2].split(" ")[2]
-                            }</span>
-                          </div>
-                        </div>`;
-              return tipHtml;
-            }
-          },
-          legend: {
-            bottom: 10,
-            borderRadius: 0,
-            itemGap: 100,
-            textStyle: {
-              color: "white"
-            }
-          },
-          geo: {
-            map: "北京",
-            zoom: 6,
-            roam: true,
-            itemStyle: {
-              normal: {
-                areaColor: "#26a3d2"
-              }
-            },
-            label: {
-              normal: {
-                show: true //是否显示标签
-              }
-            },
-            regions: [
-              {
-                name: "丰台区",
-                itemStyle: {
-                  areaColor: "#27b1de"
+                normal: {
+                  areaColor: "#26a3d2"
                 }
-              },
-              {
-                name: "房山区",
-                itemStyle: {
-                  areaColor: "#216ca3"
-                }
-              },
-              {
-                name: "朝阳区",
-                itemStyle: {
-                  areaColor: "#0c6c9f"
-                }
-              },
-              {
-                name: "大兴区",
-                itemStyle: {
-                  areaColor: "#0c6c9f"
-                }
-              },
-              {
-                name: "东城区",
-                itemStyle: {
-                  areaColor: "#2490c2"
-                }
-              },
-              {
-                name: "西城区",
-                itemStyle: {
-                  areaColor: "#0c6c9f"
-                }
-              },
-              {
-                name: "海淀区",
-                itemStyle: {
-                  areaColor: "#2490c2"
-                }
-              },
-              // {
-              //   name: "门头沟区",
-              //   itemStyle: {
-              //     areaColor: "#26a2d1",
-              //   }
-              // },
-              {
-                name: "顺义区",
-                itemStyle: {
-                  areaColor: "#206199"
-                }
-              },
-              // {
-              //   name: "昌平区",
-              //   itemStyle: {
-              //     areaColor: "#2490c2",
-              //   }
-              // },
-              {
-                name: "密云区",
-                itemStyle: {
-                  areaColor: "#206199"
-                }
-              },
-              {
-                name: "怀柔区",
-                itemStyle: {
-                  areaColor: "#2384b7"
-                }
-              },
-              {
-                name: "延庆区",
-                itemStyle: {
-                  areaColor: "#0c6c9f"
-                }
-              }
-            ]
-          },
-          series: [
-            {
-              name: "报警",
-              type: "scatter",
-              coordinateSystem: "geo",
-              data: schollData(b_list),
-              symbolSize: function(val) {
-                return 30;
               },
               label: {
                 normal: {
-                  show: true,
-                  formatter: function(value) {
-                    i++;
-                    var str = `{a|${i}}{k|} {b|${value.name}}`;
-                    return str;
-                  },
-                  // align: "center",
-                  textStyle: {
-                    color: "white",
-                    fontSize: 12,
-                    lineHeight: 16
-                  },
-                  rich: {
-                    a: {
-                      backgroundColor: "red",
-                      color: "white",
-                      padding: 2,
-                      borderRadius: 10
-                    },
-                    b: {
-                      backgroundColor: "red",
-                      color: "white",
-                      borderRadius: 5,
-                      padding: 5
-                    },
-                    k: {
-                      width: 5
-                    }
-                  }
-                }
-              }
-            },
-            {
-              name: "预警",
-              type: "scatter",
-              coordinateSystem: "geo",
-              data: schollData(y_list),
-              symbolSize: function(val) {
-                return 10;
-              },
-              symbolOffset: ["-60%", 0],
-              label: {
-                normal: {
-                  show: true,
-
-                  formatter: function(value) {
-                    i++;
-                    var str = `{a|${i}}{k|} {b|${value.name}}`;
-                    return str;
-                  },
+                  show: true, //是否显示标签
+                  position: "insideTopLeft",
                   align: "center",
-                  textStyle: {
-                    color: "white",
-                    fontSize: 12,
-                    lineHeight: 16
-                  },
-                  rich: {
-                    a: {
-                      backgroundColor: "blue",
-                      color: "white",
-                      padding: 2,
-                      borderRadius: 10
+                  offset: [0, 0]
+                  // formatter: "{b}:"
+                }
+              },
+              regions: []
+            },
+            series: [
+              {
+                name: "报警",
+                type: "scatter",
+                coordinateSystem: "geo",
+                data: convertData(b_data),
+                symbolSize: function(val) {
+                  return 60;
+                },
+                label: {
+                  normal: {
+                    show: true,
+                    formatter: function(value) {
+                      var str = `${value.name} ${value.value[2]}个报警`;
+                      return str.split(" ").join("\n");
                     },
-                    b: {
-                      backgroundColor: "blue",
+                    align: "center",
+                    textStyle: {
                       color: "white",
-                      borderRadius: 5,
-                      padding: 5
+                      fontSize: 12,
+                      lineHeight: 16
                     },
-                    k: {
-                      width: 5
+                    rich: {
+                      a: {}
                     }
                   }
                 }
               },
-              itemStyle: {
-                color: "#a96c00"
+              {
+                name: "预警",
+                type: "scatter",
+                coordinateSystem: "geo",
+                data: convertData(y_data),
+                symbolSize: function(val) {
+                  return 60;
+                },
+                symbolOffset: [0, 0],
+                label: {
+                  normal: {
+                    show: true,
+                    formatter: function(value) {
+                      // console.log(value);
+                      var str = `${value.name} ${value.value[2]}个预警`;
+                      return str.split(" ").join("\n");
+                    },
+                    align: "center",
+                    textStyle: {
+                      color: "white",
+                      fontSize: 12,
+                      lineHeight: 16
+                    },
+                    rich: {
+                      a: {}
+                    }
+                  }
+                },
+                itemStyle: {
+                  color: "#a96c00"
+                }
               }
-            }
-          ]
-        };
-        _this.myChart8.setOption(this.mapOption);
-
-        //点击事件,根据点击某个省份计算出这个省份的数据
-        this.myChart8.on("click", function(params) {
-          if (params.data.name !== "通州区") {
-            _this.$router.push("/header_hei");
-          }
+            ]
+          };
+          _this.myChart8.setOption(this.mapOption);
         });
-      });
     }
   },
   mounted() {
-    console.log(localStorage.getItem("user_info"));
-    let user_info = JSON.parse(localStorage.getItem("user_info"));
-
-    if (user_info.type === "jiaoyu") {
-      if (user_info.cengji == "sheng") {
-        this.active_show = "shengjiaoyu";
-      } else if (user_info.cengji === "shi") {
-        this.active_show = "shijiaoyu";
-      } else if (user_info.cengji === "qu") {
-        this.active_show = "qujiaoyu";
-      }
-    } else if (user_info.type === "jianguan") {
-      if (user_info.cengji == "sheng") {
-        this.active_show = "shengjianguan";
-      } else if (user_info.cengji === "shi") {
-        this.active_show = "shijianguan";
-      } else if (user_info.cengji === "qu") {
-        this.active_show = "qujianguan";
-      }
+    if (!this.USER_INFO.areaCode) {
+      let user = localStorage.getItem("userInfo");
+      this.SET_USER_INFO(JSON.parse(user));
     }
 
-    if (!localStorage.getItem("user_info")) {
-      this.$router.push("/login");
-    }
-    if (this.$echarts) {
-      this.init1();
-    } else {
-      setTimeout(() => {
-        this.init1();
-      }, 0);
-    }
+    console.log(this.USER_INFO.userLevel);
+
+    // 没有数据时 延时播放
+    setTimeout(res => {
+      window.addEventListener("resize", this.resizeHandler);
+
+      this.initEcharts8();
+    }, 1000);
+    // console.log(localStorage.getItem("user_info"));
+    // let user_info = JSON.parse(localStorage.getItem("user_info"));
+
+    // if (user_info.type === "jiaoyu") {
+    //   if (user_info.cengji == "sheng") {
+    //     this.active_show = "shengjiaoyu";
+    //   } else if (user_info.cengji === "shi") {
+    //     this.active_show = "shijiaoyu";
+    //   } else if (user_info.cengji === "qu") {
+    //     this.active_show = "qujiaoyu";
+    //   }
+    // } else if (user_info.type === "jianguan") {
+    //   if (user_info.cengji == "sheng") {
+    //     this.active_show = "shengjianguan";
+    //   } else if (user_info.cengji === "shi") {
+    //     this.active_show = "shijianguan";
+    //   } else if (user_info.cengji === "qu") {
+    //     this.active_show = "qujianguan";
+    //   }
+    // }
+
+    // if (!localStorage.getItem("user_info")) {
+    //   this.$router.push("/login");
+    // }
+    // if (this.$echarts) {
+    //   this.init1();
+    // } else {
+    //   setTimeout(() => {
+    //     this.init1();
+    //   }, 0);
+    // }
     // 绑定监听事件
-    window.addEventListener("resize", this.resizeHandler);
+  },
+  created() {
+    this.getxuexiaobaojingpaiming();
+    this.getxuexiaoyujingpaiming();
+    this.getyujinghuangjie();
+    this.getbaojinghuangjie();
+
+    this.getxuexiaotongji();
+    this.getshitangxinxi();
   },
   beforeDestroy() {
     // 清理工作 避免内存泄漏

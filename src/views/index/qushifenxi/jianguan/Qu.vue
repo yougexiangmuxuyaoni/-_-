@@ -126,20 +126,20 @@
         <div class="y-duibi hezi">
           <div class="title">
             <p>预警环节数量对比</p>
-            <div class="btn anniu">
+            <!-- <div class="btn anniu">
               季度
               <i class="el-icon-arrow-down"></i>
-            </div>
+            </div> -->
           </div>
           <div class="tu" ref="ydb"></div>
         </div>
         <div class="b-duibi hezi">
           <div class="title">
             <p>报警环节数量对比</p>
-            <div class="btn anniu">
+            <!-- <div class="btn anniu">
               月
               <i class="el-icon-arrow-down"></i>
-            </div>
+            </div> -->
           </div>
           <div class="tu" ref="bdb"></div>
         </div>

@@ -6,7 +6,7 @@
           <div class="Export-btn anniu" v-show="yichang">报表导出</div>
         </div>
         <h1 class="h1" style="flex-direction: column;line-height: 1.6em;margin-top: -.18rem;">
-          <span>{{title}}</span>
+          <span>{{USER_INFO.areaName}}</span>
           <div style="display:flex;">
             <!-- <img src="@/assets/img/logo.png" /> -->
             <span>校园食品安全监测云平台</span>
@@ -105,7 +105,7 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["SET_USER_INFO", "CHENGE_ACTIVE"]),
+    ...mapMutations(["SET_USER_INFO", "CHENGE_ACTIVE","GO_OUT"]),
 
     change(e) {
       this.fullscreenLoading = true;
@@ -137,11 +137,11 @@ export default {
     },
     getHongList() {
       xinxiaoxi({
-         userId: 4,
+        userId: 4,
         supStatus: 2
       }).then(res => {
-        console.log('home');
-         this.TZList = res.data.data.records;
+        console.log("home");
+        this.TZList = res.data.data.records;
       });
 
       // h_tongzhiliebiao({
@@ -165,8 +165,9 @@ export default {
     },
     to(url) {
       if (url === "/login") {
-        localStorage.removeItem("user_info");
-        this.SET_USER_INFO("");
+        this.GO_OUT();
+        // localStorage.removeItem("userInfo");
+        // this.SET_USER_INFO("");
       }
 
       if (url === "/abnormal") {
@@ -183,33 +184,34 @@ export default {
   },
   mounted() {
     this.linkActive = this.$route.path;
-    // console.log("HOME");
+    console.log("HOME");
+    // if(!this.USER_INFO.areaCode){
+    //   this.$router.push('/login');
+    // }
+    console.log(this.USER_INFO);
 
-    // console.log(localStorage.getItem("user_info"));
-    this.SET_USER_INFO(localStorage.getItem("user_info"));
-    // console.log(this.USER_INFO);
 
-    if (this.USER_INFO == "shengjiaoyu") {
+    if (this.USER_INFO.userLevel == "shengjiaoyu") {
       this.title = "四川省教育局";
-    } else if (this.USER_INFO === "shijiaoyu") {
+    } else if (this.USER_INFO.userLevel === "shijiaoyu") {
       this.title = "泸州市教育局";
-    } else if (this.USER_INFO === "qujiaoyu") {
+    } else if (this.USER_INFO.userLevel === "qujiaoyu") {
       this.title = "叙永县教育局";
-    } else if (this.USER_INFO == "shengjianguan") {
+    } else if (this.USER_INFO.userLevel == "shengjianguan") {
       this.title = "四川省市场监督管理局";
-    } else if (this.USER_INFO === "shijianguan") {
+    } else if (this.USER_INFO.userLevel === "shijianguan") {
       this.title = "泸州市市场监督管理局";
-    } else if (this.USER_INFO === "qujianguan") {
+    } else if (this.USER_INFO.userLevel === "qujianguan") {
       this.title = "叙永县市场监督管理局";
     }
     setTimeout(() => {
       this.getHongList();
     }, 0);
 
-    // setInterval(() => {
-    //   console.log("新通知");
-    //   this.getHongList();
-    // }, 1000*5);
+    setInterval(() => {
+      console.log("新通知");
+      this.getHongList();
+    }, 1000*5);
   }
 };
 

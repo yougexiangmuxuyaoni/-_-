@@ -5,11 +5,11 @@
         <div class="left" style="width:6rem;">
           <img class="img" src="@/assets/school1.jpg" alt />
           <div class="neirong">
-            <div class="dazi">北京市海淀区人大附中</div>
-            <p>所在区域：海淀区 中关村</p>
+            <div class="dazi">叙永县外国语小学</div>
+            <p>所在区域：泸州市叙永县</p>
             <p>办学性质：公办学校</p>
-            <p>类型：区直中学</p>
-            <p>地址：北京市海淀区颐和园路12号</p>
+            <p>类型：县直中学</p>
+            <p>地址：四川省叙永县和平路12号</p>
             <div @click="VideShow" class="btn">查看视频直播</div>
           </div>
         </div>
@@ -69,15 +69,15 @@
                 <table style="line-height:2.5em;">
                   <tr>
                     <td>学校名称：</td>
-                    <td>北京市海淀区人大附中</td>
+                    <td>四川省泸州市叙永县外国语小学</td>
                   </tr>
                   <tr>
                     <td>所属市场监管：</td>
-                    <td>北京市海淀区市场监督管理局</td>
+                    <td>四川省泸州市叙永县市场监督管理局</td>
                   </tr>
                   <tr>
                     <td>所属教育监管：</td>
-                    <td>北京市海淀区教育管理局</td>
+                    <td>四川省泸州市叙永县教育管理局</td>
                   </tr>
                   <tr>
                     <td>学校校长：</td>
@@ -89,7 +89,7 @@
                   </tr>
                   <tr>
                     <td>学校地址：</td>
-                    <td>北京市海淀区颐和园路12号</td>
+                    <td>四川省泸州市叙永县和平路12号</td>
                   </tr>
                 </table>
               </div>
@@ -693,7 +693,12 @@
       </div>
     </div>
 
-    <div class="video_wrap" :class="{hidden:isHidden}" @click.self="hideVideo">
+    <div
+      class="video_wrap"
+      :class="{hidden:isHidden}"
+      style="display:none;"
+      @click.self="hideVideo"
+    >
       <div class="video_box" style="padding: .8rem .2rem;position:relative;">
         <div
           @click="hideVideo"
@@ -1159,9 +1164,7 @@ export default {
           if (res.data.data.path) {
             this.$refs.videoPlayer.player.src(res.data.data.path);
             this.$refs.videoPlayer.player.load();
-            setTimeout(res => {
-              this.$refs.videoPlayer.player.play();
-            }, 2000);
+            document.querySelector(".video_wrap").style.display = "none";
           }
         });
       });
@@ -1172,7 +1175,7 @@ export default {
     },
     hideVideo() {
       this.isHidden = true;
-        document.querySelector(".vjs-control-bar").style.display = "none";
+      document.querySelector(".vjs-control-bar").style.display = "none";
     },
     getYuJing(type) {
       // console.log(type);
@@ -1198,6 +1201,8 @@ export default {
     },
     VideShow() {
       this.isHidden = false;
+      document.querySelector(".video_wrap").style.display = "flex";
+
       try {
         document.querySelector(".vjs-control-bar").style.display = "flex";
       } catch {}
@@ -1809,7 +1814,8 @@ export default {
             border-color: #31c9f2;
             color: white;
             .title {
-              line-height: 1.5em;
+              height: 40px;
+              line-height: 40px;
             }
             &:hover {
               background: rgba(47, 123, 255, 0.63);
@@ -1818,7 +1824,7 @@ export default {
             }
             img {
               width: 100%;
-              height: 1rem;
+              height: 80px;
             }
           }
         }

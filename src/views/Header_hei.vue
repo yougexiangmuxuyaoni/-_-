@@ -138,7 +138,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["CHENGE_ACTIVE"]),
+    ...mapMutations(["CHENGE_ACTIVE","GO_OUT"]),
     mianbaioxie() {
       let path = this.$route.path;
       if (path === "/alertDetails") {
@@ -213,6 +213,9 @@ export default {
       this.$router.go(-1);
     },
     to(uri) {
+      if (uri === "/login") {
+      this.GO_OUT();
+      }
       this.$router.push(uri);
     }
   },
@@ -221,11 +224,11 @@ export default {
     this.getHongList();
 
     this.mianbaioxie();
-    // setInterval(() => {
-    //   console.log("新通知");
+    setInterval(() => {
+      console.log("新通知");
 
-    //   this.getHongList();
-    // }, 1000 * 5);
+      this.getHongList();
+    }, 1000 * 5);
   }
 };
 </script>

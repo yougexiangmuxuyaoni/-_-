@@ -85,20 +85,20 @@
         <div class="y-duibi hezi">
           <div class="title">
             <p>预警环节数量对比</p>
-            <div class="btn anniu">
+            <!-- <div class="btn anniu">
               季度
               <i class="el-icon-arrow-down"></i>
-            </div>
+            </div> -->
           </div>
           <div class="tu" ref="ydb"></div>
         </div>
         <div class="b-duibi hezi">
           <div class="title">
             <p>报警环节数量对比</p>
-            <div class="btn anniu">
+            <!-- <div class="btn anniu">
               月
               <i class="el-icon-arrow-down"></i>
-            </div>
+            </div> -->
           </div>
           <div class="tu" ref="bdb"></div>
         </div>
@@ -1137,12 +1137,12 @@ export default {
     }
   },
   mounted() {
-    console.log(localStorage.getItem("user_info"));
+    console.log(localStorage.getItem("userInfo"));
 
-    if (!localStorage.getItem("user_info")) {
+    if (!localStorage.getItem("userInfo")) {
       this.$router.push("/login");
     }
-    this.user = localStorage.getItem("user_info");
+    this.user = localStorage.getItem("userInfo");
     if (this.$echarts) {
       this.init1();
     } else {

@@ -85,20 +85,20 @@
         <div class="y-duibi hezi">
           <div class="title">
             <p>预警环节数量对比</p>
-            <div class="btn anniu">
+            <!-- <div class="btn anniu">
               季度
               <i class="el-icon-arrow-down"></i>
-            </div>
+            </div>-->
           </div>
           <div class="tu" ref="ydb"></div>
         </div>
         <div class="b-duibi hezi">
           <div class="title">
             <p>报警环节数量对比</p>
-            <div class="btn anniu">
+            <!-- <div class="btn anniu">
               月
               <i class="el-icon-arrow-down"></i>
-            </div>
+            </div>-->
           </div>
           <div class="tu" ref="bdb"></div>
         </div>
@@ -126,6 +126,12 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 import axios from "axios";
+import {
+  xuexiaotongji,
+  xuexiaobaojingpaiming,
+  xuexiaoyujingpaiming,
+  yujinghuanjie
+} from "@/api/qushifengxi";
 import { setTimeout } from "timers";
 import { userInfo } from "os";
 import { log } from "util";
@@ -205,32 +211,101 @@ export default {
           label: "报警"
         }
       ],
-      active_show: ""
+      active_show: "",
+      baojingxuexiaoArr: {
+        schoolNameArr: [],
+        baiArr: [],
+        kuangArr: [],
+        baojingArr: []
+      },
+      yujingxuexiaoArr: {
+        schoolNameArr: [],
+        baiArr: [],
+        kuangArr: [],
+        baojingArr: []
+      },
+      yujinghuanjie: {
+        type: [],
+        total: [],
+        kuangArr: [],
+        baojingArr: []
+      }
     };
   },
   methods: {
     ...mapMutations(["SET_USER_INFO"]),
+    getxuexiaotongji() {
+      xuexiaotongji({ areaCode: 1 }).then(res => {
+        console.log(res.data);
+      });
+    },
     find() {
       this.SET_USER_INFO("find");
     },
     init1() {
       this.initEcharts();
-      // this.initEcharts2();
-      // this.initEcharts3();
-      this.initEcharts4();
-      this.initEcharts5();
-      this.initEcharts6();
       this.initEcharts7();
       this.initEcharts8();
     },
     handleChange(e) {
       console.log(e);
     },
+    getyujinghuangjie() {
+      yujinghuanjie({
+        month: "2019-11",
+        regionalLevel: "2",
+        areaCode: "510000"
+      }).then(res => {
+        const json = res.data.data;
+        json.forEach(item => {
+          this.yujinghuanjie.type.push(item.type);
+          this.yujinghuanjie.total.push(item.total);
+          this.yujinghuanjie.baiArr.push(99.9);
+          this.yujinghuanjie.kuangArr.push(100);
+        });
+        // console.log(this.yujinghuanjie);
+        console.log(json);
+        
+        this.initEcharts6();
+      });
+    },
+    getxuexiaoyujingpaiming() {
+      xuexiaoyujingpaiming({
+        month: "2019-11",
+        regionalLevel: "2",
+        areaCode: "510000"
+      }).then(res => {
+        const json = res.data.data;
+        json.forEach(item => {
+          this.yujingxuexiaoArr.schoolNameArr.push(item.schoolName);
+          this.yujingxuexiaoArr.baojingArr.push(item.total);
+          this.yujingxuexiaoArr.baiArr.push(99.9);
+          this.yujingxuexiaoArr.kuangArr.push(100);
+        });
+        console.log(this.yujingxuexiaoArr);
+        this.initEcharts4();
+      });
+    },
+    getxuexiaobaojingpaiming() {
+      xuexiaobaojingpaiming({
+        month: "2019-11",
+        regionalLevel: "2",
+        areaCode: "510000"
+      }).then(res => {
+        const json = res.data.data;
+        json.forEach(item => {
+          this.baojingxuexiaoArr.schoolNameArr.push(item.schoolName);
+          this.baojingxuexiaoArr.baojingArr.push(item.total);
+          this.baojingxuexiaoArr.baiArr.push(99.9);
+          this.baojingxuexiaoArr.kuangArr.push(100);
+        });
+        // console.log(this.baojingxuexiaoArr);
+        this.initEcharts5();
+      });
+    },
     // Echarts 的 resize 方法
     resizeHandler() {
       this.myChart.resize();
-      // this.myChart2.resize();
-      // this.myChart3.resize();
       this.myChart4.resize();
       this.myChart5.resize();
       this.myChart6.resize();
@@ -250,7 +325,12 @@ export default {
           "中学（200所）",
           "大学（100所）"
         ],
-        wz: [["25%", "25%"], ["75%", "25%"], ["25%", "70%"], ["75%", "70%"]],
+        wz: [
+          ["25%", "25%"],
+          ["75%", "25%"],
+          ["25%", "70%"],
+          ["75%", "70%"]
+        ],
         values: ["30", "40", "20", "10"]
       };
 
@@ -334,130 +414,12 @@ export default {
         series: seriesData
       };
       _this.myChart.setOption(option);
-    }, //证照数量
-    initEcharts2() {
-      const _this = this;
-      _this.myChart2 = this.$echarts.init(this.$refs.zhengzhao);
-      // 指定图表的配置项和数据
-      let option = {
-        // backgroundColor: "#0a1f3e",
-        legend: {
-          bottom: "6%",
-          itemWidth: 14,
-          textStyle: {
-            color: "white"
-          },
-          data: ["许可证", "身份证", "营业执照"]
-        },
-        color: ["#0c6c9f", "#248384", "#1890ff"],
-        series: [
-          {
-            name: "证照数量统计",
-            type: "pie",
-            radius: "74%",
-            center: ["50%", "40%"],
-            startAngle: 116,
-            data: [
-              {
-                value: 16,
-                name: "许可证"
-              },
-              {
-                value: 42,
-                name: "身份证"
-              },
-              {
-                value: 42,
-                name: "营业执照"
-              }
-            ],
-            label: {
-              normal: {
-                formatter: params => {
-                  return `${params.value}{a|%}`;
-                },
-                position: "inner",
-                textStyle: {
-                  fontSize: 22,
-                  color: "white",
-                  lineHeight: 16
-                },
-                rich: {
-                  a: {
-                    color: "white",
-                    fontSize: 12,
-                    verticalAlign: "bottom"
-                  }
-                }
-              }
-            }
-          }
-        ]
-      };
-      _this.myChart2.setOption(option);
-    }, //供应商数量
-    initEcharts3() {
-      const _this = this;
-      _this.myChart3 = this.$echarts.init(this.$refs.gys);
-      // 指定图表的配置项和数据
-      let option = {
-        // backgroundColor: "#0a1f3e",
-        legend: {
-          bottom: "6%",
-          itemWidth: 14,
-          textStyle: {
-            color: "white"
-          },
-          data: ["个体工商", "企业工商"]
-        },
-        color: ["#248384", "#1890ff", "#0c6c9f"],
-        series: [
-          {
-            name: "供应商数量统计",
-            type: "pie",
-            radius: "74%",
-            center: ["50%", "40%"],
-            startAngle: 116,
-            data: [
-              {
-                value: 66,
-                name: "个体工商"
-              },
-              {
-                value: 38,
-                name: "企业工商"
-              }
-            ],
-            label: {
-              normal: {
-                formatter: params => {
-                  return `${params.value}{a|%}`;
-                },
-                position: "inner",
-                textStyle: {
-                  fontSize: 22,
-                  color: "white",
-                  lineHeight: 16
-                },
-                rich: {
-                  a: {
-                    color: "white",
-                    fontSize: 12,
-                    verticalAlign: "bottom"
-                  }
-                }
-              }
-            }
-          }
-        ]
-      };
-      _this.myChart3.setOption(option);
     }, //学校预警总数 top5
     initEcharts4() {
       const _this = this;
       _this.myChart4 = this.$echarts.init(this.$refs.yzs);
       // 指定图表的配置项和数据
-      var dataLine = [50, 66, 33, 25];
+      var dataLine = this.yujingxuexiaoArr.baojingArr;
       var option = {
         // backgroundColor: "#0a1f3e",
         grid: [
@@ -496,7 +458,7 @@ export default {
                 fontSize: "12"
               }
             },
-            data: ["学校名称", "学校名称", "学校名称", "学校名称"]
+            data: this.yujingxuexiaoArr.schoolNameArr
           },
           {
             axisTick: "none",
@@ -508,7 +470,7 @@ export default {
                 fontSize: "12"
               }
             },
-            data: [1, 1, 1, 1]
+            data: []
           },
           {
             axisLine: {
@@ -540,7 +502,7 @@ export default {
             type: "bar",
             yAxisIndex: 1,
             barGap: "-100%",
-            data: [99.8, 99.9, 99.9, 99.9],
+            data: this.yujingxuexiaoArr.baiArr,
             barWidth: 12,
             itemStyle: {
               normal: {
@@ -555,7 +517,7 @@ export default {
             type: "bar",
             yAxisIndex: 2,
             barGap: "-100%",
-            data: [100, 100, 100, 100],
+            data: this.yujingxuexiaoArr.kuangArr,
             barWidth: 12,
             label: {
               normal: {
@@ -586,8 +548,7 @@ export default {
     initEcharts5() {
       const _this = this;
       _this.myChart5 = this.$echarts.init(this.$refs.bzs);
-      // 指定图表的配置项和数据
-      var dataLine = [50, 66, 33, 25];
+      var dataLine = this.baojingxuexiaoArr.baojingArr;
       var option = {
         // backgroundColor: "#0a1f3e",
         grid: [
@@ -626,7 +587,7 @@ export default {
                 fontSize: "12"
               }
             },
-            data: ["学校名称", "学校名称", "学校名称", "学校名称"]
+            data: this.baojingxuexiaoArr.schoolNameArr
           },
           {
             axisTick: "none",
@@ -638,7 +599,7 @@ export default {
                 fontSize: "12"
               }
             },
-            data: [1, 1, 1, 1]
+            data: []
           },
           {
             axisLine: {
@@ -670,7 +631,7 @@ export default {
             type: "bar",
             yAxisIndex: 1,
             barGap: "-100%",
-            data: [99.8, 99.9, 99.9, 99.9],
+            data: this.baojingxuexiaoArr.baiArr,
             barWidth: 12,
             itemStyle: {
               normal: {
@@ -685,7 +646,7 @@ export default {
             type: "bar",
             yAxisIndex: 2,
             barGap: "-100%",
-            data: [100, 100, 100, 100],
+            data: this.baojingxuexiaoArr.kuangArr,
             barWidth: 12,
             label: {
               normal: {
@@ -711,13 +672,151 @@ export default {
           }
         ]
       };
+      // 指定图表的配置项和数据
+      // var option = {
+      //   // backgroundColor: "#0a1f3e",
+      //   grid: [
+      //     {
+      //       left: "6%",
+      //       top: "1%",
+      //       right: "1%",
+      //       bottom: "6%",
+      //       containLabel: true
+      //     }
+      //   ],
+      //   xAxis: [
+      //     {
+      //       type: "value",
+      //       axisLabel: {
+      //         color: "white",
+      //         fontSize: 12,
+      //         fontWeight: "normal"
+      //       },
+      //       axisLine: {
+      //         show: false
+      //       },
+      //       splitLine: {
+      //         show: false
+      //       }
+      //     }
+      //   ],
+      //   yAxis: [
+      //     {
+      //       axisTick: "none",
+      //       axisLine: "none",
+      //       offset: "0",
+      //       axisLabel: {
+      //         textStyle: {
+      //           color: "white",
+      //           fontSize: "12"
+      //         }
+      //       },
+      //       data: this.baojingxuexiaoArr.schoolNameArr
+      //     },
+      //     {
+      //       axisTick: "none",
+      //       axisLine: "none",
+      //       show: false,
+      //       axisLabel: {
+      //         textStyle: {
+      //           color: "#ffffff",
+      //           fontSize: "12"
+      //         }
+      //       },
+      //       data: [1, 1, 1, 1]
+      //     },
+      //     {
+      //       axisLine: {
+      //         lineStyle: {
+      //           color: "rgba(0,0,0,0)"
+      //         }
+      //       },
+      //       data: []
+      //     }
+      //   ],
+      //   series: [
+      //     {
+      //       name: "条",
+      //       type: "bar",
+      //       stack: "b",
+      //       yAxisIndex: 0,
+      //       data: dataLine,
+      //       barWidth: 12,
+      //       itemStyle: {
+      //         normal: {
+      //           color: "#a02000",
+      //           barBorderRadius: 12
+      //         }
+      //       },
+      //       z: 2
+      //     },
+      //     {
+      //       name: "白框",
+      //       type: "bar",
+      //       yAxisIndex: 1,
+      //       barGap: "-100%",
+      //       data: this.baojingxuexiaoArr.baiArr,
+      //       barWidth: 12,
+      //       label: {
+      //         normal: {
+      //           show: true,
+      //           position: "right",
+      //           distance: 10,
+      //           formatter: function(data) {
+      //             return "";
+      //           },
+      //           textStyle: {
+      //             color: "#ffffff",
+      //             fontSize: "16"
+      //           }
+      //         }
+      //       },
+      //       itemStyle: {
+      //         normal: {
+      //           color: "#0e2147",
+      //           barBorderRadius: 12
+      //         }
+      //       },
+      //       z: 1
+      //     },
+      //     {
+      //       name: "外框",
+      //       type: "bar",
+      //       yAxisIndex: 2,
+      //       barGap: "-100%",
+      //       data: this.baojingxuexiaoArr.kuangArr,
+      //       barWidth: 12,
+      //       label: {
+      //         normal: {
+      //           show: true,
+      //           position: "right",
+      //           distance: 10,
+      //           formatter: function(data) {
+      //             return "";
+      //           },
+      //           textStyle: {
+      //             color: "#ffffff",
+      //             fontSize: "16"
+      //           }
+      //         }
+      //       },
+      //       itemStyle: {
+      //         normal: {
+      //           color: "#3de7c9",
+      //           barBorderRadius: 12
+      //         }
+      //       },
+      //       z: 0
+      //     }
+      //   ]
+      // };
       _this.myChart5.setOption(option);
     }, //预警环节数量对比
     initEcharts6() {
       const _this = this;
       _this.myChart6 = this.$echarts.init(this.$refs.ydb);
       // 指定图表的配置项和数据
-      var dataLine = [50, 66, 33];
+      var dataLine = this.yujinghuanjie.total;
       var option = {
         // backgroundColor: "#0a1f3e",
         grid: [
@@ -771,7 +870,7 @@ export default {
                 fontSize: "12"
               }
             },
-            data: ["人员预警", "证照预警", "食材预警"]
+            data: this.yujinghuanjie.type
           },
           {
             axisTick: "none",
@@ -814,7 +913,7 @@ export default {
             type: "bar",
             xAxisIndex: 1,
             barGap: "-100%",
-            data: [99.8, 99.9, 99.9],
+            data: this.yujinghuanjie.baiArr,
             barWidth: 12,
             itemStyle: {
               normal: {
@@ -828,7 +927,7 @@ export default {
             type: "bar",
             xAxisIndex: 2,
             barGap: "-100%",
-            data: [100, 100, 100],
+            data: this.yujinghuanjie.kuangArr,
             barWidth: 12,
             label: {
               normal: {
@@ -1139,17 +1238,25 @@ export default {
     }
   },
   mounted() {
-    console.log(localStorage.getItem("user_info"));
+    // console.log(localStorage.getItem("user_info"));
 
-    if (this.$echarts) {
-      this.init1();
-    } else {
-      setTimeout(() => {
-        this.init1();
-      }, 0);
-    }
-    // 绑定监听事件
-    window.addEventListener("resize", this.resizeHandler);
+    // if (this.$echarts) {
+    //   this.init1();
+    // } else {
+    //   setTimeout(() => {
+    //     this.init1();
+    //   }, 0);
+    // }
+    setTimeout(() => {
+      // 绑定监听事件
+      window.addEventListener("resize", this.resizeHandler);
+    },5000);
+  },
+  created() {
+    // this.getxuexiaotongji();
+    this.getxuexiaobaojingpaiming();
+    this.getxuexiaoyujingpaiming();
+    this.getyujinghuangjie();
   },
   beforeDestroy() {
     // 清理工作 避免内存泄漏
