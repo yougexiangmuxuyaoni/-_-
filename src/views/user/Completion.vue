@@ -79,7 +79,7 @@
         <el-table-column type="index" width="20"></el-table-column>
         <el-table-column prop="schName" width="100" label="学校名称"></el-table-column>
         <el-table-column prop="title" width="120" label=" 标题"></el-table-column>
-        <el-table-column prop="content"  label="内容"></el-table-column>
+        <el-table-column prop="content" label="内容"></el-table-column>
         <el-table-column prop="realName" width="70" label="发布人"></el-table-column>
         <el-table-column prop="createTime" width="100" label="发布时间"></el-table-column>
         <el-table-column prop="viewTime" width="100" label="学校查看时间"></el-table-column>
@@ -104,6 +104,7 @@
 </template>
 <script>
 import { mapState, mapMutations } from "vuex";
+import { jianguanxidajilu,tongzhigonggao } from "@/api/home";
 export default {
   name: "completion",
   computed: {
@@ -538,43 +539,33 @@ export default {
   },
   methods: {
     ...mapMutations(["CHENGE_ACTIVE"]),
-    handleEdit(index, row) {
-    },
+    handleEdit(index, row) {},
     tz_previousPage() {
-
       this.tz_current = this.tz_current - 1;
 
       this.getTZ();
     },
     tz_nextPage() {
-
       this.tz_current = this.tz_current + 1;
 
       this.getTZ();
     },
     previousPage() {
-
       this.current = this.current - 1;
 
       this.getJGList();
     },
     nextPage() {
-
       this.current = this.current + 1;
 
       this.getJGList();
     },
     getTZ() {
-      this.$http({
-        url: "/api/manageWat/supervision/findPage",
-        method: "get",
-        params: {
-          userId: 4,
-          size: this.tz_size,
-          current: this.tz_current
-        }
+      tongzhigonggao({
+        userId: 4,
+        size: this.tz_size,
+        current: this.tz_current
       }).then(res => {
-        
         this.tz_com_size = res.data.data.total;
         this.tz_com_current = res.data.data.pages;
         let arr = [];
@@ -597,33 +588,33 @@ export default {
         });
         this.TZList = arr;
       });
+    
     },
     getJGList() {
-      this.$http
-        .get("/api/manageWat/supervision/findPageForOp", {
-          params: { userId: 4, size: this.size, current: this.current }
-        })
-        .then(res => {
-          
-          this.com_size = res.data.data.total;
-          this.com_current = res.data.data.pages;
-          let arr = [];
-          res.data.data.records.forEach(val => {
-            if (val.type === "1") {
-              val.type = "证照预警";
-            } else {
-              val.type = "其他预警";
-            }
-            if (val.status === "1") {
-              val.status = "已查看";
-            } else if (val.status === "2") {
-              val.status = "未查看";
-            }
-            arr.push(val);
-          });
-
-          this.tableData = arr;
+      jianguanxidajilu({
+        userId: 4,
+        size: this.size,
+        current: this.current
+      }).then(res => {
+        this.com_size = res.data.data.total;
+        this.com_current = res.data.data.pages;
+        let arr = [];
+        res.data.data.records.forEach(val => {
+          if (val.type === "1") {
+            val.type = "证照预警";
+          } else {
+            val.type = "其他预警";
+          }
+          if (val.status === "1") {
+            val.status = "已查看";
+          } else if (val.status === "2") {
+            val.status = "未查看";
+          }
+          arr.push(val);
         });
+
+        this.tableData = arr;
+      });
     }
   },
   mounted() {
