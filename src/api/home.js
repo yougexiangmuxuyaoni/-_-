@@ -11,9 +11,16 @@ export function xinxiaoxi(query) {
     })
 }
 
-export function zhiboliu(query) {
+export function jianguanxidajilu(query) {
     return request({
-        url: '/api/manageWat/school/getIoTLivePathWatch',
+        url: '/api/manageWat/supervision/findPageForOp',
+        method: 'get',
+        params: query
+    })
+}
+export function tongzhigonggao(query) {
+    return request({
+        url: '/api/manageWat/supervision/findPage',
         method: 'get',
         params: query
     })
