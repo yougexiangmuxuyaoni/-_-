@@ -1,13 +1,13 @@
 <template>
   <div>
-    <shengjg v-if="USER_INFO === 'shengjianguan'"></shengjg>
-    <shijg v-else-if="USER_INFO === 'shijianguan'"></shijg>
-    <qujg v-else-if="USER_INFO === 'qujianguan'"></qujg>
-    <shengjy v-else-if="USER_INFO === 'shengjiaoyu'"></shengjy>
-    <shijy v-else-if="USER_INFO === 'shijiaoyu'"></shijy>
-    <qujy v-else-if="USER_INFO === 'qujiaoyu'"></qujy>
+    <shengjg v-if="USER_INFO.userLevel === 'shengjianguan'"></shengjg>
+    <shijg v-else-if="USER_INFO.userLevel === 'shijianguan'"></shijg>
+    <qujg v-else-if="USER_INFO.userLevel === 'qujianguan'"></qujg>
+    <shengjy v-else-if="USER_INFO.userLevel === 'shengjiaoyu'"></shengjy>
+    <shijy v-else-if="USER_INFO.userLevel === 'shijiaoyu'"></shijy>
+    <qujy v-else-if="USER_INFO.userLevel === 'qujiaoyu'"></qujy>
 
-    <find v-else-if="USER_INFO === 'find'"></find>
+    <find v-else-if="USER_INFO.userLevel === 'find'"></find>
   </div>
 </template>
 
@@ -33,7 +33,8 @@ export default {
   },
   data() {
     return {
-      active_show: ""
+      active_show: "",
+      user: null
     };
   },
   computed: {
@@ -43,13 +44,23 @@ export default {
     ...mapMutations(["SET_USER_INFO"])
   },
   mounted() {
-    this.SET_USER_INFO(localStorage.getItem("user_info"));
+    console.log("trend");
+
     console.log(this.USER_INFO);
-    if (!this.USER_INFO) {
-      this.$router.push("/login");
-    }
+    // let user = localStorage.getItem("userInfo");
+
+    // console.log( JSON.parse(user))
+    // console.log(this.user);
+
+    // if (!this.USER_INFO) {
+    //   this.$router.push("/login");
+    // }
+
     // 绑定监听事件
     window.addEventListener("resize", this.resizeHandler);
+  },
+  created() {
+    // this.user = localStorage.getItem("userInfo");
   }
 };
 </script>
