@@ -8,77 +8,28 @@
           </div>
           <div class="t-right">
             <span @click="to('/header_hei')">
-              待处理
-              <span class="btn">1265</span>
+              预警总数
+              <span class="btn" v-if="yujinglistJson.earlyTotal">{{yujinglistJson.earlyTotal}}</span>
             </span>
             <span @click="to('/header_hei')">全部预警</span>
           </div>
         </div>
         <div class="group">
-          <div class="item" @click="to('/alertDetails')">
+          <div
+            class="item"
+            @click="to('/positioning')"
+            v-for="(val,index) of yujinglistJson.earlyList"
+            :key="index"
+          >
+            <!-- :key="val.earlyId" -->
+
             <div class="top">
-              <div class="t-left">
-                个体工商户
-                <br />身份证信息
-                <br />缺失
-              </div>
+              <div class="t-left">{{val.title || "暂无"}}</div>
             </div>
             <div class="bot">
-              <p class="ellipsis">红双喜食品有限公司</p>
-              <p>证照报警</p>
-              <p class="ellipsis">北京市第一实验小学</p>
-            </div>
-          </div>
-          <div class="item" @click="to('/alertDetails')">
-            <div class="top">
-              <div class="t-left">
-                健康证信息
-                <br />超期
-              </div>
-            </div>
-            <div class="bot">
-              <p class="ellipsis">红双喜食品有限公司</p>
-              <p>人员预警</p>
-              <p class="ellipsis">星光实验小学</p>
-            </div>
-          </div>
-          <div class="item" @click="to('/alertDetails')">
-            <div class="top">
-              <div class="t-left">
-                卫生情况检
-                <br />查不合格
-              </div>
-            </div>
-            <div class="bot">
-              <p class="ellipsis">红双喜食品有限公司</p>
-              <p>人员预警</p>
-              <p class="ellipsis">外国语幼儿园</p>
-            </div>
-          </div>
-          <div class="item" @click="to('/alertDetails')">
-            <div class="top">
-              <div class="t-left">
-                无供应商信
-                <br />息
-              </div>
-            </div>
-            <div class="bot">
-              <p class="ellipsis">红双喜食品有限公司</p>
-              <p>食材预警</p>
-              <p class="ellipsis">附属实验幼儿园</p>
-            </div>
-          </div>
-          <div class="item" @click="to('/alertDetails')">
-            <div class="top">
-              <div class="t-left">
-                健康证信息
-                <br />超期
-              </div>
-            </div>
-            <div class="bot">
-              <p class="ellipsis">西兰花</p>
-              <p>食材预警</p>
-              <p class="ellipsis">光明小学</p>
+              <p class="ellipsis">{{val.content || "暂无"}}</p>
+              <p>{{val.type}}</p>
+              <p class="ellipsis">{{val.schoolName || "暂无"}}</p>
             </div>
           </div>
         </div>
@@ -91,76 +42,27 @@
           <div class="t-right">
             <span @click="to('/header_hei')">
               待处理
-              <span class="btn">21</span>
+              <span class="btn" v-if="baojinglistJson.alarmTotal">{{baojinglistJson.alarmTotal}}</span>
             </span>
             <span @click="to('/header_hei')">全部报警</span>
           </div>
         </div>
         <div class="group">
-          <div class="item" @click="to('/alertDetails')">
+          <div
+            class="item"
+            @click="to('/positioning')"
+            v-for="(val,index) of baojinglistJson.alarmList"
+            :key="index"
+          >
+            <!-- :key="val.schoolId" -->
+
             <div class="top">
-              <div class="t-left">
-                企业无商事主
-                <br />体资格
-              </div>
+              <div class="t-left">{{val.label || "暂无"}}</div>
             </div>
             <div class="bot">
-              <p class="ellipsis">安琪食品粮油公司</p>
-              <p>证照报警</p>
-              <p class="ellipsis">北京市第一实验小学</p>
-            </div>
-          </div>
-          <div class="item" @click="to('/alertDetails')">
-            <div class="top">
-              <div class="t-left">
-                个体工商户
-                <br />身份证信息
-                <br />过期
-              </div>
-            </div>
-            <div class="bot">
-              <p class="ellipsis">关洁/食品安全员</p>
-              <p>证照预警</p>
-              <p class="ellipsis">北京市第一实验小学</p>
-            </div>
-          </div>
-          <div class="item" @click="to('/alertDetails')">
-            <div class="top">
-              <div class="t-left">
-                采购高风险
-                <br />食材
-              </div>
-            </div>
-            <div class="bot">
-              <p class="ellipsis">成品油</p>
-              <p>食材信息报警</p>
-              <p class="ellipsis">北京市第一实验小学</p>
-            </div>
-          </div>
-          <div class="item" @click="to('/alertDetails')">
-            <div class="top">
-              <div class="t-left">
-                食材检验检
-                <br />测不合格
-              </div>
-            </div>
-            <div class="bot">
-              <p class="ellipsis">腐烂豆角</p>
-              <p>食材信息报警</p>
-              <p class="ellipsis">北京市第一实验小学</p>
-            </div>
-          </div>
-          <div class="item" @click="to('/alertDetails')">
-            <div class="top">
-              <div class="t-left">
-                食品信息严
-                <br />重缺失
-              </div>
-            </div>
-            <div class="bot">
-              <p class="ellipsis">关洁/食品安全员</p>
-              <p>食材信息报警</p>
-              <p class="ellipsis">北京市第一实验小学</p>
+              <p class="ellipsis">{{val.content || "暂无"}}</p>
+              <p>{{val.type}}</p>
+              <p class="ellipsis">{{val.schoolName || "暂无"}}</p>
             </div>
           </div>
         </div>
@@ -170,7 +72,12 @@
       <div class="item" ref="shuliang"></div>
       <div class="item" ref="leibie"></div>
       <div class="item" ref="quyu"></div>
-      <div class="item" ref="paiming"></div>
+      <div class="item" ref="paiming">
+        <div
+          v-show="ISxuexiao"
+          style="text-align:center;color:#30eee9;font-size:.3rem;font-weight:900;line-height: 10em;"
+        >暂无学校报警统计数据</div>
+      </div>
     </div>
     <div class="baogao">
       <div class="report">
@@ -279,10 +186,31 @@
   </div>
 </template>
 <script>
+import {
+  yujingList,
+  yujingdaichuli,
+  baojingList,
+  baojingdaichuli,
+  baojingshuliang,
+  baojingleibie,
+  xuexiaobaojing,
+  quyubaojing
+} from "@/api/yichangjiance";
 export default {
   name: "abnormal",
   data() {
-    return {};
+    return {
+      yujinglistJson: {},
+      baojinglistJson: {},
+      baojingshuliangJson: [],
+      baojingleibieJson: {},
+      xuexiaobaojingJson: [],
+      quyubaojingJson: [],
+      ISxuexiao: false,
+      nameArr:[],
+      yujingArr:[],
+      yujingArr:[],
+    };
   },
   methods: {
     to(uri) {
@@ -373,7 +301,7 @@ export default {
         ],
         series: [
           {
-            name: "已采纳",
+            name: "",
             type: "line",
             stack: "总量",
             symbol: "circle",
@@ -406,7 +334,7 @@ export default {
                 ]
               }
             },
-            data: [120, 132, 101, 134, 90, 230, 210, 182, 191, 234, 290, 330]
+            data: this.baojingshuliangJson
           }
         ]
       };
@@ -446,9 +374,9 @@ export default {
             center: ["50%", "50%"],
             startAngle: -90,
             data: [
-              { value: 25, name: "人员" },
-              { value: 30, name: "食材" },
-              { value: 45, name: "证件" }
+              { value: this.baojingleibieJson.personTotal, name: "人员" },
+              { value: this.baojingleibieJson.foodTotal, name: "食材" },
+              { value: this.baojingleibieJson.cardTotal, name: "证件" }
             ],
             label: {
               show: true,
@@ -507,7 +435,7 @@ export default {
         xAxis: [
           {
             type: "category",
-            data: ["海淀区", "西城区", "宣武区", "通州区", "丰台区", "朝阳区"],
+            data: this.nameArr,
             axisLine: {
               show: true,
               lineStyle: {
@@ -550,7 +478,7 @@ export default {
           {
             name: "报警",
             type: "bar",
-            data: [220, 120, 240, 266, 210, 246],
+            data: this.baojingArr,
             barWidth: 5, //柱子宽度
             barGap: 0, //柱子之间间距
             itemStyle: {
@@ -579,7 +507,7 @@ export default {
           {
             name: "预警",
             type: "bar",
-            data: [130, 150, 220, 245, 136, 256],
+            data: this.yujingArr,
             barWidth: 5,
             barGap: 1,
             itemStyle: {
@@ -610,11 +538,18 @@ export default {
     initEcharts4() {
       const _this = this;
       _this.myChart4 = this.$echarts.init(this.$refs.paiming);
+      let arr = [["学校", "预警", "报警"]];
+      for (let i = 0; i < this.xuexiaobaojingJson.length; i++) {
+        let name = this.xuexiaobaojingJson[i].schoolName;
+        let yujing = this.xuexiaobaojingJson[i].warningTotal;
+        let baojing = this.xuexiaobaojingJson[i].alarmTotal;
+        arr.push([name, yujing, baojing]);
+      }
       // 指定图表的配置项和数据
       let option = {
         backgroundColor: "#00265f",
         title: {
-          text: "报警区域统计",
+          text: "学校报警统计",
           top: 10,
           textStyle: {
             color: "#30eee9"
@@ -622,13 +557,7 @@ export default {
         },
         color: ["#0092f6", "#005193"],
         dataset: {
-          source: [
-            ["学校", "预警", "报警"],
-            ["学校名称", 130, 30, 40],
-            ["学校名称2", 160, 70, 80],
-            ["学校名称3", 100, 110, 100],
-            ["学校名称5", 20, 100, 80]
-          ]
+          source: arr
         },
         grid: {
           left: "3%",
@@ -759,16 +688,112 @@ export default {
         ]
       };
       _this.myChart4.setOption(option);
+    },
+    //预警列表
+    getYuJingList() {
+      yujingList({
+        year: "2019",
+        areaCode: "510000",
+        regionalLevel: "2"
+      }).then(res => {
+
+        this.yujinglistJson = res.data.data;
+        console.log(this.yujinglistJson);
+        
+      });
+    },
+    //报警列表
+    getBaoJingList() {
+      baojingList({
+        year: "2019",
+        areaCode: "510000",
+        regionalLevel: "2"
+      }).then(res => {
+        // console.log("报警");
+        // console.log(res.data);
+        this.baojinglistJson = res.data.data;
+      });
+    },
+    //1-2月报警数量统计
+    getBaoJingShuLiang() {
+      baojingshuliang({
+        year: "2019",
+        areaCode: "510000",
+        regionalLevel: "2"
+      }).then(res => {
+        // console.log("报警数量统计");
+        // console.log(res.data);
+        this.baojingshuliangJson = res.data.data;
+        this.initEcharts();
+      });
+    },
+    //报警类别统计
+    getBaoJingleibie() {
+      baojingleibie({
+        year: "2019",
+        regionalLevel: "2",
+        areaCode: "510000"
+      }).then(res => {
+        // console.log("报警类别统计");
+        // console.log(res.data);
+        this.baojingleibieJson = res.data.data;
+        this.initEcharts2();
+      });
+    }, //学校报警统计
+    getxXueXiaoBaoJing() {
+      xuexiaobaojing({
+        year: "2019",
+        areaCode: "510000",
+        regionalLevel: "2",
+        limit: "5"
+      }).then(res => {
+        // console.log("学校报警统计");
+        // console.log(res.data.data);
+        this.xuexiaobaojingJson = res.data.data;
+        if (this.xuexiaobaojingJson.length === 0) {
+          this.ISxuexiao = true;
+        } else {
+          this.ISxuexiao = false;
+          this.initEcharts4();
+        }
+      });
+    }, //区域报警统计
+    getxQuYuBaoJing() {
+      console.log("区域报警统计");
+
+      quyubaojing({
+        areaCode: "510100",
+        regionalLevel: "3",
+        year: "2019",
+        limit:"5"
+      }).then(res => {
+        console.log(res.data.data);
+        let json = res.data.data;
+        let nameArr = [];
+        let yujingArr = [];
+        let baojingArr = [];
+        json.forEach(item => {
+          nameArr.push(item.NAME);
+          yujingArr.push(item.warningTotal);
+          baojingArr.push(item.alramTotal);
+        });
+        this.nameArr = nameArr;
+        this.yujingArr = yujingArr;
+        this.baojingArr = baojingArr;
+
+        console.log(this.quyubaojingJson);
+        this.initEcharts3();
+      });
     }
   },
   mounted() {
-    setTimeout(() => {
-      this.initEcharts();
-      this.initEcharts2();
-      this.initEcharts3();
-      this.initEcharts4();
-    }, 0);
-
+    this.getYuJingList();
+    this.getBaoJingList();
+    this.getBaoJingShuLiang();
+    this.getBaoJingleibie();
+    this.getBaoJingleibie();
+    this.getxXueXiaoBaoJing();
+    this.getxQuYuBaoJing();
     // 绑定监听事件
     window.addEventListener("resize", this.resizeHandler);
   },
@@ -855,10 +880,10 @@ export default {
           border-radius: 0.02rem;
 
           .top {
+            padding: 0 0.1rem;
             box-sizing: border-box;
             display: flex;
             align-items: center;
-            padding-left: 0.1rem;
             height: 50%;
             background: linear-gradient(90deg, #0640c7, #5c70ff);
             color: #fff;
@@ -935,6 +960,7 @@ export default {
           background: rgba(47, 123, 255, 0.14);
           border-radius: 0.02rem;
           .top {
+            padding: 0 0.1rem;
             box-sizing: border-box;
             display: flex;
             align-items: center;
