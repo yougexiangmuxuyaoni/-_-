@@ -34,6 +34,16 @@ export function xiaoxitingxin(query) {
         params: query
     })
 }
+
+export function bjjieshou(query) {
+    return request({
+        url: '/api/manageWat/statistics/getDoneAlarms',
+        method: 'get',
+        params: query
+    })
+}
+
+
 // export function baojingList(query) {
 //     return request({
 //         url: '/api/baojingList',

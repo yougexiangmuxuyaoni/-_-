@@ -56,6 +56,14 @@ export function shitangxinxi() {
     })
 }
 
+export function baojingshu(query) {
+    return request({
+        url: '/api/manageWat/statistics/getWarnAlarmTotalContrast',
+        method: 'get',
+        params: query
+
+    })
+}
 // export function baojingList(query) {
 //     return request({
 //         url: '/api/baojingList',
