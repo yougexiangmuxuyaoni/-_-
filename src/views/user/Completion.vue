@@ -109,6 +109,8 @@
         <el-table-column prop="content" label="监管意见"></el-table-column>
         <el-table-column prop="schName" label="学校名称"></el-table-column>
         <el-table-column prop="createTime" label="接收时间"></el-table-column>
+        <el-table-column prop="status" label="学校查看状态"></el-table-column>
+        <el-table-column prop="supStatus" label="下发人查看状态"></el-table-column>
 
         <el-table-column prop="viewName" label="接收人"></el-table-column>
         <!-- <el-table-column label="查看详情">
@@ -139,14 +141,14 @@
     <div class="biao" v-show="active==='通知公告'">
       <el-table height="calc(100% - 70)" :data="TZList" style="width: 100%">
         <el-table-column type="index" width="20"></el-table-column>
-        <el-table-column prop="schName" width="100" label="学校名称"></el-table-column>
-        <el-table-column prop="title" width="120" label=" 标题"></el-table-column>
+        <el-table-column prop="schName" label="学校名称"></el-table-column>
+        <el-table-column prop="title" label=" 标题"></el-table-column>
         <el-table-column prop="content" label="内容"></el-table-column>
-        <el-table-column prop="realName" width="70" label="发布人"></el-table-column>
-        <el-table-column prop="createTime" width="100" label="发布时间"></el-table-column>
-        <el-table-column prop="viewTime" width="100" label="学校查看时间"></el-table-column>
-        <el-table-column prop="status" width="70" label="学校查看状态"></el-table-column>
-        <el-table-column prop="supStatus" width="80" label="下发人查看状态"></el-table-column>
+        <el-table-column prop="realName" label="发布人"></el-table-column>
+        <el-table-column prop="createTime" label="发布时间"></el-table-column>
+        <el-table-column prop="viewTime" label="学校查看时间"></el-table-column>
+        <el-table-column prop="status" label="学校查看状态"></el-table-column>
+        <el-table-column prop="supStatus" label="下发人查看状态"></el-table-column>
 
         <!-- <el-table-column prop="details" label="查看详情"></el-table-column> -->
       </el-table>
@@ -178,6 +180,7 @@ export default {
   },
   data() {
     return {
+      userInfo: null,
       bjval: {
         page: 1,
         size: 10,
@@ -409,12 +412,15 @@ export default {
     },
     getTZ() {
       tongzhigonggao({
-        userId: 4,
+        userId: this.userInfo.userId,
         size: this.tz_size,
-        current: this.tz_current
+        current: this.tz_current,
+        supStatus: 1 //1 已办 未办
       }).then(res => {
         this.tz_com_size = res.data.data.total;
         this.tz_com_current = res.data.data.pages;
+        // console.log(res.data.data.records);
+
         let arr = [];
         res.data.data.records.forEach(val => {
           //（1已查看2未查看 ）
@@ -438,9 +444,10 @@ export default {
     },
     getJGList() {
       jianguanxidajilu({
-        userId: 4,
+        userId: this.userInfo.userId,
         size: this.size,
-        current: this.current
+        current: this.current,
+        supStatus: 1
       }).then(res => {
         this.com_size = res.data.data.total;
         this.com_current = res.data.data.pages;
@@ -460,13 +467,14 @@ export default {
         });
 
         this.tableData = arr;
+        // console.log(this.tableData);
       });
     },
     getbjjieshou() {
       this.loading_bj = true;
       bjjieshou({
-        regionalLevel: 1,
-        areaCode: 510000,
+        regionalLevel: this.userInfo.userLevel,
+        areaCode: this.userInfo.areaCode,
         page: this.bjval.page,
         size: this.bjval.size,
         iswarning: this.bjval.iswarning
@@ -481,8 +489,8 @@ export default {
     getyjjieshou() {
       this.loading_yj = true;
       bjjieshou({
-        regionalLevel: 1,
-        areaCode: 510000,
+        regionalLevel: this.userInfo.userLevel,
+        areaCode: this.userInfo.areaCode,
         page: this.yjval.page,
         size: this.yjval.size,
         iswarning: this.yjval.iswarning
@@ -504,6 +512,10 @@ export default {
     this.getTZ();
     this.getbjjieshou();
     this.getyjjieshou();
+  },
+  created() {
+    this.userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    console.log(this.userInfo);
   }
 };
 </script>

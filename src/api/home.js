@@ -20,14 +20,8 @@ export function jianguanxidajilu(query) {
 }
 
 export function tongzhigonggao(query) {
-    return request({
-        url: '/api/manageWat/supervision/findPage',
-        method: 'get',
-        params: query
-    })
-}
+    console.log(query);
 
-export function xiaoxitingxin(query) {
     return request({
         url: '/api/manageWat/supervision/findPage',
         method: 'get',
@@ -45,6 +39,8 @@ export function bjjieshou(query) {
 
 
 export function bjweijieshou(query) {
+    console.log(query);
+
     return request({
         url: '/api/manageWat/statistics/getUpcomingAlarms',
         method: 'get',

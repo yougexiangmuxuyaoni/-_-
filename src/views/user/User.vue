@@ -42,8 +42,7 @@ export default {
         { name: "修改密码", path: "/user" },
         { name: "已办事项", path: "/completion" },
         { name: "待办事项", path: "/uncompletion" },
-        { name: "通知中心", path: "/notice" },
-        { name: "消息提醒", path: "/remind" }
+        { name: "通知中心", path: "/notice" }
       ]
     };
   },

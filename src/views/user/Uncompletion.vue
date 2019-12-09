@@ -3,6 +3,8 @@
     <el-radio-group v-model="active">
       <el-radio-button label="未接收报警"></el-radio-button>
       <el-radio-button label="未接收预警"></el-radio-button>
+      <el-radio-button label="监管意见下达记录"></el-radio-button>
+      <el-radio-button label="通知公告"></el-radio-button>
     </el-radio-group>
     <div class="biao" v-show="active==='未接收报警'">
       <el-table
@@ -96,156 +98,77 @@
         </div>
       </el-footer>
     </div>
+    <div class="biao" v-show="active==='监管意见下达记录'">
+      <el-table height="calc(100% - 70)" :data="tableData" style="width: 100%">
+        <el-table-column type="index" width="50"></el-table-column>
+        <el-table-column prop="realName" label="发送人"></el-table-column>
+        <el-table-column prop="type" label="类别"></el-table-column>
+        <el-table-column prop="content" label="监管意见"></el-table-column>
+        <el-table-column prop="schName" label="学校名称"></el-table-column>
+        <el-table-column prop="createTime" label="接收时间"></el-table-column>
+        <el-table-column prop="viewName" label="接收人"></el-table-column>
+      </el-table>
+
+      <el-footer class="footer">
+        <div
+          class="tip"
+        >显示{{this.size}}项结果，共{{this.com_size}}项，当前{{this.current}}/{{this.com_current}}页</div>
+        <div>
+          <el-button v-show="this.current === 1" :disabled="isJinyong" class="dis">上一页</el-button>
+          <el-button v-show="this.current > 1" @click="previousPage()">上一页</el-button>
+          <el-button @click="nextPage()" v-show="this.current < this.com_current">下一页</el-button>
+          <el-button
+            v-show="this.current === this.com_current"
+            :disabled="isJinyong"
+            class="dis"
+          >下一页</el-button>
+        </div>
+      </el-footer>
+    </div>
+
+    <div class="biao" v-show="active==='通知公告'">
+      <el-table height="calc(100% - 70)" :data="TZList" style="width: 100%">
+        <el-table-column type="index" width="20"></el-table-column>
+        <el-table-column prop="schName" width="100" label="学校名称"></el-table-column>
+        <el-table-column prop="title" width="120" label=" 标题"></el-table-column>
+        <el-table-column prop="content" label="内容"></el-table-column>
+        <el-table-column prop="realName" width="70" label="发布人"></el-table-column>
+        <el-table-column prop="createTime" width="100" label="发布时间"></el-table-column>
+        <el-table-column prop="viewTime" width="100" label="学校查看时间"></el-table-column>
+        <el-table-column prop="status" width="70" label="学校查看状态"></el-table-column>
+        <el-table-column prop="supStatus" width="80" label="下发人查看状态"></el-table-column>
+      </el-table>
+      <el-footer class="footer">
+        <div
+          class="tip"
+        >显示{{this.tz_size}}项结果，共{{this.tz_com_size}}项，当前{{this.tz_current}}/{{this.tz_com_current}}页</div>
+        <div>
+          <el-button v-show="this.tz_current === 1" :disabled="isJinyong" class="dis">上一页</el-button>
+          <el-button v-show="this.tz_current > 1" @click="tz_previousPage()">上一页</el-button>
+          <el-button @click="tz_nextPage()" v-show="this.tz_current < this.tz_com_current">下一页</el-button>
+          <el-button
+            v-show="this.tz_current === this.tz_com_current"
+            :disabled="isJinyong"
+            class="dis"
+          >下一页</el-button>
+        </div>
+      </el-footer>
+    </div>
   </div>
 </template>
 <script>
-import { bjweijieshou } from "@/api/home";
+import { bjweijieshou, jianguanxidajilu, tongzhigonggao } from "@/api/home";
 import { mapState, mapMutations } from "vuex";
 export default {
   name: "completion",
   data() {
     return {
+      userInfo: null,
       isJinyong: true,
       active: "未接收报警",
       loading_bj: true,
       loading_yj: true,
-      tableData: [
-        {
-          number: "0001",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "未接收",
-          details: "查看详情"
-        },
-        {
-          number: "0002",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "未接收",
-          details: "查看详情"
-        },
-        {
-          number: "0003",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "未接收",
-          details: "查看详情"
-        },
-        {
-          number: "0004",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "未接收",
-          details: "查看详情"
-        },
-        {
-          number: "0002",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "未接收",
-          details: "查看详情"
-        },
-        {
-          number: "0003",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "未接收",
-          details: "查看详情"
-        },
-        {
-          number: "0004",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "未接收",
-          details: "查看详情"
-        },
-        {
-          number: "0002",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "未接收",
-          details: "查看详情"
-        },
-        {
-          number: "0003",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "未接收",
-          details: "查看详情"
-        },
-        {
-          number: "0004",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "未接收",
-          details: "查看详情"
-        },
-        {
-          number: "0002",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "未接收",
-          details: "查看详情"
-        },
-        {
-          number: "0003",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "未接收",
-          details: "查看详情"
-        },
-        {
-          number: "0004",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "未接收",
-          details: "查看详情"
-        },
-        {
-          number: "0003",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "未接收",
-          details: "查看详情"
-        },
-        {
-          number: "0004",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "未接收",
-          details: "查看详情"
-        }
-      ],
+
       bjlistJson: {
         records: [],
         total: 12,
@@ -271,7 +194,29 @@ export default {
         page: 1,
         size: 15,
         iswarning: 1
-      }
+      },
+
+      current: 1,
+      size: 20,
+      com_size: "",
+      com_current: "",
+      tableData: [
+        {
+          number: "0001",
+          info: "企业无商业资格证",
+          type: "证照报警",
+          name: "朝阳区实验小学",
+          date: "2019-09-16",
+          opinion: "未接收",
+          details: "查看详情"
+        }
+      ],
+
+      TZList: [],
+      tz_current: 1,
+      tz_size: 20,
+      tz_com_size: Number,
+      tz_com_current: Number
     };
   },
   methods: {
@@ -288,8 +233,8 @@ export default {
       this.loading_bj = true;
       bjweijieshou({
         iswarning: 1,
-        areaCode: 510000,
-        regionalLevel: 1,
+        regionalLevel: this.userInfo.userLevel,
+        areaCode: this.userInfo.areaCode,
         size: this.bjval.size,
         page: this.bjval.page
       }).then(res => {
@@ -309,13 +254,76 @@ export default {
       this.loading_yj = true;
       bjweijieshou({
         iswarning: 0,
-        areaCode: 510000,
-        regionalLevel: 1,
+        regionalLevel: this.userInfo.userLevel,
+        areaCode: this.userInfo.areaCode,
         size: this.yjval.size,
         page: this.yjval.page
       }).then(res => {
         this.loading_yj = false;
         this.yjlistJson = res.data.data;
+      });
+    },
+    getJGList() {
+      jianguanxidajilu({
+        userId: this.userInfo.userId,
+        size: this.size,
+        current: this.current,
+        supStatus: 2
+      }).then(res => {
+        this.com_size = res.data.data.total;
+        this.com_current = res.data.data.pages;
+        let arr = [];
+        res.data.data.records.forEach(val => {
+          if (val.type === "1") {
+            val.type = "证照预警";
+          } else {
+            val.type = "其他预警";
+          }
+          if (val.status === "1") {
+            val.status = "已查看";
+          } else if (val.status === "2") {
+            val.status = "未查看";
+          }
+          arr.push(val);
+        });
+
+        this.tableData = arr;
+        console.log(this.tableData);
+      });
+    },
+    getTZ() {
+      console.log("tongzhi");
+      console.log(this.userInfo);
+
+      tongzhigonggao({
+        userId: this.userInfo.userId,
+        size: this.tz_size,
+        current: this.tz_current,
+        supStatus: 2 //1 已办 2未办
+      }).then(res => {
+        this.tz_com_size = res.data.data.total;
+        this.tz_com_current = res.data.data.pages;
+        // console.log(res.data.data.records);
+
+        let arr = [];
+        res.data.data.records.forEach(val => {
+          //（1已查看2未查看 ）
+          if (val.status === "1") {
+            val.status = "已查看";
+          } else if (val.status === "2") {
+            val.status = "未查看";
+          }
+
+          //（1已查看2未查看 ）
+          if (val.supStatus === "1") {
+            val.supStatus = "已查看";
+          } else if (val.supStatus === "2") {
+            val.supStatus = "未查看";
+          }
+
+          arr.push(val);
+        });
+        this.TZList = arr;
       });
     },
     showXiangqing(e) {
@@ -328,8 +336,13 @@ export default {
     }
   },
   created() {
+    this.userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    console.log(this.userInfo);
+
     this.getbjweijieshou();
     this.getyjweijieshou();
+    this.getJGList();
+    this.getTZ();
   }
 };
 </script>

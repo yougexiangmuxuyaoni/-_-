@@ -3,7 +3,7 @@
     <div class="box">
       <div class="title">基础信息</div>
 
-      <div class="row2" v-if="TYPE === '证照'">
+      <div class="row2" v-if="type === '证照'">
         <div class="title_warp">
           <div class="title">学校名称:{{lishixiangqingJson.basicInformationW.schoolName}}</div>
           <div>
@@ -25,7 +25,7 @@
           </div>
         </div>
       </div>
-      <div class="row2" v-if="TYPE === '食材'">
+      <div class="row2" v-if="type === '食材'">
         <div class="title_warp">
           <div class="title">学校名称:{{shicaixiangqingJson.schoolName}}</div>
           <div>
@@ -50,7 +50,7 @@
           </div>
         </div>
       </div>
-      <div class="row2" v-if="TYPE === '人员'">
+      <div class="row2" v-if="type === '人员'">
         <div class="title_warp">
           <div class="title">学校名称:{{renyuanxiangqingJson.schoolName}}</div>
           <div>
@@ -73,14 +73,14 @@
         </div>
       </div>
 
-      <div class="row5" v-if="TYPE === '证照'">
+      <div class="row5" v-if="type === '证照'">
         <div class="title">供应商关联学校</div>
         <div class="conten">
           <span>{{lishixiangqingJson.schoolName.schName}}</span>
         </div>
       </div>
 
-      <div class="row5" v-if="TYPE === '食材'">
+      <div class="row5" v-if="type === '食材'">
         <div class="title">同一食材关联学校</div>
         <div class="conten">
           <span
@@ -107,7 +107,7 @@
         </div>
       </div>
 
-      <div class="row6" v-if="TYPE === '证照'">
+      <div class="row6" v-if="type === '证照'">
         <div class="title">供应商关联风险</div>
 
         <div class="box">
@@ -238,6 +238,7 @@ export default {
       yjLength: 4,
       textarea: "",
       loading: false,
+      type:'',
       lishixiangqingJson: {
         basicInformationW: {
           supplierName: "叙永县供应商A",
@@ -378,7 +379,8 @@ export default {
     },
     getlsxiangqing(e) {
       let SchoolId = localStorage.getItem("SchoolId");
-      let type = localStorage.getItem("lishixiangqingtype");
+      this.type = localStorage.getItem("lishixiangqingtype");
+      let type = this.type;
       let id = Number(localStorage.getItem("lishixiangqingid"));
       let jing = localStorage.getItem("lishixiangqingjing");
       this.schoolId = SchoolId;
@@ -394,7 +396,9 @@ export default {
 
       // warningId 可以用 e参数
       //iswarning 0预警 1预警
-      if (this.TYPE === "证照") {
+      console.log(type);
+      
+      if (type === "证照") {
         lishixiangqing({
           schoolId: SchoolId,
           iswarning: isBAO,
@@ -413,7 +417,7 @@ export default {
             }
           }
         });
-      } else if (this.TYPE === "人员") {
+      } else if (type === "人员") {
         renyuanxiangqing({
           schoolId: SchoolId,
           iswarning: isBAO,
@@ -425,7 +429,7 @@ export default {
             this.renyuanxiangqingJson = res.data.data.data;
           }
         });
-      } else if (this.TYPE === "食材") {
+      } else if (type === "食材") {
         shicaixiangqing({
           schoolId: SchoolId,
           iswarning: isBAO,

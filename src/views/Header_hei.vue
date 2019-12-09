@@ -88,7 +88,6 @@
             <li @click="to('/completion')">已办事项</li>
             <li @click="to('/uncompletion')">待办事项</li>
             <li @click="to('/notice')">通知中心</li>
-            <li @click="to('/remind')">消息提醒</li>
             <li @click="to('/login')">退出</li>
           </ul>
 
@@ -116,17 +115,6 @@ export default {
   data() {
     return {
       lujing: [],
-      yujinglujing: [
-        { url: "/", name: "首页" },
-        { url: "/header_hei", name: "预警信息" },
-        { url: "/header_hei", name: "预警信息详情页" }
-      ],
-      baojinglujing: [
-        { url: "/", name: "首页" },
-        { url: "/header_hei", name: "报警信息" },
-        { url: "/header_hei", name: "报警信息详情页" }
-      ],
-
       TZList: [],
       TZId: Number,
       fullscreenLoading: false,
@@ -153,6 +141,8 @@ export default {
     ...mapMutations(["SET_USER_INFO", "CHENGE_ACTIVE", "GO_OUT"]),
     mianbaioxie() {
       let path = this.$route.path;
+      console.log(path, this.jilu);
+
       if (path === "/alertDetails") {
         if (this.jilu === "AllWarning") {
           this.lujing = [
@@ -170,6 +160,11 @@ export default {
           this.lujing = [
             { url: "/uncompletion", name: "返回" },
             { url: "", name: "报警信息详情页" }
+          ];
+        } else if (this.jilu === "abnormal") {
+          this.lujing = [
+            { url: "/abnormal", name: "返回" },
+            { url: "", name: "预警信息详情页" }
           ];
         } else {
           this.lujing = [
@@ -221,14 +216,16 @@ export default {
       }, 1000);
     },
     seeMore() {
-      // this.CHENGE_ACTIVE("通知公告");
-      this.to("/remind");
+      this.CHENGE_ACTIVE("通知公告");
+      this.to("/completion");
     },
     getHongList() {
       xinxiaoxi({
         userId: this.userId,
         supStatus: 2
       }).then(res => {
+        console.log(res.data.data.records);
+
         this.TZList = res.data.data.records;
       });
     },
@@ -246,11 +243,11 @@ export default {
     this.getHongList();
 
     this.mianbaioxie();
-    setInterval(() => {
-      // console.log("新通知");
+    // setInterval(() => {
+    //   // console.log("新通知");
 
-      this.getHongList();
-    }, 1000 * 5);
+    //   this.getHongList();
+    // }, 1000 * 5);
   },
   created() {
     var user = JSON.parse(localStorage.getItem("userInfo"));
@@ -421,7 +418,7 @@ export default {
           top: 0.55rem;
           left: 0rem;
           width: 1.5rem;
-          height: 2.4rem;
+          height: 2rem;
           list-style: none;
           text-align: center;
           li {

@@ -11,8 +11,8 @@ module.exports = {
         hotOnly: true, //是否开启热更新
         proxy: {
             '/api': {
-                // target: 'http://172.31.15.115:9998', //徐
-                target: 'http://112.125.25.93:9998', //航信服务器的地址
+                target: 'http://172.31.15.115:9998', //徐
+                // target: 'http://112.125.25.93:9998', //航信服务器的地址
                 // target: 'http://47.93.216.51:9998', //四川服务器的地址
                 changeOrigin: true,
                 pathRewrite: {

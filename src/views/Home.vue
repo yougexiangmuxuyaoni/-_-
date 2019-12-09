@@ -56,7 +56,6 @@
               <li @click="to('/completion')">已办事项</li>
               <li @click="to('/uncompletion')">待办事项</li>
               <li @click="to('/notice')">通知中心</li>
-              <li @click="to('/remind')">消息提醒</li>
               <li @click="to('/login')">退出</li>
             </ul>
             <!--  style="    visibility: hidden;;display:none;" -->
@@ -133,8 +132,8 @@ export default {
       }, 1000);
     },
     seeMore() {
-      // this.CHENGE_ACTIVE("通知公告");
-      this.to("/remind");
+      this.CHENGE_ACTIVE("通知公告");
+      this.to("/completion");
     },
     getHongList() {
       xinxiaoxi({
@@ -181,10 +180,10 @@ export default {
       this.getHongList();
     }, 0);
 
-    setInterval(() => {
-      // console.log("新通知");
-      this.getHongList();
-    }, 1000 * 5);
+    // setInterval(() => {
+    //   // console.log("新通知");
+    //   this.getHongList();
+    // }, 1000 * 5);
   },
   created() {
     var user = JSON.parse(localStorage.getItem("userInfo"));
@@ -392,7 +391,7 @@ html {
               top: 0.5rem;
               left: 0rem;
               width: 1.5rem;
-              height: 2.4rem;
+              height: 2rem;
               list-style: none;
               text-align: center;
               li {

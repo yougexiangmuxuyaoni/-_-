@@ -11,11 +11,11 @@
             <p>学生总量</p>
             <p>{{xuexiaotongjiJson.stuNum}}</p>
           </div>
-          <div class="tu" ref="xx" v-show="xuexiaotongjiJson.place"></div>
+          <div class="tu" ref="xx" v-if="xuexiaotongjiJson.schoolArr.length >0"></div>
           <div
+            v-else
             class="tu"
             style="text-align:center;font-size: .3rem;line-height: 3.6rem;color: aqua;"
-            v-show="!xuexiaotongjiJson.place"
           >暂无统计数据</div>
         </div>
       </div>
@@ -199,7 +199,7 @@
             <p>本月</p>
           </div>
           <div
-            v-show="yujingxuexiaoArr.schoolNameArr ==[]"
+            v-show="yujingxuexiaoArr.schoolNameArr !==[]"
             v-loading="loading_yujingtop"
             element-loading-text="拼命加载中"
             element-loading-spinner="el-icon-loading"
@@ -208,7 +208,7 @@
             ref="yzs"
           ></div>
           <div
-            v-show="yujingxuexiaoArr.schoolNameArr !=[]"
+            v-show="yujingxuexiaoArr.schoolNameArr ==[]"
             class="tu"
             style="font-size: .3rem;color: aqua;line-height: 3rem;text-align: center;"
           >暂无统计数据</div>
@@ -219,7 +219,7 @@
             <p>本月</p>
           </div>
           <div
-            v-show="baojingxuexiaoArr.schoolNameArr ==[]"
+            v-show="baojingxuexiaoArr.schoolNameArr !=[]"
             v-loading="loading_baojingtop"
             element-loading-text="拼命加载中"
             element-loading-spinner="el-icon-loading"
@@ -228,7 +228,7 @@
             ref="bzs"
           ></div>
           <div
-            v-show="baojingxuexiaoArr.schoolNameArr !=[]"
+            v-show="baojingxuexiaoArr.schoolNameArr ==[]"
             class="tu"
             style="font-size: .3rem;color: aqua;line-height: 3rem;text-align: center;"
           >暂无统计数据</div>
@@ -471,19 +471,21 @@ export default {
       xuexiaotongji().then(res => {
         const json = res.data.data;
 
-        if (!json.place) {
-          this.xuexiaotongjiJson.schoolNum = json.schoolNum;
-          this.xuexiaotongjiJson.stuNum = json.stuNum;
-          json.place.forEach(item => {
-            this.xuexiaotongjiJson.schoolArr.push(
-              `${item.schoolType}(${item.schoolNum}所)`
-            );
-            this.xuexiaotongjiJson.zhanbiArr.push(
-              parseInt((item.schoolNum / json.schoolNum) * 100)
-            );
-          });
+        this.xuexiaotongjiJson.schoolNum = json.schoolNum;
+        this.xuexiaotongjiJson.stuNum = json.stuNum;
+        json.place.forEach(item => {
+          this.xuexiaotongjiJson.schoolArr.push(
+            `${item.schoolType}(${item.schoolNum}所)`
+          );
+          this.xuexiaotongjiJson.zhanbiArr.push(
+            parseInt((item.schoolNum / json.schoolNum) * 100)
+          );
+        });
+        setTimeout(() => {
           this.initEcharts();
-        }
+        }, 1000);
+        // console.log("学校统计");
+        // console.log(this.xuexiaotongjiJson);
       });
     }, // console.log("食堂");
     getshitangxinxi() {

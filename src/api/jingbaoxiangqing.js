@@ -4,6 +4,10 @@ import request from 'axios'
 */
 
 export function lishixiangqing(query) {
+    console.log("xiangqing");
+    
+    console.log(query);
+    
     return request({
         url: '/api/manageWat/statistics/getHistoryDetails',
         method: 'get',

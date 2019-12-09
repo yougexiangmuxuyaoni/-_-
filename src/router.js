@@ -2,9 +2,7 @@ import Vue from "vue";
 import Router from "vue-router";
 import Home from "./views/Home.vue";
 
-// import Trend from "./views/index/qushifenxi/Trend.vue";//趋势分析 1
 import Trend from "./views/index/Trend.vue";//趋势分析 1
-
 import Abnormal from "./views//index/Abnormal.vue";//异常检测 2
 import Risk from "./views//index/Risk.vue";//风险定位 3
 
@@ -15,7 +13,6 @@ import Password from "./views/user/Password.vue";//修改密码
 import Completion from "./views/user/Completion.vue";//已办事项
 import Uncompletion from "./views/user/Uncompletion.vue";//待办事项
 import Notice from "./views/user/Notice.vue";//通知中心
-import Remind from "./views/user/Remind.vue";//消息提示
 
 
 import Header_hei from "./views/Header_hei.vue";//预警头部
@@ -23,11 +20,8 @@ import AllWarning from "./views/Warning/AllWarning.vue";//全部预警
 import AllAllalarm from "./views/Allalarm/AllAllalarm.vue";//全部报警
 
 
-// import NotChecked from "./views/NotChecked.vue";//未查收预警信息
-// import Com_AlertDetails from "@/views/Com_AlertDetails.vue";//预警详情模板
 import AlertDetails from "./views/AlertDetails.vue";//预警详情页
 import Positioning from "./views/Positioning.vue";//学校详情
-import CompanyDetails from "./views/CompanyDetails.vue";//公司详情
 
 
 
@@ -115,11 +109,6 @@ const vueRouter = new Router({
           path: "/notice",
           name: "Notice",
           component: Notice
-        },
-        {
-          path: "/remind",
-          name: "Remind",
-          component: Remind
         }
       ]
     },

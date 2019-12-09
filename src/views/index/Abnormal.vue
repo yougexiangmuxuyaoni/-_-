@@ -23,7 +23,7 @@
         >
           <div
             class="item"
-            @click="to('/positioning',val.schoolId)"
+            @click="to('/alertDetails',val)"
             v-for="(val,index) of yujinglistJson.earlyList"
             :key="index"
           >
@@ -60,7 +60,7 @@
         >
           <div
             class="item"
-            @click="to('/positioning',val.schoolId)"
+            @click="to('/alertDetails',val)"
             v-for="(val,index) of baojinglistJson.alarmList"
             :key="index"
           >
@@ -265,9 +265,20 @@ export default {
     };
   },
   methods: {
-    to(uri, id) {
-      if (uri === "/positioning") {
-        localStorage.setItem("yichangId", id);
+    to(uri, e) {
+      if (uri === "/alertDetails") {
+        localStorage.setItem("SchoolId", e.schoolId);
+        localStorage.setItem("lishixiangqingtype", e.type.substr(0, 2));
+        localStorage.setItem("lishixiangqingjing", e.type.substr(2));
+        if (e.alarmId) {
+          console.log(e.alarmId);
+
+          localStorage.setItem("lishixiangqingid", e.alarmId);
+        } else {
+          console.log(e.earlyId);
+
+          localStorage.setItem("lishixiangqingid", e.earlyId);
+        }
       }
       this.$router.push(uri);
     },
