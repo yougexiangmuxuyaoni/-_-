@@ -11,22 +11,19 @@ module.exports = {
         hotOnly: true, //是否开启热更新
         proxy: {
             '/api': {
-                // target: 'http://192.168.10.47:9998', //崔
-                // target: 'http://192.168.10.46:9998', //徐
-                // target: 'http://192.168.10.49:9998', //阳
-                target: 'http://112.125.25.93:9998', //服务器API服务器的地址
+                // target: 'http://172.31.15.115:9998', //徐
+                target: 'http://112.125.25.93:9998', //航信服务器的地址
+                // target: 'http://47.93.216.51:9998', //四川服务器的地址
                 changeOrigin: true,
                 pathRewrite: {
                     '^/api': ''
                 }
-            // }, '/index': {
-            //     target: 'http://localhost:8863', //本地API服务器的地址--崔
-            //     //target: 'http://172.31.9.138:9998', //本地API服务器的地址--谢
-            //     // target: 'http://112.125.25.93:9998', //服务器API服务器的地址
-            //     changeOrigin: true,
-            //     pathRewrite: {
-            //         '^/index': ''
-            //     }
+            }, '/map': {
+                target: 'https://geo.datav.aliyun.com', //地图
+                changeOrigin: true,
+                pathRewrite: {
+                    '^/map': ''
+                }
             }
         }
     }

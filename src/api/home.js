@@ -44,6 +44,17 @@ export function bjjieshou(query) {
 }
 
 
+export function bjweijieshou(query) {
+    return request({
+        url: '/api/manageWat/statistics/getUpcomingAlarms',
+        method: 'get',
+        params: query
+    })
+}
+
+
+
+
 // export function baojingList(query) {
 //     return request({
 //         url: '/api/baojingList',

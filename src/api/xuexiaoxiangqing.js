@@ -100,6 +100,24 @@ export function lishixiangqing(query) {
         params: query
     })
 }
+
+
+export function jilulist(query) {
+    return request({
+        url: '/api/manageWat/statistics/getAccountDetails',
+        method: 'get',
+        params: query
+    })
+}
+
+
+export function jiluxiangqing(query) {
+    return request({
+        url: '/api/manageWat/statistics/getAccountDetail',
+        method: 'get',
+        params: query
+    })
+}
 // export function baojingList(query) {
 //     return request({
 //         url: '/api/baojingList',

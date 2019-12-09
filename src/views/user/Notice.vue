@@ -94,11 +94,11 @@
         style="visibility:hidden;display:none;"
       >
         <!-- <form action="/manageWat/supervision/insertAnnouncement" method="post"> -->
-        <input type="text" name="schoolId" value="1" />
+        <input type="text" name="schoolId" v-model="SchoolId" />
         <input type="file" name="file" multiple="multiple" @change="tirggerFile($event)" ref="btn" />
         <input type="text" name="title" v-model="zhuti" />
         <input type="text" name="content" v-model="neirong" />
-        <input type="text" name="userId" value="4" />
+        <input type="text" name="userId" v-model="userId" />
         <input type="submit" value="tijiao" ref="fa" />
       </form>
       <iframe id="id_iframe" name="nm_iframe" style="visibility: hidden;display:none;"></iframe>
@@ -134,7 +134,9 @@ export default {
       file_list: [],
       xuexiao: "",
       zhuti: "",
-      neirong: ""
+      neirong: "",
+      SchoolId: 1,
+      userId:4,
     };
   },
   methods: {
@@ -186,6 +188,11 @@ export default {
         }
       }, 1000);
     }
+  },
+  created() {
+    this.SchoolId = localStorage.getItem("SchoolId");
+    var user = JSON.parse(localStorage.getItem("userInfo"));
+    this.userId = user.userId;
   }
 };
 </script>

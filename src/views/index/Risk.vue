@@ -7,13 +7,13 @@
           <i @click="search" class="el-icon-search"></i>
           <div v-show="isSearch" class="school_wrap">
             <div class="jie_wrap">
-              <p>燕园街道食品药品监督管理所</p>
+              <p>叙永县食品药品监督管理所</p>
               <p>
                 <span>预警：30次</span>
                 <span>报警：30次</span>
                 <span>学校：30次</span>
               </p>
-              <p>北京市海淀区双榆树西里16号白楼</p>
+              <p>G312（广成线）</p>
             </div>
             <div class="school_list_wrap">
               <div class="tap">
@@ -96,8 +96,8 @@ export default {
       isSearch: false, //是否显示搜索结果
       search_type: "街道", //搜索结果的类型 （街道/学校）
       isClick: 1,
-      zoom: 12,
-      center: [116.397428, 39.90923],
+      zoom: 7,
+      center: [104.069855,30.658281],
       shiMarkers: [],
       jieMarkers: [],
       xueMarkers: [],
@@ -206,8 +206,10 @@ export default {
                       `;
             val.events = {
               click(e) {
+                vm.zoom = 14;
                 vm.search_type = "学校";
                 vm.search();
+                 
               }
             };
             this.activeMarers = searchData;
@@ -270,7 +272,7 @@ export default {
             `;
           val.events = {
             click(e) {
-              this.zoom = 12;
+              vm.zoom = 9;
               console.log(e);
               vm.search();
             }

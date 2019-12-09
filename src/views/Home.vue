@@ -6,7 +6,7 @@
           <div class="Export-btn anniu" v-show="yichang">报表导出</div>
         </div>
         <h1 class="h1" style="flex-direction: column;line-height: 1.6em;margin-top: -.18rem;">
-          <span>{{USER_INFO.areaName}}</span>
+          <span>{{title}}</span>
           <div style="display:flex;">
             <!-- <img src="@/assets/img/logo.png" /> -->
             <span>校园食品安全监测云平台</span>
@@ -101,16 +101,17 @@ export default {
       TZList: [],
       title: "", //标题
       TZId: Number,
-      fullscreenLoading: false
+      fullscreenLoading: false,
+      userId: ""
     };
   },
   methods: {
-    ...mapMutations(["SET_USER_INFO", "CHENGE_ACTIVE","GO_OUT"]),
+    ...mapMutations(["SET_USER_INFO", "CHENGE_ACTIVE", "GO_OUT"]),
 
     change(e) {
       this.fullscreenLoading = true;
 
-      console.log("改变状态");
+      // console.log("改变状态");
       this.TZId = e;
       setTimeout(() => {
         // console.log(this.TZId);
@@ -132,42 +133,22 @@ export default {
       }, 1000);
     },
     seeMore() {
-      this.CHENGE_ACTIVE("通知公告");
-      this.to("completion");
+      // this.CHENGE_ACTIVE("通知公告");
+      this.to("/remind");
     },
     getHongList() {
       xinxiaoxi({
-        userId: 4,
+        userId: this.userId,
         supStatus: 2
       }).then(res => {
-        console.log("home");
+        // console.log(res.data.data.records);
+
         this.TZList = res.data.data.records;
       });
-
-      // h_tongzhiliebiao({
-      //   userId: 4,
-      //   supStatus: 2
-      // }).then(res => {
-      //   console.log(res.data);
-      //   this.TZList = res.data.data.records;
-      // });
-
-      // this.$http
-      //   .get("/api/manageWat/supervision/findForStatus", {
-      //     params: { userId: 4, supStatus: 2 }
-      //   })
-      //   .then(res => {
-      //     // console.log('userId');
-
-      //     // console.log(res.data.data.records);
-      //     this.TZList = res.data.data.records;
-      //   });
     },
     to(url) {
       if (url === "/login") {
         this.GO_OUT();
-        // localStorage.removeItem("userInfo");
-        // this.SET_USER_INFO("");
       }
 
       if (url === "/abnormal") {
@@ -183,35 +164,36 @@ export default {
     }
   },
   mounted() {
+    // console.log(this.USER_INFO);
+
     this.linkActive = this.$route.path;
-    console.log("HOME");
-    // if(!this.USER_INFO.areaCode){
-    //   this.$router.push('/login');
-    // }
-    console.log(this.USER_INFO);
+    if (!this.USER_INFO.areaCode) {
+      this.$router.push("/login");
+      return;
+    }
 
-
-    if (this.USER_INFO.userLevel == "shengjiaoyu") {
-      this.title = "四川省教育局";
-    } else if (this.USER_INFO.userLevel === "shijiaoyu") {
-      this.title = "泸州市教育局";
-    } else if (this.USER_INFO.userLevel === "qujiaoyu") {
-      this.title = "叙永县教育局";
-    } else if (this.USER_INFO.userLevel == "shengjianguan") {
-      this.title = "四川省市场监督管理局";
-    } else if (this.USER_INFO.userLevel === "shijianguan") {
-      this.title = "泸州市市场监督管理局";
-    } else if (this.USER_INFO.userLevel === "qujianguan") {
-      this.title = "叙永县市场监督管理局";
+    if (this.USER_INFO.roleCodes[0] === "shichangjianguan") {
+      this.title = this.USER_INFO.areaName + "监管局";
+    } else if (this.USER_INFO.roleCodes[0] === "jiaoyujuguanli") {
+      this.title = this.USER_INFO.areaName + "教育局";
     }
     setTimeout(() => {
       this.getHongList();
     }, 0);
 
     setInterval(() => {
-      console.log("新通知");
+      // console.log("新通知");
       this.getHongList();
-    }, 1000*5);
+    }, 1000 * 5);
+  },
+  created() {
+    var user = JSON.parse(localStorage.getItem("userInfo"));
+    try {
+      this.SET_USER_INFO(user);
+      this.userId = user.userId;
+    } catch {
+      this.$router.push("/login");
+    }
   }
 };
 

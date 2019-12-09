@@ -46,7 +46,8 @@ export default {
   data() {
     return {
       loginForm: {
-        username: "xyEduAdmin",
+        username: "xySupAdmin",
+        // username: "xyEduAdmin",
         password: "123456",
         code: "",
         redomStr: "",
@@ -57,7 +58,9 @@ export default {
         roleCodes: null,
         areaCode: "",
         userLevel: "",
-        areaName: ""
+        areaName: "",
+        type: "",
+        userId: ""
       }
     };
   },
@@ -95,7 +98,7 @@ export default {
               localStorage.removeItem("token");
               this.$message({
                 showClose: true,
-                message: "账号错误，请重试111",
+                message: "账号错误，请重试",
                 type: "error"
               });
               return;
@@ -117,26 +120,27 @@ export default {
             if (this.userInfo.roleCodes[0] === "shichangjianguan") {
               if (this.userInfo.userLevel === "2") {
                 //省
-                this.userInfo.userLevel = "shengjianguan";
+                this.userInfo.type = "shengjianguan";
               } else if (this.userInfo.userLevel === "3") {
                 //市
-                this.userInfo.userLevel = "shijianguan";
+                this.userInfo.type = "shijianguan";
               } else if (this.userInfo.userLevel === "4") {
                 //区
-                this.userInfo.userLevel = "qujianguan";
+                this.userInfo.type = "qujianguan";
               }
             } else if (this.userInfo.roleCodes[0] === "jiaoyujuguanli") {
               if (this.userInfo.userLevel === "2") {
                 //省
-                this.userInfo.userLevel = "shengjiaoyu";
+                this.userInfo.type = "shengjiaoyu";
               } else if (this.userInfo.userLevel === "3") {
                 //市
-                this.userInfo.userLevel = "shijiaoyu";
+                this.userInfo.type = "shijiaoyu";
               } else if (this.userInfo.userLevel === "4") {
                 //区
-                this.userInfo.userLevel = "qujiaoyu";
+                this.userInfo.type = "qujiaoyu";
               }
             }
+            this.userInfo.userId = json.sysUser.userId;
             this.SET_USER_INFO(this.userInfo);
             this.$router.push("/");
           });
@@ -157,37 +161,6 @@ export default {
           });
           _this.geterweima();
         });
-    },
-    toHome() {
-      console.log("denglu");
-
-      let userinfo = "";
-
-      if (this.loginForm.username === "xySupAdmin") {
-        userinfo = "shengjianguan";
-      } else if (this.loginForm.username === "shengjiaoyu") {
-        userinfo = "shengjiaoyu";
-      } else if (this.loginForm.username === "shijiaoyu") {
-        userinfo = "shijiaoyu";
-      } else if (this.loginForm.username === "qujiaoyu") {
-        userinfo = "qujiaoyu";
-      } else if (this.loginForm.username === "shengjianguan") {
-        userinfo = "shengjianguan";
-      } else if (this.loginForm.username === "shijianguan") {
-        userinfo = "shijianguan";
-      } else if (this.loginForm.username === "qujianguan") {
-        userinfo = "qujianguan";
-      } else {
-        // this.$message({
-        //   dangerouslyUseHTMLString: true,
-        //   message:
-        //     "账号：<strong>shengjianguan/shijianguan/qujianguan/shengjiaoyu/shijiaoyu/qujiaoyu</strong></br>密码：<i>空</i><br/>验证码：<i>空</i>"
-        // });
-        return;
-      }
-      localStorage.setItem("user_info", userinfo);
-      this.SET_USER_INFO(userinfo);
-      this.$router.push("/");
     }
   }
 };

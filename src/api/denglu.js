@@ -33,14 +33,6 @@ export const getUserInfo = () => {
     })
 }
 
-// export function baojingList(query) {
-//     return request({
-//         url: '/api/baojingList',
-//         method: 'get',
-//         params: query
-//     })
-// }
-
 /*加密
 */
 function encryption(params) {

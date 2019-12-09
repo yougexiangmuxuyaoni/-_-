@@ -12,30 +12,33 @@
         >
           <el-submenu index="1">
             <template slot="title">
-              证照预警
-              <span>{{yujingshuJson.warningNumber.cardTotal}}</span>
+              证照报警
+              <span>{{baojingshuJson.alarmTotalByYear.cardTotal}}</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="1">营业执照即将过期</el-menu-item>
-              <el-menu-item index="2">许可证即将过期</el-menu-item>
+              <el-menu-item index="1">营业执照过期</el-menu-item>
+              <el-menu-item index="2">许可证过期</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">
             <template slot="title">
-              人员预警
-              <span>{{yujingshuJson.warningNumber.personTotal}}</span>
+              人员报警
+              <span>{{baojingshuJson.alarmTotalByYear.personTotal}}</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="3">健康证即将过期</el-menu-item>
+              <el-menu-item index="3">健康证过期</el-menu-item>
+              <el-menu-item index="4">晨检出现不合格报警</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="3">
             <template slot="title">
-              食材预警
-              <span>{{yujingshuJson.warningNumber.foodTotal}}</span>
+              食材报警
+              <span>{{baojingshuJson.alarmTotalByYear.foodTotal}}</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="4">采购时未上传索证索票</el-menu-item>
+              <el-menu-item index="5">索证索票未上传超过3天报警</el-menu-item>
+              <el-menu-item index="6">食材快检报告不合格报警</el-menu-item>
+              <el-menu-item index="7">食材快检报告未上传</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
@@ -66,9 +69,9 @@
         <el-header>
           <div class="tap">
             <el-radio-group v-model="radio1">
-              <el-radio-button label="全部预警"></el-radio-button>
-              <el-radio-button label="未接收预警"></el-radio-button>
-              <el-radio-button label="已接收预警"></el-radio-button>
+              <el-radio-button label="全部报警"></el-radio-button>
+              <el-radio-button label="未接收报警"></el-radio-button>
+              <el-radio-button label="已接收报警"></el-radio-button>
             </el-radio-group>
           </div>
         </el-header>
@@ -83,15 +86,15 @@
             height="7.6rem"
           >
             <el-table-column type="index"></el-table-column>
-            <el-table-column prop="sameWarning" label="同一预警数量"></el-table-column>
-            <el-table-column prop="description" label="预警信息内容"></el-table-column>
-            <el-table-column prop="type" label="预警类别"></el-table-column>
+            <el-table-column prop="sameAlarm" label="同一报警数量"></el-table-column>
+            <el-table-column prop="description" label="报警信息内容"></el-table-column>
+            <el-table-column prop="type" label="报警类别"></el-table-column>
 
             <el-table-column prop="schoolName" label="学校名称"></el-table-column>
             <el-table-column prop="supplierName" label="供应商名称"></el-table-column>
             <el-table-column prop="school" label="关联学校数量"></el-table-column>
-            <el-table-column prop="warning" label="关联预警数量"></el-table-column>
-            <el-table-column prop="time" label="最近预警时间"></el-table-column>
+            <el-table-column prop="alarm" label="关联报警数量"></el-table-column>
+            <el-table-column prop="time" label="最近报警时间"></el-table-column>
             <el-table-column prop="Status" label="接收状态"></el-table-column>
             <el-table-column fixed="right" label="操作" width="100">
               <template slot-scope="scope">
@@ -122,7 +125,7 @@
   </div>
 </template>
 <script>
-import { yujingshu, yujingliebiao } from "@/api/warning.js";
+import { baojingshu, baojingliebiao } from "@/api/warning.js";
 import { log } from "util";
 import { mapState, mapMutations } from "vuex";
 export default {
@@ -144,16 +147,16 @@ export default {
           {
             supplierName: " ",
             Status: " ",
-            school: '',
+            school: "",
             description: " ",
-            warning: '',
+            warning: "",
             VALUE: "",
             time: ":",
-            id: '',
+            id: "",
             type: "",
             schoolName: "",
-            SchoolId: '',
-            sameWarning: ''
+            SchoolId: "",
+            sameWarning: ""
           }
         ],
         total: 3,
@@ -163,18 +166,18 @@ export default {
         pages: 1
       },
       navType: "1",
-      yujingshuJson: {
-        warningNumber: {
-          cardTotal: 2,
-          foodTotal: 1,
-          personTotal: 5
+      baojingshuJson: {
+        alarmTotalByYear: {
+          cardTotal: 30,
+          foodTotal: 20,
+          personTotal: 50
         }
       },
       activeIndex: "",
       value: "",
       options: [],
       shicai_date: [],
-      radio1: "全部预警"
+      radio1: "全部报警"
     };
   },
   watch: {
@@ -186,8 +189,10 @@ export default {
         this.jsonval.startingTime = this.shicai_date[0];
         this.jsonval.endTime = this.shicai_date[1];
       }
+      console.log(this.shicai_date);
     },
     radio1() {
+      console.log(this.radio1);
       this.topNav();
     }
   },
@@ -206,14 +211,14 @@ export default {
         size: 10,
         dealWith: 3 //全部 1.未接收 3.已接收
       };
-      if (this.radio1 === "全部预警") {
+      if (this.radio1 === "全部报警") {
         this.jsonval.dealWith = 3;
-      } else if (this.radio1 === "未接收预警") {
+      } else if (this.radio1 === "未接收报警") {
         this.jsonval.dealWith = 1;
-      } else if (this.radio1 === "已接收预警") {
+      } else if (this.radio1 === "已接收报警") {
         this.jsonval.dealWith = 2;
       }
-      this.getyujingliebiao();
+      this.getbaojingliebiao();
     },
     listInit() {
       this.jsonval = {
@@ -222,57 +227,56 @@ export default {
         endTime: "",
         page: 1,
         size: 10,
-        dealWith: 3,
+        dealWith: 3, //全部 1.未接收 3.已接收
         type: 1
       };
     },
     search() {
-      this.jsonval.page = 1;
-      this.radio1 = "全部预警";
+      this.radio1 = "全部报警";
       this.jsonval.dealWith = 3;
-      this.getyujingliebiao();
+      this.jsonval.page = 1;
+      this.getbaojingliebiao();
     },
     upPage() {
       this.jsonval.page--;
-      this.getyujingliebiao();
+      this.getbaojingliebiao();
     },
     nextPage() {
       this.jsonval.page++;
-      this.getyujingliebiao();
+      this.getbaojingliebiao();
     },
     handleSelect(key, keyPath) {
-      this.radio1 = "全部预警";
+      this.radio1 = "全部报警";
       this.listInit();
       this.jsonval.type = key;
-      this.getyujingliebiao();
+      this.getbaojingliebiao();
     },
     showXiangqing(e) {
       this.CHANGE_TIME_NUMBER();
       this.SETTYPE(e.type.substr(0, 2));
-      localStorage.setItem("SchoolId",e.SchoolId);
-      localStorage.setItem("lishixiangqingid",e.id);
-      localStorage.setItem("lishixiangqingjing",e.type.substr(2));
+      localStorage.setItem("SchoolId", e.SchoolId);
+      localStorage.setItem("lishixiangqingid", e.id);
+      localStorage.setItem("lishixiangqingjing", e.type.substr(2));
       this.$router.push("/alertDetails");
     },
     hover(row, column, cell, event) {
       console.log(row);
     },
-    getyujingshu() {
+    getbaojingshu() {
       let date = new Date();
       let year = date.getFullYear();
-      yujingshu({
+      baojingshu({
         year: year,
         regionalLevel: this.USER_INFO.userLevel,
         areaCode: this.USER_INFO.areaCode
       }).then(res => {
-        this.yujingshuJson = res.data.data;
+        this.baojingshuJson = res.data.data;
       });
     },
-    getyujingliebiao() {
+    getbaojingliebiao() {
       this.loading_yujing = true;
-
-      yujingliebiao({
-        type: this.jsonval.type, //预警类别
+      baojingliebiao({
+        type: this.jsonval.type, //报警类别
         regionalLevel: this.USER_INFO.userLevel,
         areaCode: this.USER_INFO.areaCode,
         dealWith: this.jsonval.dealWith,
@@ -292,8 +296,8 @@ export default {
     var user = JSON.parse(localStorage.getItem("userInfo"));
     this.SET_USER_INFO(user);
 
-    this.getyujingshu();
-    this.getyujingliebiao();
+    this.getbaojingshu();
+    this.getbaojingliebiao();
   }
 };
 </script>

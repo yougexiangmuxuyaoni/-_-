@@ -2,28 +2,26 @@
   <div class="alertDetails">
     <div class="box">
       <div class="title">基础信息</div>
+
       <div class="row2" v-if="TYPE === '证照'">
         <div class="title_warp">
-          <div class="title">学校名称:{{lishixiangqingJson.basicInformationA.schoolName}}</div>
+          <div class="title">学校名称:{{lishixiangqingJson.basicInformationW.schoolName}}</div>
           <div>
             <div v-show="isShow" class="btn" @click="to('/positioning')">风险定位</div>
           </div>
         </div>
         <div class="conten">
           <div>
-            <div>{{lishixiangqingJson.basicInformationA.type.substr(2)}}编号：#{{lishixiangqingJson.basicInformationA.type.substr(2)==="报警"?"B":"Y"}}{{lishixiangqingJson.basicInformationA.id}}</div>
-            <div>同一{{lishixiangqingJson.basicInformationA.type.substr(2)}}数量：{{lishixiangqingJson.sameWarning}}次</div>
+            <div>{{lishixiangqingJson.basicInformationW.type.substr(2)}}编号：#{{lishixiangqingJson.basicInformationW.type.substr(2)==="报警"?"B":"Y"}}{{lishixiangqingJson.basicInformationW.id}}</div>
+            <div>同一{{lishixiangqingJson.basicInformationW.type.substr(2)}}数量：{{lishixiangqingJson.sameWarning}}次</div>
           </div>
           <div>
-            <div>{{lishixiangqingJson.basicInformationA.type.substr(2)}}类别：{{lishixiangqingJson.basicInformationA.type}}</div>
-            <div>{{lishixiangqingJson.basicInformationA.type.substr(2)}}信息内容：{{lishixiangqingJson.basicInformationA.description}}</div>
+            <div>{{lishixiangqingJson.basicInformationW.type.substr(2)}}类别：{{lishixiangqingJson.basicInformationW.type}}</div>
+            <div>{{lishixiangqingJson.basicInformationW.type.substr(2)}}信息内容：{{lishixiangqingJson.basicInformationW.description}}</div>
           </div>
           <div>
-            <div>供应商名称：{{lishixiangqingJson.basicInformationA.supplierName}}</div>
-            <div>{{lishixiangqingJson.basicInformationA.type.substr(2)}}时间：{{lishixiangqingJson.basicInformationA.time}}</div>
-          </div>
-          <div v-if="TYPE === '食材'">
-            <div>食材名称：茄子</div>
+            <div>供应商名称：{{lishixiangqingJson.basicInformationW.supplierName}}</div>
+            <div>{{lishixiangqingJson.basicInformationW.type.substr(2)}}时间：{{lishixiangqingJson.basicInformationW.time}}</div>
           </div>
         </div>
       </div>
@@ -48,7 +46,7 @@
             <div>{{shicaixiangqingJson.type.substr(2)}}时间：{{shicaixiangqingJson.time}}</div>
           </div>
           <div style="flex: inherit;">
-            <div>食材名称：{{shicaixiangqingJson.foodName}}</div>
+            <div>食材名称：{{shicaixiangqingJson.food_name || "暂无"}}</div>
           </div>
         </div>
       </div>
@@ -69,7 +67,7 @@
             <div>{{renyuanxiangqingJson.type.substr(2)}}信息内容：{{renyuanxiangqingJson.description}}</div>
           </div>
           <div>
-            <div>人员名称：{{renyuanxiangqingJson.human}}</div>
+            <div>人员名称：{{renyuanxiangqingJson.human || "暂无"}}</div>
             <div>{{renyuanxiangqingJson.type.substr(2)}}时间：{{renyuanxiangqingJson.time}}</div>
           </div>
         </div>
@@ -79,12 +77,6 @@
         <div class="title">供应商关联学校</div>
         <div class="conten">
           <span>{{lishixiangqingJson.schoolName.schName}}</span>
-          <!-- <div class="more_wrap">
-            <div class="more">
-              展开更多
-              <i class="el-icon-arrow-down"></i>
-            </div>
-          </div>-->
         </div>
       </div>
 
@@ -198,14 +190,14 @@
           v-if="TYPE === '证照'"
           type="text"
           name="alarmId"
-          v-model="lishixiangqingJson.basicInformationA.id"
+          v-model="lishixiangqingJson.basicInformationW.id"
         />
         <input v-if="TYPE === '人员'" type="text" name="alarmId" v-model="renyuanxiangqingJson.id" />
         <input v-if="TYPE === '食材'" type="text" name="alarmId" v-model="shicaixiangqingJson.id" />
 
-        <input type="text" name="schoolId" value="1" />
+        <input type="text" name="schoolId" v-model="schoolId" />
         <input type="text" name="content" v-model="textarea" />
-        <input type="text" name="userId" value="4" />
+        <input type="text" name="userId" v-model="userId" />
         <input type="text" name="type" value="1" />
         <input type="submit" value="tijiao" ref="btn" />
       </form>
@@ -239,13 +231,15 @@ export default {
         sameWarning: 1,
         id: ""
       },
+      schoolId: "",
+      userId: "",
       shicaiLength: 5,
       bjLength: 5,
       yjLength: 4,
       textarea: "",
       loading: false,
       lishixiangqingJson: {
-        basicInformationA: {
+        basicInformationW: {
           supplierName: "叙永县供应商A",
           early_warning: "1",
           description: "营业执照即将过期",
@@ -305,36 +299,6 @@ export default {
             description: "营业执照过期",
             label: "营业执照报警",
             value: "1"
-          },
-          {
-            total: 3,
-            description: "许可证过期",
-            label: "许可证报警",
-            value: "2"
-          },
-          {
-            total: 1,
-            description: "营业执照过期",
-            label: "营业执照报警",
-            value: "1"
-          },
-          {
-            total: 3,
-            description: "许可证过期",
-            label: "许可证报警",
-            value: "2"
-          },
-          {
-            total: 1,
-            description: "营业执照过期",
-            label: "营业执照报警",
-            value: "1"
-          },
-          {
-            total: 3,
-            description: "许可证过期",
-            label: "许可证报警",
-            value: "2"
           }
         ]
       },
@@ -413,51 +377,66 @@ export default {
       }
     },
     getlsxiangqing(e) {
-      console.log("进入的类型");
-      // console.log(localStorage.getItem("leixing"));
+      let SchoolId = localStorage.getItem("SchoolId");
       let type = localStorage.getItem("lishixiangqingtype");
       let id = Number(localStorage.getItem("lishixiangqingid"));
       let jing = localStorage.getItem("lishixiangqingjing");
+      this.schoolId = SchoolId;
+
+      this.userId = JSON.parse(localStorage.getItem("userInfo")).userId;
       let isBAO = 0;
       if (jing === "报警") {
         isBAO = 1;
       }
-      console.log(isBAO,id);
+      // console.log("报警/预警||预警报警ID||学校ID");
+
+      // console.log(isBAO, id, SchoolId);
 
       // warningId 可以用 e参数
       //iswarning 0预警 1预警
       if (this.TYPE === "证照") {
         lishixiangqing({
-          schoolId: 1,
+          schoolId: SchoolId,
           iswarning: isBAO,
           warningId: id
         }).then(res => {
-          console.log("证照详情");
-
-          console.log(res.data.data.data);
-          this.lishixiangqingJson = res.data.data.data;
+          // console.log("证照详情");
+          // console.log(res.data);
+          if (res.data.data) {
+            if (this.lishixiangqingJson.schoolName) {
+              this.lishixiangqingJson = res.data.data.data;
+            } else {
+              this.lishixiangqingJson.schoolName = {
+                schName: "叙永县城西实验中学",
+                id: 1
+              };
+            }
+          }
         });
       } else if (this.TYPE === "人员") {
         renyuanxiangqing({
-          schoolId: 1,
+          schoolId: SchoolId,
           iswarning: isBAO,
           warningId: id
         }).then(res => {
-          console.log("人员详情");
-
-          console.log(res.data.data.data);
-          this.renyuanxiangqingJson = res.data.data.data;
+          // console.log("人员详情");
+          if (res.data.data) {
+            // console.log(res.data.data.data);
+            this.renyuanxiangqingJson = res.data.data.data;
+          }
         });
       } else if (this.TYPE === "食材") {
         shicaixiangqing({
-          schoolId: 1,
+          schoolId: SchoolId,
           iswarning: isBAO,
           warningId: id
         }).then(res => {
-          console.log("食材详情");
-
-          console.log(res.data.data.data);
-          this.shicaixiangqingJson = res.data.data.data;
+          // console.log("食材详情");
+          // console.log(res.data);
+          if (this.shicaixiangqingJson.data) {
+            this.shicaixiangqingJson = res.data.data.data;
+          } else {
+          }
         });
       }
     },
@@ -494,9 +473,13 @@ export default {
       this.$router.push(uri);
     }
   },
-  mounted() {},
   created() {
     this.getlsxiangqing();
+    // 历史信息
+    // let id = localStorage.getItem("yichangId");
+    // console.log("学校id");
+    // console.log(id);
+    // this.schoolId = id;
   }
 };
 </script>

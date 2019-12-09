@@ -64,6 +64,26 @@ export function baojingshu(query) {
 
     })
 }
+
+
+export function zhengzhaolv(query) {
+    return request({
+        url: '/api/manageWat/statistics/getPercentage',
+        method: 'get',
+        params: query
+
+    })
+}
+
+export function quyuma(query) {
+    return request({
+        url: '/api/manageWat/statistics/getCode',
+        method: 'get',
+        params: query
+
+    })
+}
+
 // export function baojingList(query) {
 //     return request({
 //         url: '/api/baojingList',

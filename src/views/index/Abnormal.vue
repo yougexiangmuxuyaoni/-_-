@@ -7,22 +7,26 @@
             <span class="tit">预警列表</span>
           </div>
           <div class="t-right">
-            <span @click="to('/header_hei')">
+            <span @click="to('/header_hei/allWarning')">
               预警总数
               <span class="btn" v-if="yujinglistJson.earlyTotal">{{yujinglistJson.earlyTotal}}</span>
             </span>
-            <span @click="to('/header_hei')">全部预警</span>
+            <span @click="to('/header_hei/allWarning')">全部预警</span>
           </div>
         </div>
-        <div class="group">
+        <div
+          class="group"
+          v-loading="loading_yujing"
+          element-loading-text="拼命加载中"
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(0, 0, 0, 0.1)"
+        >
           <div
             class="item"
-            @click="to('/positioning')"
+            @click="to('/positioning',val.schoolId)"
             v-for="(val,index) of yujinglistJson.earlyList"
             :key="index"
           >
-            <!-- :key="val.earlyId" -->
-
             <div class="top">
               <div class="t-left">{{val.title || "暂无"}}</div>
             </div>
@@ -40,22 +44,26 @@
             <span class="tit">报警信息</span>
           </div>
           <div class="t-right">
-            <span @click="to('/header_hei')">
+            <span @click="to('/header_hei/allalarm')">
               待处理
               <span class="btn" v-if="baojinglistJson.alarmTotal">{{baojinglistJson.alarmTotal}}</span>
             </span>
-            <span @click="to('/header_hei')">全部报警</span>
+            <span @click="to('/header_hei/allalarm')">全部报警</span>
           </div>
         </div>
-        <div class="group">
+        <div
+          class="group"
+          v-loading="loading_baojing"
+          element-loading-text="拼命加载中"
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(0, 0, 0, 0.1)"
+        >
           <div
             class="item"
-            @click="to('/positioning')"
+            @click="to('/positioning',val.schoolId)"
             v-for="(val,index) of baojinglistJson.alarmList"
             :key="index"
           >
-            <!-- :key="val.schoolId" -->
-
             <div class="top">
               <div class="t-left">{{val.label || "暂无"}}</div>
             </div>
@@ -69,15 +77,44 @@
       </div>
     </div>
     <div class="echarts">
-      <div class="item" ref="shuliang"></div>
-      <div class="item" ref="leibie"></div>
-      <div class="item" ref="quyu"></div>
-      <div class="item" ref="paiming">
-        <div
-          v-show="ISxuexiao"
-          style="text-align:center;color:#30eee9;font-size:.3rem;font-weight:900;line-height: 10em;"
-        >暂无学校报警统计数据</div>
-      </div>
+      <div
+        class="item"
+        ref="shuliang"
+        v-loading="loading_shuliang"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.1)"
+      ></div>
+      <div
+        class="item"
+        ref="leibie"
+        v-loading="loading_leibie"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.1)"
+      ></div>
+      <div
+        class="item"
+        ref="quyu"
+        v-loading="loading_quyu"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.1)"
+      ></div>
+      <div
+        v-show="!ISxuexiao"
+        class="item"
+        ref="paiming"
+        v-loading="loading_xuexiao"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.1)"
+      ></div>
+      <div
+        v-show="ISxuexiao"
+        class="item"
+        style="text-align:center;color:#30eee9;font-size:.3rem;font-weight:900;line-height: 10em;"
+      >暂无学校报警统计数据</div>
     </div>
     <div class="baogao">
       <div class="report">
@@ -188,9 +225,7 @@
 <script>
 import {
   yujingList,
-  yujingdaichuli,
   baojingList,
-  baojingdaichuli,
   baojingshuliang,
   baojingleibie,
   xuexiaobaojing,
@@ -207,13 +242,33 @@ export default {
       xuexiaobaojingJson: [],
       quyubaojingJson: [],
       ISxuexiao: false,
-      nameArr:[],
-      yujingArr:[],
-      yujingArr:[],
+      nameArr: [],
+      yujingArr: [],
+      yujingArr: [],
+
+      loading_yujing: true,
+      loading_baojing: true,
+      loading_shuliang: true,
+      loading_leibie: true,
+      loading_quyu: true,
+      loading_xuexiao: true,
+      parmes: {
+        //全局参数
+        year: "2010",
+        areaCode: "510000",
+        regionalLevel: "2"
+      },
+      myChart4: null,
+      myChart3: null,
+      myChart2: null,
+      myChart: null
     };
   },
   methods: {
-    to(uri) {
+    to(uri, id) {
+      if (uri === "/positioning") {
+        localStorage.setItem("yichangId", id);
+      }
       this.$router.push(uri);
     },
     // Echarts 的 resize 方法
@@ -692,34 +747,34 @@ export default {
     //预警列表
     getYuJingList() {
       yujingList({
-        year: "2019",
-        areaCode: "510000",
-        regionalLevel: "2"
+        year: this.parmes.year,
+        areaCode: this.parmes.areaCode,
+        regionalLevel: this.parmes.regionalLevel
       }).then(res => {
-
         this.yujinglistJson = res.data.data;
-        console.log(this.yujinglistJson);
-        
+        this.loading_yujing = false;
+        // console.log(this.yujinglistJson);
       });
     },
     //报警列表
     getBaoJingList() {
       baojingList({
-        year: "2019",
-        areaCode: "510000",
-        regionalLevel: "2"
+        year: this.parmes.year,
+        areaCode: this.parmes.areaCode,
+        regionalLevel: this.parmes.regionalLevel
       }).then(res => {
         // console.log("报警");
         // console.log(res.data);
         this.baojinglistJson = res.data.data;
+        this.loading_baojing = false;
       });
     },
     //1-2月报警数量统计
     getBaoJingShuLiang() {
       baojingshuliang({
-        year: "2019",
-        areaCode: "510000",
-        regionalLevel: "2"
+        year: this.parmes.year,
+        areaCode: this.parmes.areaCode,
+        regionalLevel: this.parmes.regionalLevel
       }).then(res => {
         // console.log("报警数量统计");
         // console.log(res.data);
@@ -730,9 +785,9 @@ export default {
     //报警类别统计
     getBaoJingleibie() {
       baojingleibie({
-        year: "2019",
-        regionalLevel: "2",
-        areaCode: "510000"
+        year: this.parmes.year,
+        areaCode: this.parmes.areaCode,
+        regionalLevel: this.parmes.regionalLevel
       }).then(res => {
         // console.log("报警类别统计");
         // console.log(res.data);
@@ -742,13 +797,11 @@ export default {
     }, //学校报警统计
     getxXueXiaoBaoJing() {
       xuexiaobaojing({
-        year: "2019",
-        areaCode: "510000",
-        regionalLevel: "2",
+        year: this.parmes.year,
+        areaCode: this.parmes.areaCode,
+        regionalLevel: this.parmes.regionalLevel,
         limit: "5"
       }).then(res => {
-        // console.log("学校报警统计");
-        // console.log(res.data.data);
         this.xuexiaobaojingJson = res.data.data;
         if (this.xuexiaobaojingJson.length === 0) {
           this.ISxuexiao = true;
@@ -759,34 +812,39 @@ export default {
       });
     }, //区域报警统计
     getxQuYuBaoJing() {
-      console.log("区域报警统计");
-
       quyubaojing({
-        areaCode: "510100",
-        regionalLevel: "3",
-        year: "2019",
-        limit:"5"
+        year: this.parmes.year,
+        areaCode: this.parmes.areaCode,
+        regionalLevel: this.parmes.regionalLevel,
+        limit: "5"
       }).then(res => {
-        console.log(res.data.data);
         let json = res.data.data;
         let nameArr = [];
         let yujingArr = [];
         let baojingArr = [];
         json.forEach(item => {
-          nameArr.push(item.NAME);
+          nameArr.push(item.name);
           yujingArr.push(item.warningTotal);
           baojingArr.push(item.alramTotal);
         });
         this.nameArr = nameArr;
         this.yujingArr = yujingArr;
         this.baojingArr = baojingArr;
-
-        console.log(this.quyubaojingJson);
         this.initEcharts3();
       });
     }
   },
   mounted() {
+    var date = new Date();
+    this.parmes.year = date.getFullYear();
+    // console.log(this.parmes.year);
+
+    let user = JSON.parse(localStorage.getItem("userInfo"));
+    // 登录后取得 个人信息 动态赋值
+    this.parmes.areaCode = user.areaCode;
+    this.parmes.regionalLevel = user.userLevel;
+    // console.log(user);
+
     this.getYuJingList();
     this.getBaoJingList();
     this.getBaoJingShuLiang();
@@ -816,6 +874,8 @@ export default {
 <style lang="scss" scope>
 @import "@/assets/css/public.scss";
 #abnormal {
+  position: relative;
+  z-index: 0;
   box-sizing: border-box;
   font-size: 0.12rem;
   padding: 0.2rem 0.1rem;

@@ -2,7 +2,8 @@
   <Detail isShow="true"></Detail>
 </template>
 <script>
-import Detail from "@/components/ComAlertDetails";
+import Detail from "@/components/schoolDetails/GYSDetails";
+
 export default {
   name: "alertDetails",
   data() {

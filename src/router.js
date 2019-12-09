@@ -19,23 +19,8 @@ import Remind from "./views/user/Remind.vue";//消息提示
 
 
 import Header_hei from "./views/Header_hei.vue";//预警头部
-
 import AllWarning from "./views/Warning/AllWarning.vue";//全部预警
-import Certificates from "./views/Warning/WarningCertificates.vue";//证件信息缺失
-import WarningBeoverdue from "./views/Warning/WarningBeoverdue.vue";//证照过期
-import WariningPersonnel from "./views/Warning/WariningPersonnel.vue";//证件信息丢失
-import WariningPersonDate from "./views/Warning/WariningPersonDate.vue";//证件超期
-import WariningHygiene from "./views/Warning/WariningHygiene.vue";//证件超期
-import WariningFood from "./views/Warning/WariningFood.vue";//食材预警
-import WariningPacking from "./views/Warning/WariningPacking.vue";//预包装食品预警
-import WariningProduct from "./views/Warning/WariningProduct.vue";//成品预警
-
-
-
-
-
-import Allalarm from "./views/Allalarm.vue";//全部报警
-
+import AllAllalarm from "./views/Allalarm/AllAllalarm.vue";//全部报警
 
 
 // import NotChecked from "./views/NotChecked.vue";//未查收预警信息
@@ -88,58 +73,14 @@ const vueRouter = new Router({
       name: "Header_hei",
       component: Header_hei,
       children: [{
-        path: '/header_hei',
+        path: 'allWarning',
         name: 'AllWarning',
         component: AllWarning,
-        children: [
-          {
-            path: '/header_hei',
-            name: 'Certificates',
-            component: Certificates
-          }, {
-            path: 'beoverdue',
-            name: 'Beoverdue',
-            component: WarningBeoverdue
-          }, {
-            path: 'personnel',
-            name: 'Personnel',
-            component: WariningPersonnel
-          }, {
-            path: 'personneldate',
-            name: 'personneldate',
-            component: WariningPersonDate
-          }, {
-            path: 'hygiene',
-            name: 'hygiene',
-            component: WariningHygiene
-          }, {
-            path: 'food',
-            name: 'food',
-            component: WariningFood
-          }, {
-            path: 'packing',
-            name: 'packing',
-            component: WariningPacking
-          }, {
-            path: 'product',
-            name: 'product',
-            component: WariningProduct
-          }
-        ]
       }, {
-        path: '/allalarm',
+        path: 'allalarm',
         name: 'Allalarm',
-        component: Allalarm
-
-        // }, {
-        //   path: '/companydetails',
-        //   name: 'CompanyDetails',
-        //   component: CompanyDetails
-        // }, {
-        //   path: '/notchecked',
-        //   name: 'NotChecked',
-        //   component: NotChecked
-      }, , {
+        component: AllAllalarm,
+      }, {
         path: '/alertDetails',
         name: 'AlertDetails',
         component: AlertDetails

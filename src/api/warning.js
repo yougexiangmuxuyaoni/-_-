@@ -12,6 +12,8 @@ export function yujingshu(query) {
 }
 
 export function yujingliebiao(query) {
+    console.log(query);
+
     return request({
         url: '/api/manageWat/statistics/getWarnings',
         method: 'get',
@@ -28,6 +30,8 @@ export function baojingshu(query) {
 }
 
 export function baojingliebiao(query) {
+    console.log(query);
+    
     return request({
         url: '/api/manageWat/statistics/getAlarms',
         method: 'get',

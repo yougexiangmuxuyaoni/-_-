@@ -2,14 +2,14 @@
   <div id="positioning">
     <div class="top">
       <div class="row1" style>
-        <div class="left" style="width:6rem;">
-          <img class="img" src="@/assets/school1.jpg" alt />
+        <div class="left">
+          <img class="img" :src="xuexiaoxinxiJson.schoolInformation.pic" alt />
           <div class="neirong">
-            <div class="dazi">叙永县外国语小学</div>
-            <p>所在区域：泸州市叙永县</p>
-            <p>办学性质：公办学校</p>
-            <p>类型：县直中学</p>
-            <p>地址：四川省叙永县和平路12号</p>
+            <div class="dazi">{{xuexiaoxinxiJson.schoolInformation.schoolName || "暂无"}}</div>
+            <p>所在区域：{{xuexiaoxinxiJson.schoolInformation.schArea || "暂无"}}</p>
+            <p>办学性质：{{xuexiaoxinxiJson.schoolInformation.officeNature || "民办" }}学校</p>
+            <p>类型：{{xuexiaoxinxiJson.schoolInformation.schoolType || "暂无"}}</p>
+            <p>地址：{{xuexiaoxinxiJson.schoolInformation.schAddress || "暂无"}}</p>
             <div @click="VideShow" class="btn">查看视频直播</div>
           </div>
         </div>
@@ -20,7 +20,7 @@
             </div>
             <div class="shu">
               <div class="shu1">
-                <span>36</span>条
+                <span>{{xuexiaoxinxiJson.warningNumber.warningNumber}}</span>条
               </div>
             </div>
             <div>学校预警数量汇总</div>
@@ -35,7 +35,7 @@
 
             <div class="shu">
               <div class="shu1 red">
-                <span>15</span>条
+                <span>{{xuexiaoxinxiJson.alarmNumber.alarmNumber}}</span>条
               </div>
             </div>
             <div>学校报警数量汇总</div>
@@ -69,27 +69,27 @@
                 <table style="line-height:2.5em;">
                   <tr>
                     <td>学校名称：</td>
-                    <td>四川省泸州市叙永县外国语小学</td>
+                    <td>{{zizhixinxiJson.sch_name}}</td>
                   </tr>
                   <tr>
                     <td>所属市场监管：</td>
-                    <td>四川省泸州市叙永县市场监督管理局</td>
+                    <td>{{zizhixinxiJson.reg_name}}</td>
                   </tr>
                   <tr>
                     <td>所属教育监管：</td>
-                    <td>四川省泸州市叙永县教育管理局</td>
+                    <td>{{zizhixinxiJson.reg_name}}</td>
                   </tr>
                   <tr>
                     <td>学校校长：</td>
-                    <td>张全德</td>
+                    <td>{{zizhixinxiJson.principal}}</td>
                   </tr>
                   <tr>
                     <td>联系方式：</td>
-                    <td>13684759020</td>
+                    <td>{{zizhixinxiJson.tel}}</td>
                   </tr>
                   <tr>
                     <td>学校地址：</td>
-                    <td>四川省泸州市叙永县和平路12号</td>
+                    <td>{{zizhixinxiJson.address}}</td>
                   </tr>
                 </table>
               </div>
@@ -97,7 +97,7 @@
                 <div>
                   <el-progress
                     type="circle"
-                    :percentage="100"
+                    :percentage="Number(zizhixinxiJson.ratingScore)"
                     :show-text="false"
                     style="position: absolute;"
                   ></el-progress>
@@ -105,13 +105,13 @@
                     class="score"
                     style="width: 126px;text-align: center;font-size: 0.24rem;font-weight: bold;color: #FFFFFF;padding-top: 50px;"
                   >
-                    <span>100分</span>
+                    <span>{{zizhixinxiJson.ratingScore}}分</span>
                   </div>
                   <div
                     class="score"
                     style="width: 126px;text-align: center;font-size: 0.16rem;color: #FFFFFF;margin-top: 65px;"
                   >
-                    <span>量化评级：A级</span>
+                    <span>量化评级：{{zizhixinxiJson.quantitative}}级</span>
                   </div>
                 </div>
               </div>
@@ -126,7 +126,7 @@
                     供应商总数：
                     <span
                       style="color:#31c9f2; font-size: 20px;padding-right: 5px"
-                    >{{gongyingshangshuJson.zongshu}}</span>家
+                    >{{gongyingshangJson.total.Total}}</span>家
                   </span>
                 </div>
                 <div style="width: 40%; float: left">
@@ -136,7 +136,7 @@
                       :text-inside="true"
                       :width="20"
                       :stroke-width="18"
-                      :percentage="gongyingshangshuJson.yingyeshu"
+                      :percentage="parseInt((Number(gongyingshangJson.open.OpenTotal)/Number(gongyingshangJson.total.Total))*100)"
                     ></el-progress>
                   </div>
                 </div>
@@ -147,7 +147,7 @@
                       :text-inside="true"
                       :width="20"
                       :stroke-width="18"
-                      :percentage="gongyingshangshuJson.xukeshu"
+                      :percentage="parseInt((Number(gongyingshangJson.license.LicenseTotal)/Number(gongyingshangJson.total.Total))*100)"
                       background="#ff9900"
                     ></el-progress>
                   </div>
@@ -157,66 +157,45 @@
                 class="box"
                 style="width:100%; float:left;padding: .3rem .2rem;box-sizing:border-box;"
               >
-                <div class="flex justify_between">
-                  <div class="item">
-                    <p class="r1">红双喜粮油食品有限公司</p>
-                    <p class>食品经营许可证：7343948394544</p>
+                <div class="flex justify_between" style="flex-wrap: wrap;">
+                  <div
+                    class="item"
+                    style="width:30%;padding-bottom: 20px;"
+                    v-show="index < gongyingshangLength"
+                    v-for="(val,index) of gongyingshangJson.supplierInformation"
+                    :key="index"
+                  >
+                    <p class="r1">{{val.name}}</p>
+                    <p class>食品经营许可证：{{val.license_number}}</p>
                     <div class="bot">
-                      <p class="ellipsis">同时供应：第二外国语小学，清华附中</p>
-                      <p class="all">查看全部学校</p>
-                    </div>
-                  </div>
-
-                  <div class="item">
-                    <p class="r1">红双喜粮油食品有限公司</p>
-                    <p class>食品经营许可证：7343948394544</p>
-                    <div class="bot">
-                      <p class="ellipsis">同时供应：第二外国语小学，清华附中</p>
-                      <p class="all">查看全部学校</p>
-                    </div>
-                  </div>
-
-                  <div class="item">
-                    <p class="r1">红双喜粮油食品有限公司</p>
-                    <p class>食品经营许可证：7343948394544</p>
-                    <div class="bot">
-                      <p class="ellipsis">同时供应：第二外国语小学，清华附中</p>
-                      <p class="all">查看全部学校</p>
+                      <p class="ellipsis">
+                        同时供应：{{val.school.schName}}
+                        <!-- <span v-for="val of val.school" :key="val.id">{{val.schName}}</span> -->
+                      </p>
+                      <!-- <p class="all">查看全部学校</p> -->
                     </div>
                   </div>
                 </div>
-                <div class="flex justify_between">
-                  <div class="item">
-                    <p class="r1">红双喜粮油食品有限公司</p>
-                    <p class>食品经营许可证：7343948394544</p>
-                    <div class="bot">
-                      <p class="ellipsis">同时供应：第二外国语小学，清华附中</p>
-                      <p class="all">查看全部学校</p>
-                    </div>
-                  </div>
 
-                  <div class="item">
-                    <p class="r1">红双喜粮油食品有限公司</p>
-                    <p class>食品经营许可证：7343948394544</p>
-                    <div class="bot">
-                      <p class="ellipsis">同时供应：第二外国语小学，清华附中</p>
-                      <p class="all">查看全部学校</p>
-                    </div>
-                  </div>
-
-                  <div class="item">
-                    <p class="r1">红双喜粮油食品有限公司</p>
-                    <p class>食品经营许可证：7343948394544</p>
-                    <div class="bot">
-                      <p class="ellipsis">同时供应：第二外国语小学，清华附中</p>
-                      <p class="all">查看全部学校</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="flex more xu_more">
+                <div
+                  v-show="gongyingshangJson.supplierInformation.length>gongyingshangLength"
+                  @click="gongyingshangMore"
+                  class="flex more xu_more"
+                >
                   <span>
                     展开更多
                     <i class="el-icon-arrow-down"></i>
+                  </span>
+                </div>
+
+                <div
+                  v-show="gongyingshangJson.supplierInformation.length<gongyingshangLength && gongyingshangJson.supplierInformation.length>3"
+                  @click="gongyingshangMore"
+                  class="flex more xu_more"
+                >
+                  <span>
+                    收起
+                    <i class="el-icon-arrow-up"></i>
                   </span>
                 </div>
               </div>
@@ -229,7 +208,9 @@
                 <div style="width: 20%; float: left">
                   <span style="font-size: 16px">
                     人员总数：
-                    <span style="color:#31c9f2; font-size: 20px;padding-right: 5px">26</span>人
+                    <span
+                      style="color:#31c9f2; font-size: 20px;padding-right: 5px"
+                    >{{renyuanxinxiJson.chefInformation.length+renyuanxinxiJson.foodSafetyInformation.length+renyuanxinxiJson.foodEscortInformation.length}}</span>人
                   </span>
                 </div>
                 <div style="width: 40%; float: left">
@@ -239,7 +220,7 @@
                       :text-inside="true"
                       :width="20"
                       :stroke-width="18"
-                      :percentage="100"
+                      :percentage="parseInt((Number(renyuanxinxiJson.healthCheck.healthCard)/Number(renyuanxinxiJson.morningCheck.total))*100) ||0"
                     ></el-progress>
                   </div>
                 </div>
@@ -250,7 +231,7 @@
                       :text-inside="true"
                       :width="20"
                       :stroke-width="18"
-                      :percentage="80"
+                      :percentage="parseInt(Number(renyuanxinxiJson.morningCheck.eqRatio))*100"
                     ></el-progress>
                   </div>
                 </div>
@@ -262,28 +243,39 @@
                 <div class="flex column" style="margin-bottom: 0.3rem">
                   <div
                     class="tip"
-                    style="padding-left: 0.2rem; font-size: 16px; border-left: 3px solid #31c9f2"
-                  >厨房人员（10人）</div>
-                  <div class="main" style="padding:0.2rem">
-                    <div>
-                      <p>理想/厨师</p>
-                      <p>健康证：563434387483</p>
-                    </div>
-
-                    <div>
-                      <p>理想/厨师</p>
-                      <p>健康证：563434387483</p>
-                    </div>
-
-                    <div>
-                      <p>理想/厨师</p>
-                      <p>健康证：563434387483</p>
+                    style="padding-left: 0.2rem; font-size: 16px; border-left: 3px solid #31c9f2;"
+                  >厨房人员（{{renyuanxinxiJson.chefInformation.length}}人）</div>
+                  <div class="main" style="padding:0.2rem;flex-wrap: wrap;">
+                    <div
+                      style="width:30%;text-align: center;padding-bottom: 20px;"
+                      v-show="index < chufangLength"
+                      v-for="(val,index) of renyuanxinxiJson.chefInformation"
+                      :key="index"
+                    >
+                      <p>{{val.realName}}/厨师</p>
+                      <p>健康证：{{val.healthNumber}}</p>
                     </div>
                   </div>
-                  <div class="bottom more">
+
+                  <div
+                    v-show="renyuanxinxiJson.chefInformation.length>chufangLength"
+                    @click="chufangMore"
+                    class="flex more xu_more"
+                  >
                     <span>
                       展开更多
                       <i class="el-icon-arrow-down"></i>
+                    </span>
+                  </div>
+
+                  <div
+                    v-show="renyuanxinxiJson.chefInformation.length<chufangLength &&renyuanxinxiJson.chefInformation.length>3"
+                    @click="chufangMore"
+                    class="flex more xu_more"
+                  >
+                    <span>
+                      收起
+                      <i class="el-icon-arrow-up"></i>
                     </span>
                   </div>
                 </div>
@@ -291,49 +283,76 @@
                   <div
                     class="tip"
                     style="padding-left: 0.2rem; font-size: 16px; border-left: 3px solid #31c9f2"
-                  >食品安全员（3人）</div>
-                  <div class="main" style="padding:0.2rem">
-                    <div>
-                      <p>理想/食品安全员</p>
-                      <p>健康证：563434387483</p>
+                  >食品安全员（{{renyuanxinxiJson.foodSafetyInformation.length}}人）</div>
+                  <div class="main" style="padding:0.2rem;flex-wrap: wrap;">
+                    <div
+                      style="width:30%;text-align: center;padding-bottom: 20px;"
+                      v-show="index<shipinLength"
+                      v-for="(val,index) of renyuanxinxiJson.foodSafetyInformation"
+                      :key="index"
+                    >
+                      <p>{{val.realName}}/食品安全员</p>
+                      <p>健康证：{{val.healthNumber}}</p>
                     </div>
+                  </div>
+                  <div
+                    v-show="renyuanxinxiJson.foodSafetyInformation.length>shipinLength"
+                    @click="shipinMore"
+                    class="flex more xu_more"
+                  >
+                    <span>
+                      展开更多
+                      <i class="el-icon-arrow-down"></i>
+                    </span>
+                  </div>
 
-                    <div>
-                      <p>理想/食品安全员</p>
-                      <p>健康证：563434387483</p>
-                    </div>
-
-                    <div>
-                      <p>理想/食品安全员</p>
-                      <p>健康证：563434387483</p>
-                    </div>
+                  <div
+                    v-show="renyuanxinxiJson.foodSafetyInformation.length<shipinLength &&renyuanxinxiJson.foodSafetyInformation.length>3"
+                    @click="shipinMore"
+                    class="flex more xu_more"
+                  >
+                    <span>
+                      收起
+                      <i class="el-icon-arrow-up"></i>
+                    </span>
                   </div>
                 </div>
                 <div class="flex column" style="margin-bottom: 0.3rem">
                   <div
                     class="tip"
                     style="padding-left: 0.2rem; font-size: 16px; border-left: 3px solid #31c9f2"
-                  >陪餐人员（13人）</div>
-                  <div class="main" style="padding:0.2rem">
-                    <div>
-                      <p>理想/厨师</p>
-                      <p>健康证：563434387483</p>
-                    </div>
-
-                    <div>
-                      <p>理想/食品安全员</p>
-                      <p>健康证：563434387483</p>
-                    </div>
-
-                    <div>
-                      <p>理想/厨师</p>
-                      <p>健康证：563434387483</p>
+                  >陪餐人员（{{renyuanxinxiJson.foodEscortInformation.length}}人）</div>
+                  <div class="main" style="padding:0.2rem;flex-wrap: wrap;">
+                    <div
+                      style="width:30%;text-align: center;padding-bottom: 20px;"
+                      v-show="index < peicanLength"
+                      v-for="(val,index) of renyuanxinxiJson.foodEscortInformation"
+                      :key="index"
+                    >
+                      <p>{{val.realName}}/配餐人员</p>
+                      <p>健康证：{{val.healthNumber}}</p>
                     </div>
                   </div>
-                  <div class="bottom more">
+
+                  <div
+                    v-show="renyuanxinxiJson.foodEscortInformation.length>peicanLength"
+                    @click="peicanMore"
+                    class="flex more xu_more"
+                  >
                     <span>
                       展开更多
                       <i class="el-icon-arrow-down"></i>
+                    </span>
+                  </div>
+
+                  <div
+                    v-show="renyuanxinxiJson.foodEscortInformation.length<peicanLength &&renyuanxinxiJson.foodEscortInformation.length>3"
+                    @click="peicanMore"
+                    class="flex more xu_more"
+                  >
+                    <span>
+                      收起
+                      <i class="el-icon-arrow-up"></i>
                     </span>
                   </div>
                 </div>
@@ -347,7 +366,9 @@
                 <div style="width: 20%; float: left">
                   <span style="font-size: 16px">
                     设备总数：
-                    <span style="color:#31c9f2; font-size: 20px;padding-right: 5px">5</span>类
+                    <span
+                      style="color:#31c9f2; font-size: 20px;padding-right: 5px"
+                    >{{shebeixinxiJson.eqOperationRatio.total}}</span>类
                   </span>
                 </div>
                 <div style="width: 40%; float: left">
@@ -357,7 +378,7 @@
                       :text-inside="true"
                       :width="20"
                       :stroke-width="18"
-                      :percentage="100"
+                      :percentage="shebeixinxiJson.eqOperationRatio.eqWell*100"
                     ></el-progress>
                   </div>
                 </div>
@@ -368,27 +389,27 @@
                       :text-inside="true"
                       :width="20"
                       :stroke-width="18"
-                      :percentage="100"
+                      :percentage="shebeixinxiJson.eqOperationRatio.eqWell*100"
                     ></el-progress>
                   </div>
                 </div>
               </div>
               <el-table
-                :data="tableData"
+                :data="shebeixinxiJson.deviceInformation"
                 style="width: 100%;"
                 :header-cell-style="rowClass"
                 :row-style="rowClass"
                 :header-row-style="rowClass"
               >
-                <el-table-column prop="name" label="设备名称：" width="180"></el-table-column>
+                <el-table-column prop="label" label="设备名称：" width="180"></el-table-column>
 
-                <el-table-column prop="pinpai" label="设备品牌：" width="180"></el-table-column>
+                <el-table-column prop="brand" label="设备品牌：" width="180"></el-table-column>
 
-                <el-table-column prop="date" label="出厂日期：" width="180"></el-table-column>
+                <el-table-column prop="start_date" label="出厂日期：" width="180"></el-table-column>
 
-                <el-table-column prop="nianxian" label="使用年限：" width="180"></el-table-column>
+                <el-table-column :formatter="geshihua" prop="use_year" label="使用年限：" width="180"></el-table-column>
 
-                <el-table-column prop="address" label="地址"></el-table-column>
+                <el-table-column prop="restaurant_name" label="地址"></el-table-column>
               </el-table>
             </div>
 
@@ -398,142 +419,70 @@
                 style="display:flex;justify-content: flex-end;height: 1rem;display: flex;align-items: center;"
               >
                 <el-date-picker
-                  style="background: rgb(25, 38, 79);color: white;"
                   v-model="shicai_date"
-                  type="datetimerange"
+                  style="background: rgb(25, 38, 79);color: white;"
+                  type="daterange"
+                  format="yyyy 年 MM 月 dd 日"
+                  value-format="yyyy-MM-dd"
                   range-separator="至"
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
                 ></el-date-picker>
-                <el-button type="primary" style="margin:0 .2rem;">查看</el-button>
+                <el-button @click="clear" type="primary" style="margin:0 .2rem;">清空</el-button>
+
+                <el-button @click="see" type="primary" style="margin:0 .2rem;">查看</el-button>
               </div>
               <div class="border main">
-                <div class="r1" style="display: flex;justify-content: space-around;">
-                  <div>编号</div>
-                  <div>食材名称</div>
-                  <div>采购日期</div>
-                  <div>快检结果</div>
+                <div class="r1">
+                  <div style="width:25%;text-align:center;">编号</div>
+                  <div style="width:25%;text-align:center;">食材名称</div>
+                  <div style="width:25%;text-align:center;">采购日期</div>
+                  <div style="width:25%;text-align:center;">快检结果</div>
                 </div>
                 <div class="r1_box">
-                  <div>
-                    <div>A0001</div>
-                    <div>五花肉</div>
-                    <div>2019-09-22</div>
-                    <div>合格</div>
-                  </div>
-                  <div>
-                    <div>A0002</div>
-                    <div>番茄</div>
-                    <div>2019-09-22</div>
-                    <div>合格</div>
-                  </div>
-                  <div class="red">
-                    <div>A0003</div>
-                    <div>土豆</div>
-                    <div>2019-09-22</div>
-                    <div>不合格</div>
-                  </div>
-                  <div>
-                    <div>A0004</div>
-                    <div>上海青</div>
-                    <div>2019-09-22</div>
-                    <div>合格</div>
-                  </div>
-                  <div>
-                    <div>A0005</div>
-                    <div>西兰花</div>
-                    <div>2019-09-22</div>
-                    <div>合格</div>
-                  </div>
-                  <div>
-                    <div>A0006</div>
-                    <div>青虾</div>
-                    <div>2019-09-22</div>
-                    <div>合格</div>
-                  </div>
-                  <div>
-                    <div>A0007</div>
-                    <div>鲤鱼</div>
-                    <div>2019-09-22</div>
-                    <div>合格</div>
-                  </div>
-                  <div>
-                    <div>A0008</div>
-                    <div>大白菜</div>
-                    <div>2019-09-22</div>
-                    <div>合格</div>
-                  </div>
-                  <div class="red">
-                    <div>A0009</div>
-                    <div>黄瓜</div>
-                    <div>2019-09-22</div>
-                    <div>不合格</div>
-                  </div>
-                  <div>
-                    <div>A0010</div>
-                    <div>茄子</div>
-                    <div>2019-09-22</div>
-                    <div>合格</div>
-                  </div>
-                  <div>
-                    <div>A0007</div>
-                    <div>鲤鱼</div>
-                    <div>2019-09-22</div>
-                    <div>合格</div>
-                  </div>
-                  <div>
-                    <div>A0008</div>
-                    <div>大白菜</div>
-                    <div>2019-09-22</div>
-                    <div>合格</div>
-                  </div>
-                  <div class="red">
-                    <div>A0009</div>
-                    <div>黄瓜</div>
-                    <div>2019-09-22</div>
-                    <div>不合格</div>
-                  </div>
-                  <div>
-                    <div>A0010</div>
-                    <div>茄子</div>
-                    <div>2019-09-22</div>
-                    <div>合格</div>
-                  </div>
-                  <div>
-                    <div>A0007</div>
-                    <div>鲤鱼</div>
-                    <div>2019-09-22</div>
-                    <div>合格</div>
-                  </div>
-                  <div>
-                    <div>A0008</div>
-                    <div>大白菜</div>
-                    <div>2019-09-22</div>
-                    <div>合格</div>
-                  </div>
-                  <div>
-                    <div>A0009</div>
-                    <div>黄瓜</div>
-                    <div>2019-09-22</div>
-                    <div>合格</div>
-                  </div>
-                  <div>
-                    <div>A0010</div>
-                    <div>茄子</div>
-                    <div>2019-09-22</div>
-                    <div>合格</div>
+                  <div v-for="(val,index) of shicaixinxiJson.records" :key="index">
+                    <div style="width:25%;text-align:center;">{{val.food_id}}</div>
+                    <div style="width:25%;text-align:center;">{{val.foodName}}</div>
+                    <div
+                      style="width:25%;text-align:center;"
+                    >{{val.time | formatTime('yyyy-MM-dd')}}</div>
+                    <div style="width:25%;text-align:center;">{{val.qualified}}</div>
                   </div>
                 </div>
               </div>
               <div class="ye">
-                <span>显示12项结果</span>
-                <span>共100项</span>
-                <span>当前1/3页</span>
+                <span>显示10项结果</span>
+                <span>共{{shicaixinxiJson.total}}项</span>
+                <span>当前{{shicaixinxiJson.current}}/{{shicaixinxiJson.pages}}页</span>
 
                 <!-- <el-button type="primary" plain>上一页</el-button> -->
-                <el-button disabled class="dis" type="primary" plain>上一页</el-button>
+                <el-button
+                  v-show="shicaixinxiJson.current>0&&shicaixinxiJson.current<2"
+                  disabled
+                  class="dis"
+                  type="primary"
+                  plain
+                >上一页</el-button>
+                <el-button
+                  v-show="shicaixinxiJson.current>1"
+                  type="primary"
+                  @click="upPageshicai"
+                  plain
+                >上一页</el-button>
 
-                <el-button type="primary" plain>下一页</el-button>
+                <el-button
+                  v-show="shicaixinxiJson.current<shicaixinxiJson.pages"
+                  type="primary"
+                  @click="nextPageshicai"
+                  plain
+                >下一页</el-button>
+                <el-button
+                  v-show="!(shicaixinxiJson.current<shicaixinxiJson.pages)"
+                  disabled
+                  class="dis"
+                  type="primary"
+                  plain
+                >下一页</el-button>
               </div>
             </div>
 
@@ -545,9 +494,13 @@
                   </div>
                   <div
                     style="width:50%;float:left;padding-left: 0.3rem;cursor: pointer"
-                    @click="showRecoedsDetail()"
+                    @click="showRecoedsDetail(1)"
                   >
-                    <el-progress :text-inside="true" :stroke-width="18" :percentage="100"></el-progress>
+                    <el-progress
+                      :text-inside="true"
+                      :stroke-width="18"
+                      :percentage="parseInt(Number(taizhangxinxiJson.sampleRecord)*100)"
+                    ></el-progress>
                   </div>
                 </div>
                 <div style="width:30%;float:left">
@@ -556,21 +509,29 @@
                   </div>
                   <div
                     style="width:50%;float:left;padding-left: 0.3rem;cursor: pointer"
-                    @click="showRecoedsDetail()"
+                    @click="showRecoedsDetail(2)"
                   >
-                    <el-progress :text-inside="true" :stroke-width="18" :percentage="100"></el-progress>
+                    <el-progress
+                      :text-inside="true"
+                      :stroke-width="18"
+                      :percentage="parseInt((Number(taizhangxinxiJson.accompanyDinner)/Number(taizhangxinxiJson.meal))*100)"
+                    ></el-progress>
                   </div>
                 </div>
+
                 <div style="width:30%;float:left">
-                  <div id="foodTj" style="width:40%;float:left; text-align: center">
-                    <span>食品添加剂使用记录</span>
+                  <div style="width:30%;float:left; text-align: center">
+                    <span>洗消记录</span>
                   </div>
                   <div
-                    id="foodTjP"
                     style="width:50%;float:left;padding-left: 0.3rem;cursor: pointer"
-                    @click="showRecoedsDetail()"
+                    @click="showRecoedsDetail(3)"
                   >
-                    <el-progress :text-inside="true" :stroke-width="18" :percentage="70"></el-progress>
+                    <el-progress
+                      :text-inside="true"
+                      :stroke-width="18"
+                      :percentage="parseInt((Number(taizhangxinxiJson.decontamination)/Number(taizhangxinxiJson.meal))*100)"
+                    ></el-progress>
                   </div>
                 </div>
               </div>
@@ -581,63 +542,66 @@
                   </div>
                   <div
                     style="width:50%;float:left;padding-left: 0.3rem;cursor: pointer"
-                    @click="showRecoedsDetail()"
+                    @click="showRecoedsDetail(4)"
                   >
-                    <el-progress :text-inside="true" :stroke-width="18" :percentage="80"></el-progress>
-                  </div>
-                </div>
-                <div style="width:30%;float:left">
-                  <div style="width:30%;float:left; text-align: center">
-                    <span>餐具洗消记录</span>
-                  </div>
-                  <div
-                    style="width:50%;float:left;padding-left: 0.3rem;cursor: pointer"
-                    @click="showRecoedsDetail()"
-                  >
-                    <el-progress :text-inside="true" :stroke-width="18" :percentage="100"></el-progress>
-                  </div>
-                </div>
-                <div style="width:30%;float:left">
-                  <div style="width:40%;float:left; text-align: center">
-                    <span>设备设施洗消记录</span>
-                  </div>
-                  <div
-                    style="width:50%;float:left;padding-left: 0.3rem;cursor: pointer"
-                    @click="showRecoedsDetail()"
-                  >
-                    <el-progress :text-inside="true" :stroke-width="18" :percentage="70"></el-progress>
-                  </div>
-                </div>
-              </div>
-              <div style="width:100%; float:left; " class="taizhang">
-                <div id="foodAreaDiv" style="width:30%;float:left">
-                  <div id="foodArea" style="width:40%;float:left; text-align: left">
-                    <span>就餐区域洗消记录</span>
-                  </div>
-                  <div
-                    id="foodAreaP"
-                    style="width:50%;float:left;cursor: pointer"
-                    @click="showRecoedsDetail()"
-                  >
-                    <el-progress :text-inside="true" :stroke-width="18" :percentage="20"></el-progress>
+                    <el-progress
+                      :text-inside="true"
+                      :stroke-width="18"
+                      :percentage="parseInt(Number(taizhangxinxiJson.kitwasteTreatment)*100)"
+                    ></el-progress>
                   </div>
                 </div>
               </div>
             </div>
 
             <div class="list_box" v-show="yuJing_active==='历史报警信息'">
-              <div class="list" v-for="(val,index) of activeArr" :key="index">
+              <div class="list" v-for="(val,index) of lishibaojingJson.records" :key="index">
                 <div class="logo">
-                  <img class="img" :src="val.img" alt />
+                  <!-- compared alarm：报警 early_warning：预警 -->
+                  <!-- health_pic：健康证照片 food_pic：食材照片 permit_pic：许可证照片 bulicense_pic：营业执照照片 identity_pic:身份证照片 -->
+                  <img
+                    v-if="val.value==1"
+                    class="img"
+                    :src="val.bulicense_pic || 'http://shenning.oss-cn-beijing.aliyuncs.com/test333f6191-82d8-4e92-92e1-07df174aa7aa.png'"
+                    alt
+                  />
+                  <img
+                    v-else-if="val.value==2"
+                    class="img"
+                    :src="val.permit_pic || 'http://shenning.oss-cn-beijing.aliyuncs.com/test333f6191-82d8-4e92-92e1-07df174aa7aa.png'"
+                    alt
+                  />
+                  <img
+                    v-else-if="val.value==3"
+                    class="img"
+                    :src="val.health_pic || 'http://shenning.oss-cn-beijing.aliyuncs.com/test333f6191-82d8-4e92-92e1-07df174aa7aa.png'"
+                    alt
+                  />
+                  <img
+                    v-else-if="val.value==4"
+                    class="img"
+                    :src="val.identity_pic || 'http://shenning.oss-cn-beijing.aliyuncs.com/test333f6191-82d8-4e92-92e1-07df174aa7aa.png'"
+                    alt
+                  />
+                  <img
+                    v-else-if="val.value==4 && val.compared == 'early_warning'|| val.value==5  || val.value==6 ||val.value==7"
+                    class="img"
+                    :src="val.food_pic || 'http://shenning.oss-cn-beijing.aliyuncs.com/test333f6191-82d8-4e92-92e1-07df174aa7aa.png'"
+                    alt
+                  />
+
                   <div class="gongsi">
-                    <p>{{val.title}}</p>
+                    <p>{{val.tital || "暂无"}}</p>
                     <p>
-                      预警类别：
-                      <span v-if="val.type.substr(2) ==='预警'" class="lan">{{val.type}}</span>
+                      {{val.type.substr(2)}}类别：
+                      <span
+                        v-if="val.type.substr(2) ==='预警'"
+                        class="lan"
+                      >{{val.type}}</span>
                       <span class="red" v-else>{{val.type}}</span>
                     </p>
-                    <p>预警内容：采购票证信息错误</p>
-                    <p>预警时间：2019-09-08 13：25</p>
+                    <p>{{val.type.substr(2)}}内容：{{val.description}}</p>
+                    <p>{{val.type.substr(2)}}时间：{{val.time}}</p>
                   </div>
                 </div>
                 <div
@@ -645,38 +609,70 @@
                   class="yujing_guanlian"
                   style="flex-direction: column;"
                 >
-                  <p>供应商：红双喜食品有限公司</p>
+                  <p>供应商：{{val.supplier}}</p>
                   <br />
-                  <p>学校名称：北京实验小学</p>
+                  <p>学校名称：{{val.schoolName}}</p>
                 </div>
                 <div v-else class="yujing_guanlian">
                   <div>
-                    <p>预警关联2项：</p>
+                    <p>{{val.type.substr(2)}}关联项：</p>
                   </div>
                   <div>
-                    <p>无供应商信息预警</p>
-                    <p>采购无票证信息预警</p>
+                    <p>{{val.label}}</p>
                   </div>
                 </div>
-                <div class="xuexiao_guanlian" style="padding-top: 0.2rem">
+                <div v-if="val.type==='食材预警'" class="xuexiao_guanlian" style="padding-top: 0.2rem">
                   <div>
-                    <p>关联学校5个：</p>
+                    <p>供应学校：</p>
                   </div>
                   <div>
-                    <p>第二外国语小学，朝阳幼儿园，超华幼儿园，光明小学，芳草地小学传媒附属幼儿园</p>
+                    <p>{{val.school.schName}}</p>
                   </div>
                 </div>
-                <div class="xiangqing" @click="isZhezhao = true">查看详情</div>
+                <div v-else class="xuexiao_guanlian" style>
+                  <div>
+                    <p>{{val.type.substr(2)}}学校：</p>
+                  </div>
+                  <div>
+                    <p>{{val.school.schName}}</p>
+                  </div>
+                </div>
+                <div class="xiangqing" @click="showXiangqing(val.id,val.type)">查看详情</div>
               </div>
+
               <div class="ye">
-                <span>显示12项结果</span>
-                <span>共100项</span>
-                <span>当前1/3页</span>
+                <span>显示{{lishibaojingJson.size}}项结果</span>
+                <span>共{{lishibaojingJson.total}}项</span>
+                <span>当前{{lishibaojingJson.current}}/{{lishibaojingJson.pages}}页</span>
 
                 <!-- <el-button type="primary" plain>上一页</el-button> -->
-                <el-button disabled class="dis" type="primary" plain>上一页</el-button>
+                <el-button
+                  v-show="lishibaojingJson.current>1"
+                  @click="upPagelishi"
+                  type="primary"
+                  plain
+                >上一页</el-button>
+                <el-button
+                  v-show="lishibaojingJson.current<2"
+                  disabled
+                  class="dis"
+                  type="primary"
+                  plain
+                >上一页</el-button>
 
-                <el-button type="primary" plain>下一页</el-button>
+                <el-button
+                  v-show="lishibaojingJson.current<lishibaojingJson.pages"
+                  @click="nextPagelishi"
+                  type="primary"
+                  plain
+                >下一页</el-button>
+                <el-button
+                  v-show="!(lishibaojingJson.current<lishibaojingJson.pages)"
+                  disabled
+                  class="dis"
+                  type="primary"
+                  plain
+                >下一页</el-button>
               </div>
             </div>
           </div>
@@ -706,8 +702,7 @@
         >x</div>
         <div class="video">
           <div style="font-size:.24rem;padding: 0 0 .1rem .1rem;">校园直播</div>
-          <!-- <video controls="controls" width="100%" height="100%" :src="videoSrc"></video> -->
-          <!-- <video controls="controls" width="100%" height="100%" src="/static/shi.mp4"></video> -->
+
           <video-player
             :class="{hidden:isHidden}"
             class="video-player vjs-custom-skin"
@@ -719,303 +714,880 @@
         </div>
         <div class="video_list">
           <ul>
-            <li @click="changeVideo(val.eqId)" v-for="val of zhiboliebiaoJson" :key="val.id">
-              <img :src="val.imageUrl" alt />
-              <div class="title">{{val.eqarea}}</div>
-            </li>
-            <!-- <li @click="changeVideo('rtmp://58.200.131.2:1935/livetv/hunantv')">
+            <li @click="changeVideo(val.eqId)" v-for="(val,index) of zhiboliebiaoJson" :key="index">
               <img
-                src="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2721259920,2245504677&fm=26&gp=0.jpg"
+                :src="val.imageUrl || 'http://shenning.oss-cn-beijing.aliyuncs.com/test333f6191-82d8-4e92-92e1-07df174aa7aa.png'"
                 alt
               />
-              <div class="title">洗菜区</div>
+              <div class="title">{{val.eqarea || "暂无"}}</div>
             </li>
-            <li @click="changeVideo('rtmp://58.200.131.2:1935/livetv/gdtv')">
-              <img
-                src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2395256036,2172655875&fm=15&gp=0.jpg"
-                alt
-              />
-              <div class="title">饮料区</div>
-            </li>
-            <li @click="changeVideo('rtmp://58.200.131.2:1935/livetv/dftv')">
-              <img src="http://pmtb146d9.pic42.websiteonline.cn/upload/11y.jpg" alt />
-              <div class="title">后厨区</div>
-            </li>-->
           </ul>
         </div>
       </div>
     </div>
 
-    <div class="records-panel" v-show="recordsPanelIsShow" @click.self="recordsPanelIsShow = false">
+    <div
+      class="records-panel no_padding"
+      v-show="recordsPanelIsShow"
+      @click.self="recordsPanelIsShow = false"
+    >
       <div
-        style="margin-bottom:.2rem;display:flex;justify-content: flex-end;float: left; width: 100%"
+        style="margin-bottom:.2rem;display:flex;justify-content: flex-end;float: left; width: 100%;box-sizing:border-box;padding:.2rem;"
       >
-        <el-date-picker v-model="shicai_date" type="date" placeholder="选择日期"></el-date-picker>
-        <el-button type="primary">查看</el-button>
+        <el-date-picker
+          v-model="jiluval.jilu_date"
+          placeholder="选择日期"
+          format="yyyy 年 MM 月 dd 日"
+          value-format="yyyy-MM-dd"
+        ></el-date-picker>
+        <el-button @click="jilusee()" type="primary">查看</el-button>
+        <el-button type="primary" @click="jiluseeall">全部记录</el-button>
+
         <i
           class="el-icon-close"
           @click.self="recordsPanelIsShow = false"
           style="float: right;font-size: 0.24rem;margin-left: 0.5rem;padding-top: 0.1rem; cursor: pointer"
         ></i>
       </div>
-      <div class="border main" id="recordTableDiv">
-        <div class="r1" style="display: flex;justify-content: space-around;">
-          <div>留样时间</div>
-          <div>留样名称</div>
-          <div>留样重量</div>
-          <div>留样人</div>
-          <div>销毁时间</div>
-          <div>快检结果</div>
-          <div>是否上传留样记录</div>
-          <div>操作</div>
+
+      <!-- 留样 -->
+      <div class="pad" v-show="tzActive == 1">
+        <el-table
+          :data="lylistJson.records"
+          style="width: 100%"
+          :row-style="tableRowStyle"
+          :header-cell-style="tableHeaderColor"
+        >
+          <el-table-column type="index" width="50"></el-table-column>
+          <el-table-column prop="srNumber" label="留样编号"></el-table-column>
+          <el-table-column prop="rdDate" label="食谱日期"></el-table-column>
+          <el-table-column prop="isSampleZ" label="留样状态"></el-table-column>
+          <el-table-column prop="schoolName" label="学校名称"></el-table-column>
+          <el-table-column label="操作" width="120">
+            <template slot-scope="scope">
+              <div class="xiangqing" @click="handleEdit(scope.row)">查看详情</div>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="ye">
+          <span>显示{{lylistJson.size}}项结果</span>
+          <span>共{{lylistJson.total}}项</span>
+          <span>当前{{lylistJson.current}}/{{lylistJson.pages}}页</span>
+          <el-button v-show="lylistJson.current>1" @click="upPagejilu" type="primary" plain>上一页</el-button>
+          <el-button v-show="lylistJson.current<2" disabled class="dis" type="primary" plain>上一页</el-button>
+          <el-button
+            v-show="lylistJson.current<lylistJson.pages"
+            @click="nextPagejilu"
+            type="primary"
+            plain
+          >下一页</el-button>
+          <el-button
+            v-show="!(lylistJson.current<lylistJson.pages)"
+            disabled
+            class="dis"
+            type="primary"
+            plain
+          >下一页</el-button>
         </div>
-        <div class="r1_box">
-          <div>
-            <div>2019-08-22</div>
-            <div>回锅肉</div>
-            <div>100g</div>
-            <div>张三</div>
-            <div>2019-08-24</div>
-            <div>合格</div>
-            <div>是</div>
-            <div>
-              <a href="javascript:void(0);">查看留样快检报告</a>
-            </div>
-          </div>
+      </div>
+      <!-- 陪餐 -->
+      <div class="pad" v-show="tzActive == 2">
+        <el-table
+          :data="pclistJson.records"
+          style="width: 100%"
+          :row-style="tableRowStyle"
+          :header-cell-style="tableHeaderColor"
+        >
+          <el-table-column type="index" width="50"></el-table-column>
+          <el-table-column prop="man" label="陪餐人员"></el-table-column>
+          <el-table-column prop="time" label="陪餐日期"></el-table-column>
+          <el-table-column prop="label" label="用餐餐次"></el-table-column>
+          <el-table-column prop="meals" label="陪餐情况"></el-table-column>
+          <el-table-column prop="happening" label="是否存在问题"></el-table-column>
+          <el-table-column prop="sch_name" label="学校名称"></el-table-column>
+          <el-table-column label="操作" width="120">
+            <template slot-scope="scope">
+              <div class="xiangqing" @click="handleEdit(scope.row)">查看详情</div>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="ye">
+          <span>显示{{pclistJson.size}}项结果</span>
+          <span>共{{pclistJson.total}}项</span>
+          <span>当前{{pclistJson.current}}/{{pclistJson.pages}}页</span>
+          <el-button v-show="pclistJson.current>1" @click="upPagejilu" type="primary" plain>上一页</el-button>
+          <el-button v-show="pclistJson.current<2" disabled class="dis" type="primary" plain>上一页</el-button>
+          <el-button
+            v-show="pclistJson.current<pclistJson.pages"
+            @click="nextPagejilu"
+            type="primary"
+            plain
+          >下一页</el-button>
+          <el-button
+            v-show="!(pclistJson.current<pclistJson.pages)"
+            disabled
+            class="dis"
+            type="primary"
+            plain
+          >下一页</el-button>
         </div>
-        <div class="r1_box">
-          <div>
-            <div>2019-08-22</div>
-            <div>糖醋里脊</div>
-            <div>100g</div>
-            <div>张三</div>
-            <div>2019-08-24</div>
-            <div>合格</div>
-            <div>是</div>
-            <div>
-              <a href="javascript:void(0);">查看留样快检报告</a>
-            </div>
-          </div>
+      </div>
+      <!-- 洗消 -->
+      <div class="pad" v-show="tzActive == 3">
+        <el-table
+          :data="xxlistJson.records"
+          style="width: 100%"
+          :row-style="tableRowStyle"
+          :header-cell-style="tableHeaderColor"
+        >
+          <el-table-column type="index" width="50"></el-table-column>
+          <el-table-column prop="date" label="消毒日期"></el-table-column>
+          <el-table-column prop="start" label="开始时间"></el-table-column>
+          <el-table-column prop="end" label="结束时间"></el-table-column>
+          <el-table-column prop="dislength" label="消毒时长(分钟)"></el-table-column>
+          <el-table-column prop="sch_name" label="学校名称"></el-table-column>
+          <el-table-column label="操作" width="120">
+            <template slot-scope="scope">
+              <div class="xiangqing" @click="handleEdit(scope.row)">查看详情</div>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="ye">
+          <span>显示{{xxlistJson.size}}项结果</span>
+          <span>共{{xxlistJson.total}}项</span>
+          <span>当前{{xxlistJson.current}}/{{xxlistJson.pages}}页</span>
+          <el-button v-show="xxlistJson.current>1" @click="upPagejilu" type="primary" plain>上一页</el-button>
+          <el-button v-show="xxlistJson.current<2" disabled class="dis" type="primary" plain>上一页</el-button>
+          <el-button
+            v-show="xxlistJson.current<xxlistJson.pages"
+            @click="nextPagejilu"
+            type="primary"
+            plain
+          >下一页</el-button>
+          <el-button
+            v-show="!(xxlistJson.current<xxlistJson.pages)"
+            disabled
+            class="dis"
+            type="primary"
+            plain
+          >下一页</el-button>
         </div>
-        <div class="r1_box">
-          <div>
-            <div>2019-08-22</div>
-            <div>青椒鸡蛋</div>
-            <div>100g</div>
-            <div>张三</div>
-            <div>2019-08-24</div>
-            <div>合格</div>
-            <div>是</div>
-            <div>
-              <a href="javascript:void(0);">查看留样快检报告</a>
-            </div>
-          </div>
-        </div>
-        <div class="r1_box">
-          <div>
-            <div>2019-08-22</div>
-            <div>韭菜虾仁</div>
-            <div>100g</div>
-            <div>张三</div>
-            <div>2019-08-24</div>
-            <div>合格</div>
-            <div>是</div>
-            <div>
-              <a href="javascript:void(0);">查看留样快检报告</a>
-            </div>
-          </div>
-        </div>
-        <div class="r1_box">
-          <div>
-            <div>2019-08-22</div>
-            <div>红烧黄花鱼</div>
-            <div>100g</div>
-            <div>张三</div>
-            <div>2019-08-24</div>
-            <div>合格</div>
-            <div>是</div>
-            <div>
-              <a href="javascript:void(0);">查看留样快检报告</a>
-            </div>
-          </div>
-        </div>
-        <div class="r1_box">
-          <div>
-            <div>2019-08-22</div>
-            <div>正新鸡排</div>
-            <div>100g</div>
-            <div>张三</div>
-            <div>2019-08-24</div>
-            <div>合格</div>
-            <div>是</div>
-            <div>
-              <a href="javascript:void(0);">查看留样快检报告</a>
-            </div>
-          </div>
-        </div>
-        <div class="r1_box">
-          <div>
-            <div>2019-08-22</div>
-            <div>宫爆鸡丁</div>
-            <div>100g</div>
-            <div>张三</div>
-            <div>2019-08-24</div>
-            <div>合格</div>
-            <div>是</div>
-            <div>
-              <a href="javascript:void(0);">查看留样快检报告</a>
-            </div>
-          </div>
-        </div>
-        <div class="r1_box">
-          <div>
-            <div>2019-08-22</div>
-            <div>回锅肉</div>
-            <div>100g</div>
-            <div>张三</div>
-            <div>2019-08-24</div>
-            <div>合格</div>
-            <div>是</div>
-            <div>
-              <a href="javascript:void(0);">查看留样快检报告</a>
-            </div>
-          </div>
-        </div>
-        <div class="r1_box">
-          <div>
-            <div>2019-08-22</div>
-            <div>凉拌秋葵</div>
-            <div>100g</div>
-            <div>张三</div>
-            <div>2019-08-24</div>
-            <div>合格</div>
-            <div>是</div>
-            <div>
-              <a href="javascript:void(0);">查看留样快检报告</a>
-            </div>
-          </div>
-        </div>
-        <div class="r1_box">
-          <div>
-            <div>2019-08-22</div>
-            <div>土豆炖牛肉</div>
-            <div>100g</div>
-            <div>张三</div>
-            <div>2019-08-24</div>
-            <div>合格</div>
-            <div>是</div>
-            <div>
-              <a href="javascript:void(0);">查看留样快检报告</a>
-            </div>
-          </div>
-        </div>
-        <div class="r1_box">
-          <div>
-            <div>2019-08-22</div>
-            <div>小炒口蘑</div>
-            <div>100g</div>
-            <div>张三</div>
-            <div>2019-08-24</div>
-            <div>合格</div>
-            <div>是</div>
-            <div>
-              <a href="javascript:void(0);">查看留样快检报告</a>
-            </div>
-          </div>
-        </div>
-        <div class="r1_box">
-          <div>
-            <div>2019-08-22</div>
-            <div>毛血旺</div>
-            <div>100g</div>
-            <div>张三</div>
-            <div>2019-08-24</div>
-            <div>合格</div>
-            <div>是</div>
-            <div>
-              <a href="javascript:void(0);">查看留样快检报告</a>
-            </div>
-          </div>
-        </div>
-        <div class="r1_box">
-          <div>
-            <div>2019-08-22</div>
-            <div>西红柿炒鸡蛋</div>
-            <div>100g</div>
-            <div>张三</div>
-            <div>2019-08-24</div>
-            <div>合格</div>
-            <div>是</div>
-            <div>
-              <a href="javascript:void(0);">查看留样快检报告</a>
-            </div>
-          </div>
-        </div>
-        <div class="r1_box">
-          <div>
-            <div>2019-08-22</div>
-            <div>蒜蓉西兰花</div>
-            <div>100g</div>
-            <div>张三</div>
-            <div>2019-08-24</div>
-            <div>合格</div>
-            <div>是</div>
-            <div>
-              <a href="javascript:void(0);">查看留样快检报告</a>
-            </div>
-          </div>
-        </div>
-        <div class="r1_box">
-          <div>
-            <div>2019-08-22</div>
-            <div>清炒油麦菜</div>
-            <div>100g</div>
-            <div>张三</div>
-            <div>2019-08-24</div>
-            <div>合格</div>
-            <div>是</div>
-            <div>
-              <a href="javascript:void(0);">查看留样快检报告</a>
-            </div>
-          </div>
-        </div>
-        <div class="r1_box">
-          <div>
-            <div>2019-08-22</div>
-            <div>香菇油菜</div>
-            <div>100g</div>
-            <div>张三</div>
-            <div>2019-08-24</div>
-            <div>合格</div>
-            <div>是</div>
-            <div>
-              <a href="javascript:void(0);">查看留样快检报告</a>
-            </div>
-          </div>
+      </div>
+      <!-- 厨余 -->
+      <div class="pad" v-show="tzActive == 4">
+        <el-table
+          :data="cylistJson.records"
+          style="width: 100%"
+          :row-style="tableRowStyle"
+          :header-cell-style="tableHeaderColor"
+        >
+          <el-table-column type="index" width="50"></el-table-column>
+          <el-table-column prop="time" label="收运时间"></el-table-column>
+          <el-table-column prop="man" label="处理人"></el-table-column>
+          <el-table-column prop="label" label="回收类别"></el-table-column>
+          <el-table-column prop="unit" label="处置单位"></el-table-column>
+          <el-table-column prop="number" label="收运车辆号"></el-table-column>
+          <el-table-column prop="person" label="收运人"></el-table-column>
+          <el-table-column prop="sch_name" label="学校名称"></el-table-column>
+          <el-table-column label="操作" width="120">
+            <template slot-scope="scope">
+              <div class="xiangqing" @click="handleEdit(scope.row)">查看详情</div>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="ye">
+          <span>显示{{cylistJson.size}}项结果</span>
+          <span>共{{cylistJson.total}}项</span>
+          <span>当前{{cylistJson.current}}/{{cylistJson.pages}}页</span>
+          <el-button v-show="cylistJson.current>1" @click="upPagejilu" type="primary" plain>上一页</el-button>
+          <el-button v-show="cylistJson.current<2" disabled class="dis" type="primary" plain>上一页</el-button>
+          <el-button
+            v-show="cylistJson.current<cylistJson.pages"
+            @click="nextPagejilu"
+            type="primary"
+            plain
+          >下一页</el-button>
+          <el-button
+            v-show="!(cylistJson.current<cylistJson.pages)"
+            disabled
+            class="dis"
+            type="primary"
+            plain
+          >下一页</el-button>
         </div>
       </div>
     </div>
+    <el-dialog title="详情" :visible.sync="dialogVisible" width="60%">
+      <!-- 留样 -->
+      <div v-show="tzActive == 1">
+        <el-row>
+          <el-col :span="12">
+            <span>留样编号:</span>
+            <span>LY201912261</span>
+          </el-col>
+          <el-col :span="12">
+            <span>食谱日期:</span>
+            <span>2019-12-26</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <span>留样时间:</span>
+            <span>2019-11-11</span>
+          </el-col>
+          <el-col :span="12">
+            <span>留样人:</span>
+            <span>东方</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <span>处理时间:</span>
+            <span>2019-11-11</span>
+          </el-col>
+          <el-col :span="12">
+            <span>处理人:</span>
+            <span>李地方</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <span>食谱餐次:</span>
+            <span>LY201912261</span>
+          </el-col>
+          <el-col :span="12">
+            <span>重量:</span>
+            <span>12kg</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <span>储存方法及温度:</span>
+            <span>20°</span>
+          </el-col>
+          <el-col :span="12">
+            <span>审核人:</span>
+            <span>张三</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="4">
+            <img
+              style="width:100px;height:width:100px;"
+              src="blob:https://element.eleme.cn/243a0638-92c1-4148-a3e2-23d4f2fccb97"
+              alt
+            />
+          </el-col>
+        </el-row>
+      </div>
+      <!-- 陪餐 -->
+      <div v-show="tzActive == 2">
+        <el-row>
+          <el-col :span="12">
+            <span>配餐人员:</span>
+            <span>张磊</span>
+          </el-col>
+          <el-col :span="12">
+            <span>配餐日期:</span>
+            <span>2019-12-02</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <span>用餐餐次:</span>
+            <span>午餐</span>
+          </el-col>
+          <el-col :span="12">
+            <span>陪餐情况:</span>
+            <span>满意</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <span>是否存在问题:</span>
+            <span>是</span>
+          </el-col>
+          <el-col :span="12">
+            <span>备注信息:</span>
+            <span>菜炒的有点辣</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <img
+            src="https://img.jjkaifa.com/uploads1/allimg/191206/073ee46c76a9c17e.png"
+            style="width:100px;height:100px;"
+            alt
+          />
+        </el-row>
+      </div>
+      <!-- 洗消 -->
+      <div v-show="tzActive == 3">
+        <el-row>
+          <el-col :span="12">
+            <span>洗消日期:</span>
+            <span>2019-12-14</span>
+          </el-col>
+          <el-col :span="12">
+            <span>餐次:</span>
+            <span>早</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <span>洗消列表:</span>
+            <span>午餐</span>
+          </el-col>
+          <el-col :span="12">
+            <span>陪餐情况:</span>
+            <span>满意</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <span>是否存在问题:</span>
+            <span>是</span>
+          </el-col>
+          <el-col :span="12">
+            <span>备注信息:</span>
+            <span>菜炒的有点辣</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <img
+            src="https://img.jjkaifa.com/uploads1/allimg/191206/073ee46c76a9c17e.png"
+            style="width:100px;height:100px;"
+            alt
+          />
+        </el-row>
+      </div>
+      <!-- 厨余 -->
+      <div v-show="tzActive == 4">
+        <el-row>
+          <el-col :span="12">
+            <span>收运时间:</span>
+            <span>2019-12-06</span>
+          </el-col>
+          <el-col :span="12">
+            <span>产生量:</span>
+            <span>19</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <span>处理人:</span>
+            <span>张三</span>
+          </el-col>
+          <el-col :span="12">
+            <span>回收类别:</span>
+            <span>废弃油脂</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <span>收运量:</span>
+            <span>112</span>
+          </el-col>
+          <el-col :span="12">
+            <span>处理单位:</span>
+            <span>叙永厨余垃圾回收单位</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <span>收运车辆号:</span>
+            <span>川A12353</span>
+          </el-col>
+          <el-col :span="12">
+            <span>收运人:</span>
+            <span>李四</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <div>
+            <span>厨余处理实照</span>
+          </div>
+          <img
+            src="https://img.jjkaifa.com/uploads1/allimg/191206/073ee46c76a9c17e.png"
+            style="width:100px;height:100px;"
+            alt
+          />
+        </el-row>
+        <el-row>
+          <el-col>
+            <span>备注信息:</span>
+            <span>测试更新记录</span>
+          </el-col>
+        </el-row>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-import Detail from "@/components/ComAlertDetails";
+import Detail from "@/components/schoolDetails/GYSDetails";
 import {
   zhiboliebiao,
   zhiboliu,
   gongyingshangshu,
-  gongyingshang
+  gongyingshang,
+  zizhixinxi,
+  xuexiaoxinxi,
+  renyuanxinxi,
+  shebeixinxi,
+  shicaixinxi,
+  taizhangxinxi,
+  lishibaojing,
+  jilulist,
+  jiluxiangqing
 } from "@/api/xuexiaoxiangqing";
 import { log } from "util";
+import { mapState, mapMutations } from "vuex";
 export default {
   name: "positioning",
   data() {
     return {
-      gongyingshangJson: {},
-      gongyingshangshuJson: {
-        zongshu: 30,
-        yingyeshu: 100,
-        xukeshu: 100
+      dialogVisible: false,
+      tzActive: 1,
+
+      cylistJson: {
+        records: [],
+        total: 4,
+        size: 10,
+        current: 1,
+        searchCount: true,
+        pages: 1
       },
+
+      xxlistJson: {
+        records: [],
+        total: 2,
+        size: 10,
+        current: 1,
+        searchCount: true,
+        pages: 1
+      },
+
+      lylistJson: {
+        records: [],
+        total: 4,
+        size: 10,
+        current: 1,
+        searchCount: true,
+        pages: 1
+      },
+
+      pclistJson: {
+        records: [],
+        total: 6,
+        size: 10,
+        current: 1,
+        searchCount: true,
+        pages: 1
+      },
+      jiluval: {
+        page: 1,
+        size: 10,
+        jilu_date: ""
+      },
+      lishival: {
+        page: 1,
+        size: 5
+      },
+      shicaival: {
+        page: 1,
+        size: 10,
+        startingTime: null,
+        endTime: null
+      },
+      //历史报警信息
+      lishibaojingJson: {
+        records: [
+          {
+            health_pic: null,
+            description: "食材快检报告未上传",
+            food_pic:
+              "http://shenning.oss-cn-beijing.aliyuncs.com/test7717c152-57a4-400f-9222-30232b0a52c7.png",
+            label: "食材快检报告未上传报告",
+            type: "食材报警",
+            permit_pic:
+              "http://shenning.oss-cn-beijing.aliyuncs.com/testafe36fa8-0da9-4279-9bb0-cccb9c80337e.jpg",
+            bulicense_pic:
+              "http://shenning.oss-cn-beijing.aliyuncs.com/test40e100ba-e888-4a8c-86de-f0385cb05cee.jpg",
+            school: {
+              schName: "无",
+              id: 0
+            },
+            supplier: "供应商A",
+            schoolId: 1,
+            alarm: "7",
+            time: "2019-12-10 17:32:59",
+            identity_pic: null,
+            id: 8,
+            schoolName: "叙永县城西实验中学",
+            value: "7",
+            tital: "牛肉"
+          },
+          {
+            health_pic: null,
+            description: "营业执照过期",
+            food_pic: null,
+            label: "营业执照报警",
+            type: "证照报警",
+            permit_pic: null,
+            bulicense_pic: null,
+            school: {
+              schName: "叙永县城西实验中学",
+              id: 1
+            },
+            supplier: "供应商A",
+            schoolId: 1,
+            alarm: "1",
+            time: "2019-11-10 17:32:59",
+            identity_pic: null,
+            id: 4,
+            schoolName: "叙永县城西实验中学",
+            value: "1",
+            tital: "营业执照"
+          },
+          {
+            health_pic: null,
+            description: "健康证过期",
+            food_pic: null,
+            label: "健康证报警",
+            type: "人员报警",
+            permit_pic:
+              "http://shenning.oss-cn-beijing.aliyuncs.com/testafe36fa8-0da9-4279-9bb0-cccb9c80337e.jpg",
+            bulicense_pic:
+              "http://shenning.oss-cn-beijing.aliyuncs.com/test40e100ba-e888-4a8c-86de-f0385cb05cee.jpg",
+            school: {
+              schName: "叙永县城西实验中学",
+              id: 1
+            },
+            supplier: "供应商A",
+            schoolId: 1,
+            alarm: "3",
+            time: "2019-11-10 17:32:59",
+            identity_pic: null,
+            id: 1,
+            schoolName: "叙永县城西实验中学",
+            value: "3",
+            tital: "和撒"
+          },
+          {
+            health_pic: null,
+            description: "健康证过期",
+            food_pic: null,
+            label: "健康证报警",
+            type: "人员报警",
+            permit_pic: null,
+            bulicense_pic: null,
+            school: {
+              schName: "叙永县城西实验中学",
+              id: 1
+            },
+            supplier: "供应商A",
+            schoolId: 1,
+            alarm: "3",
+            time: "2019-11-10 17:32:59",
+            identity_pic: null,
+            id: 2,
+            schoolName: "叙永县城西实验中学",
+            value: "3",
+            tital: null
+          },
+          {
+            health_pic: null,
+            description: "健康证过期",
+            food_pic: null,
+            label: "健康证报警",
+            type: "人员报警",
+            permit_pic: null,
+            bulicense_pic: null,
+            school: {
+              schName: "叙永县城西实验中学",
+              id: 1
+            },
+            supplier: "供应商A",
+            schoolId: 1,
+            alarm: "3",
+            time: "2019-10-10 17:32:59",
+            identity_pic: null,
+            id: 3,
+            schoolName: "叙永县城西实验中学",
+            value: "3",
+            tital: null
+          },
+          {
+            health_pic: null,
+            description: "采购时未上传索证索票",
+            food_pic:
+              "http://shenning.oss-cn-beijing.aliyuncs.com/test3e01f7a7-567f-4502-ae2c-89be965e2dac.jpg",
+            label: "采购时未上传索证索票",
+            type: "食材预警",
+            permit_pic:
+              "http://shenning.oss-cn-beijing.aliyuncs.com/testafe36fa8-0da9-4279-9bb0-cccb9c80337e.jpg",
+            bulicense_pic:
+              "http://shenning.oss-cn-beijing.aliyuncs.com/test40e100ba-e888-4a8c-86de-f0385cb05cee.jpg",
+            school: {
+              schName: "测试",
+              id: 2
+            },
+            supplier: "叙永县供应商b",
+            schoolId: 1,
+            alarm: "4",
+            time: "2019-11-10 17:32:50",
+            identity_pic: null,
+            id: 8,
+            schoolName: "test",
+            value: "4",
+            tital: "2019-11-25"
+          },
+          {
+            health_pic: null,
+            description: "营业执照即将过期",
+            food_pic: null,
+            label: "营业执照即将过期",
+            type: "证照预警",
+            permit_pic:
+              "http://shenning.oss-cn-beijing.aliyuncs.com/testafe36fa8-0da9-4279-9bb0-cccb9c80337e.jpg",
+            bulicense_pic:
+              "http://shenning.oss-cn-beijing.aliyuncs.com/test40e100ba-e888-4a8c-86de-f0385cb05cee.jpg",
+            school: {
+              schName: "叙永县城西实验中学",
+              id: 1
+            },
+            supplier: "叙永县供应商A",
+            schoolId: 1,
+            alarm: "1",
+            time: "2019-11-10 17:32:50",
+            identity_pic: null,
+            id: 1,
+            schoolName: "叙永县城西实验中学",
+            value: "1",
+            tital: "营业执照"
+          },
+          {
+            health_pic: null,
+            description: "许可证即将过期",
+            food_pic: null,
+            label: "许可证即将过期",
+            type: "证照预警",
+            permit_pic:
+              "http://shenning.oss-cn-beijing.aliyuncs.com/testafe36fa8-0da9-4279-9bb0-cccb9c80337e.jpg",
+            bulicense_pic:
+              "http://shenning.oss-cn-beijing.aliyuncs.com/test40e100ba-e888-4a8c-86de-f0385cb05cee.jpg",
+            school: {
+              schName: "叙永县城西实验中学",
+              id: 1
+            },
+            supplier: "叙永县供应商A",
+            schoolId: 1,
+            alarm: "2",
+            time: "2019-11-10 17:32:50",
+            identity_pic: null,
+            id: 2,
+            schoolName: "叙永县城西实验中学",
+            value: "2",
+            tital: "许可证"
+          },
+          {
+            health_pic: null,
+            description: "许可证即将过期",
+            food_pic: null,
+            label: "许可证即将过期",
+            type: "证照预警",
+            permit_pic:
+              "http://shenning.oss-cn-beijing.aliyuncs.com/testb05e02a6-49f5-479b-ada0-2555c2e0d97b.jpg",
+            bulicense_pic:
+              "http://shenning.oss-cn-beijing.aliyuncs.com/testdd3fb457-3133-4d47-ae6b-a92da3f18e2d.jpg",
+            school: {
+              schName: "叙永县城西实验中学",
+              id: 1
+            },
+            supplier: "叙永县供应商b",
+            schoolId: 1,
+            alarm: "2",
+            time: "2019-11-10 17:32:50",
+            identity_pic: null,
+            id: 4,
+            schoolName: "test",
+            value: "2",
+            tital: "许可证"
+          },
+          {
+            health_pic: null,
+            description: "健康证即将过期",
+            food_pic: null,
+            label: "健康证即将过期",
+            type: "人员预警",
+            permit_pic:
+              "http://shenning.oss-cn-beijing.aliyuncs.com/testafe36fa8-0da9-4279-9bb0-cccb9c80337e.jpg",
+            bulicense_pic:
+              "http://shenning.oss-cn-beijing.aliyuncs.com/test40e100ba-e888-4a8c-86de-f0385cb05cee.jpg",
+            school: {
+              schName: "叙永县城西实验中学",
+              id: 1
+            },
+            supplier: "叙永县供应商b",
+            schoolId: 1,
+            alarm: "3",
+            time: "2019-11-10 17:32:50",
+            identity_pic: null,
+            id: 6,
+            schoolName: "test",
+            value: "3",
+            tital: ""
+          }
+        ],
+        total: 10,
+        size: 10,
+        current: 1,
+        searchCount: true,
+        pages: 1
+      },
+      //食材信息
+      shicaixinxiJson: [
+        {
+          qualified: "合格",
+          foodName: "韭菜",
+          time: "2019-11-22 00:00:00",
+          food_id: "18"
+        }
+      ],
+      //台账信息
+      taizhangxinxiJson: {
+        meal: 3,
+        sampleRecord: 1,
+        decontamination: 1,
+        kitwasteTreatment: 1,
+        accompanyDinner: 1
+      },
+      //设备信息
+      shebeixinxiJson: {
+        eqOperationRatio: {
+          eqWell: 1,
+          total: 5,
+          eqRatio: 1
+        },
+        deviceInformation: [
+          {
+            use_year: "5",
+            label: "消毒柜",
+            brand: "美的",
+            start_date: "2017-01-22",
+            restaurant_name: "A餐厅"
+          }
+        ]
+      },
+      //人员信息
+      renyuanxinxiJson: {
+        morningCheck: {
+          total: 6,
+          eqRatio: 0.17
+        },
+        manNumber: [
+          {
+            number: 2,
+            label: "厨师"
+          },
+          {
+            number: 1,
+            label: "食品安全管理员"
+          },
+          {
+            number: 1,
+            label: "陪餐人员"
+          },
+          {
+            number: 1,
+            label: "校长"
+          },
+          {
+            number: 1,
+            label: "超级管理员"
+          }
+        ],
+        foodEscortInformation: [
+          {
+            realName: "张勇",
+            healthNumber: "43554657676776",
+            label: "陪餐人员",
+            userId: 12
+          }
+        ],
+        healthCheck: {
+          healthCard: 4
+        },
+        foodSafetyInformation: [
+          {
+            realName: "张勇",
+            healthNumber: "43554657676776",
+            label: "食品安全管理员",
+            userId: 22
+          }
+        ],
+        chefInformation: [
+          {
+            realName: "张三",
+            healthNumber: "464556456",
+            label: "厨师",
+            userId: 13
+          }
+        ]
+      }, //资质信息
+      zizhixinxiJson: {
+        principal: "策校长",
+        area: "510104",
+        address: "四川省泸州市叙永县G321(广成线)",
+        sch_name: "叙永县城西实验中学",
+        quantitative: "A",
+        reg_name: "泸州市叙永县市场监管局",
+        tel: "0830－6800552",
+        edu_name: "泸州市叙永县教育局",
+        ratingScore: 100
+      }, //学校信息
+      xuexiaoxinxiJson: {
+        warningNumber: {
+          warningNumber: 100
+        },
+        alarmNumber: {
+          alarmNumber: 100
+        },
+        schoolInformation: {
+          schArea: "四川省成都市锦江区",
+          schAddress: "四川省泸州市叙永县G321(广成线)",
+          officeNature: "民办",
+          schoolType: "小学",
+          id: 1,
+          schoolName: "叙永县城西实验中学abc"
+        }
+      },
+      //供应商信息
+      gongyingshangJson: {
+        license: {
+          LicenseTotal: 3
+        },
+        total: {
+          Total: 3
+        },
+        supplierInformation: [
+          {
+            school: {
+              schName: "叙永县城西实验中学",
+              id: 1
+            },
+            name: "叙永县供应商A",
+            id: 1,
+            license_number: "123123123"
+          }
+        ],
+        open: {
+          OpenTotal: 3
+        }
+      },
+      gongyingshangLength: 3,
+      chufangLength: 3,
+      peicanLength: 3,
+      shipinLength: 3,
       zhiboliebiaoJson: [],
       playerOptions: {
         // height: "500",
@@ -1034,43 +1606,7 @@ export default {
           "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1572970305962&di=acd0edc70f15012acd5078e46d7a8e33&imgtype=0&src=http%3A%2F%2Fimg01.cztv.com%2F201903%2F22%2Ff27ad9f1c0c7819a885a7190b96d726c.jpg"
       },
       shicai_date: "",
-      tableData: [
-        {
-          date: "2016-05-02",
-          nianxian: "3年",
-          name: "消毒柜",
-          pinpai: "新科",
-          address: "第二餐厅"
-        },
-        {
-          date: "2016-05-02",
-          nianxian: "3年",
-          name: "洗碗机",
-          pinpai: "新飞",
-          address: "第二餐厅"
-        },
-        {
-          date: "2016-05-02",
-          nianxian: "3年",
-          name: "蒸箱",
-          pinpai: "苏泊尔",
-          address: "第二餐厅"
-        },
-        {
-          date: "2016-05-02",
-          nianxian: "3年",
-          name: "烤箱",
-          pinpai: "苏泊尔",
-          address: "第二餐厅"
-        },
-        {
-          date: "2016-05-02",
-          nianxian: "3年",
-          name: "抽油烟机",
-          pinpai: "方太",
-          address: "第二餐厅"
-        }
-      ],
+
       activeArr: [
         {
           title: "辣椒",
@@ -1129,44 +1665,227 @@ export default {
       recordsPanelIsShow: false,
       yuJing_active: "资质信息",
       isHidden: true,
-      videoSrc:
-        "//f.video.weibocdn.com/003zzxrslx07wzQN2yPu01041200ba4R0E010.mp4?label=mp4_ld&template=640x360.24.0&trans_finger=78679548d3dda0964ec12b81fbdd99c2&Expires=1568969283&ssig=alvhOzoJfy&KID=unistore,video"
+      videoSrc: "rtmp://58.200.131.2:1935/livetv/hunantv",
+      schoolId: 1
     };
   },
   components: {
     Detail
   },
+  watch: {
+    shicai_date() {
+      this.shicaival.startingTime = this.shicai_date[0];
+      this.shicaival.endTime = this.shicai_date[1];
+      // console.log(this.shicaival);
+    }
+  },
   methods: {
+    ...mapMutations(["SETTYPE", "CHANGE_TIME_NUMBER"]),
+    jiluseeall() {
+      jiluval.jilu_date = "";
+      jiluval.page = 1;
+      getjilulist();
+    },
+    getjilulist() {
+      jilulist({
+        page: this.jiluval.page,
+        size: this.jiluval.size,
+        schoolId: this.schoolId,
+        time: this.jiluval.jilu_date,
+        isWho: this.tzActive
+      }).then(res => {
+        if (this.tzActive === 1) {
+          this.lylistJson = res.data.data.data;
+        // console.log(res.data.data.data);
+
+        } else if (this.tzActive === 2) {
+          this.pclistJson = res.data.data.data;
+        } else if (this.tzActive === 3) {
+          this.xxlistJson = res.data.data.data;
+        } else if (this.tzActive === 4) {
+          this.cylistJson = res.data.data.data;
+        }
+      });
+    },
+    jilusee() {
+      this.jiluval.page = 1;
+      this.getjilulist();
+    },
+    upPagejilu() {
+      this.jiluval.page--;
+      this.getjilulist();
+    },
+    nextPagejilu() {
+      this.jiluval.page++;
+      this.getjilulist();
+    },
+    handleEdit(e) {
+      this.getjiluxiangqing();
+      this.dialogVisible = true;
+      // console.log(e);
+    },
+    getjiluxiangqing() {
+      jiluxiangqing({}).then(res => {
+        // console.log(res.data.data.data);
+      });
+    },
+    //设置表格行的样式
+    tableRowStyle({ row, rowIndex }) {
+      if (rowIndex % 2) {
+        return "background-color:#0a194bbb;color:#fff;border:none;";
+      } else {
+        return "background-color:#06133c50;color:#fff;border:none;";
+      }
+      // #132c7cfb
+    },
+    //设置表头行的样式
+    tableHeaderColor({ row, column, rowIndex, columnIndex }) {
+      return "background-color:#133073;color:#fff;";
+    },
+    showXiangqing(id, type) {
+      this.CHANGE_TIME_NUMBER();
+      this.SETTYPE(type.substr(0, 2));
+      localStorage.setItem("lishixiangqingtype", type.substr(0, 2));
+      localStorage.setItem("lishixiangqingid", id);
+      localStorage.setItem("lishixiangqingjing", type.substr(2));
+      this.isZhezhao = true;
+    },
+    clear() {
+      this.shicaival.startingTime = null;
+      this.shicaival.endTime = null;
+      this.shicai_date = [];
+    },
+    see() {
+      this.shicaival.page = 1;
+      this.getshicaixinxi();
+    },
+    nextPageshicai() {
+      this.shicaival.page++;
+      this.getshicaixinxi();
+    },
+    upPageshicai() {
+      this.shicaival.page--;
+      this.getshicaixinxi();
+    },
+    nextPagelishi() {
+      this.lishival.page++;
+      this.getlishibaojing();
+    },
+    upPagelishi() {
+      this.lishival.page--;
+      this.getlishibaojing();
+    },
+    gongyingshangMore() {
+      if (this.gongyingshangLength === 3) {
+        this.gongyingshangLength = 99;
+      } else {
+        this.gongyingshangLength = 3;
+      }
+    },
+    chufangMore() {
+      if (this.chufangLength === 3) {
+        this.chufangLength = 99;
+      } else {
+        this.chufangLength = 3;
+      }
+    },
+    peicanMore() {
+      if (this.peicanLength === 3) {
+        this.peicanLength = 99;
+      } else {
+        this.peicanLength = 3;
+      }
+    },
+    shipinMore() {
+      if (this.shipinLength === 3) {
+        this.shipinLength = 99;
+      } else {
+        this.shipinLength = 3;
+      }
+    },
+    //历史报警
+    getlishibaojing() {
+      let date = new Date();
+      let y = date.getFullYear();
+      lishibaojing({
+        schoolId: this.schoolId,
+        year: y,
+        page: this.lishival.page,
+        size: this.lishival.size
+      }).then(res => {
+        // console.log("历史报警");
+        // console.log(res.data);
+        if (res.data.data) {
+          this.lishibaojingJson = res.data.data.data;
+        }
+      });
+    },
+    //食材信息
+    getshicaixinxi() {
+      shicaixinxi({
+        schoolId: this.schoolId,
+        startingTime: this.shicaival.startingTime,
+        endTime: this.shicaival.endTime,
+        page: this.shicaival.page
+      }).then(res => {
+        // console.log("食材信息");
+        // console.log(res.data.data.data);
+        this.shicaixinxiJson = res.data.data.data;
+      });
+    }, //台账信息
+    gettaizhangxinxi() {
+      taizhangxinxi({ schoolId: this.schoolId }).then(res => {
+        // console.log("台账");
+        // console.log(res.data.data.data);
+
+        this.taizhangxinxiJson = res.data.data.data;
+        if (res.data.data.data.meal == "0") {
+          this.taizhangxinxiJson.meal = 1;
+        }
+      });
+    }, //设备信息
+    getshebeixinxi() {
+      shebeixinxi({ schoolId: this.schoolId }).then(res => {
+        // console.log(res.data.data.data);
+        this.shebeixinxiJson = res.data.data.data;
+      });
+    },
+    //人员信息
+    getrenyuanxinxi() {
+      renyuanxinxi({ schoolId: this.schoolId }).then(res => {
+        this.renyuanxinxiJson = res.data.data.data;
+      });
+    },
+    //学校信息
+    getxuexiaoxinxi() {
+      xuexiaoxinxi({ schoolId: this.schoolId }).then(res => {
+        this.xuexiaoxinxiJson = res.data.data.data;
+        if (!this.xuexiaoxinxiJson.schoolInformation.pic) {
+          this.xuexiaoxinxiJson.schoolInformation.pic =
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1575433139634&di=b58e3b4e630cbd116f3842d9d38e4b84&imgtype=0&src=http%3A%2F%2Fwww.zjg12345.com%2Fzjg12345%2FZJG12345%2FPages%2FService%2FHomeService%2F%25E6%259A%2582%25E6%2597%25A0%25E5%259B%25BE%25E7%2589%2587.jpg";
+        }
+      });
+    }, //供应商信息
     getgongyingshang() {
       gongyingshang({
-        schoolid: 1
+        schoolId: this.schoolId
       }).then(res => {
-        console.log(res.data);
-        this.gongyingshangJson = res.data;
+        this.gongyingshangJson = res.data.data.data;
       });
-    },
-    getgongyingshangshu() {
-      gongyingshangshu({
-        schoolid: 1
-      }).then(res => {
-        console.log(res.data);
-        this.gongyingshangshuJson = res.data;
-      });
-    },
+    }, //直播
     getzhiboliebiao() {
-      console.log("zhiboliebiao");
-
-      zhiboliebiao({ schoolId: 1 }).then(res => {
+      zhiboliebiao({ schoolId: this.schoolId }).then(res => {
         this.zhiboliebiaoJson = res.data.data;
-        zhiboliu({ eqId: res.data.data[0].eqId }).then(res => {
-          console.log(res.data.data);
-
-          if (res.data.data.path) {
-            this.$refs.videoPlayer.player.src(res.data.data.path);
-            this.$refs.videoPlayer.player.load();
-            document.querySelector(".video_wrap").style.display = "none";
+        zhiboliu({ eqId: res.data.data[res.data.data.length - 1].eqId }).then(
+          res => {
+            // console.log(res.data.data);
+            if (res.data.data.path) {
+              this.$refs.videoPlayer.player.src(res.data.data.path);
+              this.$refs.videoPlayer.player.load();
+              document.querySelector(".video_wrap").style.display = "none";
+            }
           }
-        });
+        );
       });
     },
     rowClass({ row, rowIndex }) {
@@ -1181,9 +1900,12 @@ export default {
       // console.log(type);
       this.yuJing_active = type;
     },
+    geshihua(row, column, ceLLValue) {
+      return row.use_year + "年";
+    },
     changeVideo(e) {
       zhiboliu({ eqId: e }).then(res => {
-        console.log(res.data.data.path);
+        // console.log(res.data.data.path);
         if (res.data.data.path) {
           this.$message("直播切换中请稍等");
           this.$refs.videoPlayer.player.src(res.data.data.path);
@@ -1207,14 +1929,73 @@ export default {
         document.querySelector(".vjs-control-bar").style.display = "flex";
       } catch {}
     },
-    showRecoedsDetail() {
+    showRecoedsDetail(e) {
+      this.tzActive = e;
+      this.jiluval.page = 1;
+      this.getjilulist();
       this.recordsPanelIsShow = true;
+    },
+    getzizhixinxi() {
+      zizhixinxi({
+        schoolId: this.schoolId
+      }).then(res => {
+        const json = res.data.data.data;
+        // console.log("资质信息");
+        // console.log(json);
+        if (json) {
+          this.zizhixinxiJson = json;
+        }
+      });
+    }
+  },
+  filters: {
+    formatTime: function(date, fmt) {
+      var date = new Date(date);
+      if (/(y+)/.test(fmt)) {
+        fmt = fmt.replace(
+          RegExp.$1,
+          (date.getFullYear() + "").substr(4 - RegExp.$1.length)
+        );
+      }
+      var o = {
+        "M+": date.getMonth() + 1,
+        "d+": date.getDate(),
+        "h+": date.getHours(),
+        "m+": date.getMinutes(),
+        "s+": date.getSeconds()
+      };
+      for (var k in o) {
+        if (new RegExp("(" + k + ")").test(fmt)) {
+          var str = o[k] + "";
+          fmt = fmt.replace(
+            RegExp.$1,
+            RegExp.$1.length === 1 ? str : ("00" + str).substr(str.length)
+          );
+        }
+      }
+      return fmt;
     }
   },
   mounted() {
     this.getzhiboliebiao();
+    this.getxuexiaoxinxi();
+    this.getzizhixinxi();
     this.getgongyingshang();
-    // this.getgongyingshangshu();
+    this.getrenyuanxinxi();
+    this.getshebeixinxi();
+    this.gettaizhangxinxi();
+    this.getshicaixinxi();
+    this.getlishibaojing();
+  },
+  created() {
+    let id = localStorage.getItem("yichangId");
+
+    // console.log("学校id");
+    this.schoolId = id;
+    if (!this.schoolId || this.schoolId === "null") {
+      this.schoolId = 1;
+    }
+    // console.log(this.schoolId);
   }
 };
 </script>
@@ -1235,6 +2016,10 @@ export default {
 }
 .shebei .el-table {
   background: none;
+  th,
+  td {
+    text-align: center;
+  }
 }
 #positioning .ye {
   margin-right: 0.2rem;
@@ -1288,7 +2073,6 @@ export default {
   align-items: center;
   color: #bad3ff;
   padding-top: 0.5rem;
-  // .more,
   .details,
   .all {
     color: #31c9f2;
@@ -1296,6 +2080,12 @@ export default {
   .more {
     display: flex;
     justify-content: center;
+    padding-top: 24px;
+    span {
+      &:hover {
+        cursor: pointer;
+      }
+    }
   }
   .pointer {
     cursor: pointer;
@@ -1324,7 +2114,7 @@ export default {
   }
   .ryxx .main {
     display: flex;
-    justify-content: space-between;
+    // justify-content: space-between;
   }
   .gys .ellipsis {
     width: 2.5rem;
@@ -1361,7 +2151,7 @@ export default {
       // background: #ededed0c;
     }
     & > div {
-      padding: 0 0.2rem;
+      // padding: 0 0.2rem;
       display: flex;
       justify-content: space-between;
       height: 0.5rem;
@@ -1844,6 +2634,15 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  &.no_padding {
+    padding: 0;
+    .el-row {
+      line-height: 3em;
+    }
+  }
+  .pad {
+    padding: 0.2rem;
+  }
 }
 
 .records-panel a {
@@ -1856,7 +2655,15 @@ export default {
   overflow-x: hidden;
   overflow-y: auto;
 }
-
+.xiangqing {
+  // padding: 0.1rem 0.38rem;
+  padding: 0.04rem 0.08rem;
+  text-align: center;
+  border: 0.01rem solid #31c9f2;
+  color: #31c9f2;
+  border-radius: 0.04rem;
+  @extend .pointer;
+}
 @media screen and (max-device-width: 1600px) {
   .score {
     width: 1.8rem !important;
@@ -1877,6 +2684,26 @@ export default {
   }
   #foodAreaP {
     padding-left: 0.3rem !important;
+  }
+}
+.el-table {
+  background: none !important;
+}
+.el-table::before {
+  height: 0 !important;
+}
+.el-table--enable-row-hover .el-table__body tr:hover > td {
+  background-color: #132c7cfb !important;
+}
+.el-table th.is-leaf,
+.el-table td {
+  border: none !important;
+}
+.el-dialog {
+  background: #092969 !important;
+  span{
+    color: #fff;
+    line-height: 3em;
   }
 }
 </style>

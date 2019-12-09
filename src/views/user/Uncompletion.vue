@@ -5,50 +5,110 @@
       <el-radio-button label="未接收预警"></el-radio-button>
     </el-radio-group>
     <div class="biao" v-show="active==='未接收报警'">
-      <el-table height="calc(100% - 70)" :data="tableData" style="width: 100%">
-        <el-table-column prop="number" label="报警编号"></el-table-column>
-        <el-table-column prop="info" label="报警信息内容"></el-table-column>
+      <el-table
+        height="calc(100% - 70)"
+        :data="bjlistJson.records"
+        style="width: 100%"
+        v-loading="loading_bj"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.2)"
+      >
+        <el-table-column prop="id" label="报警编号"></el-table-column>
+        <el-table-column prop="description" label="报警信息内容"></el-table-column>
         <el-table-column prop="type" label="报警类别"></el-table-column>
-        <el-table-column prop="name" label="学校名称"></el-table-column>
-        <el-table-column prop="date" label="最新报警时间"></el-table-column>
+        <el-table-column prop="school" label="学校名称"></el-table-column>
+        <el-table-column prop="time" label="最新报警时间"></el-table-column>
         <el-table-column prop="opinion" label="接收状态"></el-table-column>
-        <el-table-column prop="details" label="查看详情"></el-table-column>
+        <el-table-column label="查看详情">
+          <template slot-scope="scope">
+            <el-button size="mini" type="primary" @click="showXiangqing(scope.row)">查看详情</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <el-footer class="footer">
-        <div class="tip">显示10项结果，共83项，当前1/9页</div>
+        <div
+          class="tip"
+        >显示{{bjlistJson.size}}项结果，共{{bjlistJson.total}}项，当前{{bjlistJson.current}}/{{bjlistJson.pages}}页</div>
         <div>
-          <el-button :disabled="isJinyong">上一页</el-button>
-          <el-button>下一页</el-button>
+          <el-button v-show="bjlistJson.current>1" @click="bjupPage" type="primary" plain>上一页</el-button>
+          <el-button v-show="bjlistJson.current<2" disabled class="dis" type="primary" plain>上一页</el-button>
+
+          <el-button
+            v-show="bjlistJson.current<bjlistJson.pages"
+            @click="bjnextPage"
+            type="primary"
+            plain
+          >下一页</el-button>
+          <el-button
+            v-show="!(bjlistJson.current<bjlistJson.pages)"
+            disabled
+            class="dis"
+            type="primary"
+            plain
+          >下一页</el-button>
         </div>
       </el-footer>
     </div>
     <div class="biao" v-show="active==='未接收预警'">
-      <el-table height="calc(100% - 70)" :data="tableData" style="width: 100%">
-        <el-table-column prop="number" label="预警编号"></el-table-column>
-        <el-table-column prop="info" label="预警信息内容"></el-table-column>
+      <el-table
+        height="calc(100% - 70)"
+        :data="yjlistJson.records"
+        style="width: 100%"
+        v-loading="loading_yj"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.2)"
+      >
+        <el-table-column prop="id" label="预警编号"></el-table-column>
+        <el-table-column prop="description" label="预警信息内容"></el-table-column>
         <el-table-column prop="type" label="预警类别"></el-table-column>
-        <el-table-column prop="name" label="学校名称"></el-table-column>
-        <el-table-column prop="date" label="最新预警时间"></el-table-column>
+        <el-table-column prop="school" label="学校名称"></el-table-column>
+        <el-table-column prop="time" label="最新预警时间"></el-table-column>
         <el-table-column prop="opinion" label="接收状态"></el-table-column>
-        <el-table-column prop="details" label="查看详情"></el-table-column>
+        <el-table-column label="查看详情">
+          <template slot-scope="scope">
+            <el-button size="mini" type="primary" @click="showXiangqing(scope.row)">查看详情</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <el-footer class="footer">
-        <div class="tip">显示10项结果，共83项，当前1/9页</div>
+        <div
+          class="tip"
+        >显示{{yjlistJson.size}}项结果，共{{yjlistJson.total}}项，当前{{yjlistJson.current}}/{{yjlistJson.pages}}页</div>
         <div>
-          <el-button :disabled="isJinyong">上一页</el-button>
-          <el-button>下一页</el-button>
+          <el-button v-show="yjlistJson.current>1" @click="yjupPage" type="primary" plain>上一页</el-button>
+          <el-button v-show="yjlistJson.current<2" disabled class="dis" type="primary" plain>上一页</el-button>
+
+          <el-button
+            v-show="yjlistJson.current<yjlistJson.pages"
+            @click="yjnextPage"
+            type="primary"
+            plain
+          >下一页</el-button>
+          <el-button
+            v-show="!(yjlistJson.current<yjlistJson.pages)"
+            disabled
+            class="dis"
+            type="primary"
+            plain
+          >下一页</el-button>
         </div>
       </el-footer>
     </div>
   </div>
 </template>
 <script>
+import { bjweijieshou } from "@/api/home";
+import { mapState, mapMutations } from "vuex";
 export default {
   name: "completion",
   data() {
     return {
-      isJinyong:true,
+      isJinyong: true,
       active: "未接收报警",
+      loading_bj: true,
+      loading_yj: true,
       tableData: [
         {
           number: "0001",
@@ -185,10 +245,92 @@ export default {
           opinion: "未接收",
           details: "查看详情"
         }
-      ]
+      ],
+      bjlistJson: {
+        records: [],
+        total: 12,
+        size: 2,
+        current: 3,
+        searchCount: true,
+        pages: 6
+      },
+      bjval: {
+        page: 1,
+        size: 15,
+        iswarning: 1
+      },
+      yjlistJson: {
+        records: [],
+        total: 12,
+        size: 2,
+        current: 3,
+        searchCount: true,
+        pages: 6
+      },
+      yjval: {
+        page: 1,
+        size: 15,
+        iswarning: 1
+      }
     };
   },
-  methods: {}
+  methods: {
+    ...mapMutations(["CHANGE_TIME_NUMBER", "SETTYPE"]),
+    bjupPage() {
+      this.bjval.page--;
+      this.getbjweijieshou();
+    },
+    bjnextPage() {
+      this.bjval.page++;
+      this.getbjweijieshou();
+    },
+    getbjweijieshou() {
+      this.loading_bj = true;
+      bjweijieshou({
+        iswarning: 1,
+        areaCode: 510000,
+        regionalLevel: 1,
+        size: this.bjval.size,
+        page: this.bjval.page
+      }).then(res => {
+        this.loading_bj = false;
+        this.bjlistJson = res.data.data;
+      });
+    },
+    yjupPage() {
+      this.yjval.page--;
+      this.getyjweijieshou();
+    },
+    yjnextPage() {
+      this.yjval.page++;
+      this.getyjweijieshou();
+    },
+    getyjweijieshou() {
+      this.loading_yj = true;
+      bjweijieshou({
+        iswarning: 0,
+        areaCode: 510000,
+        regionalLevel: 1,
+        size: this.yjval.size,
+        page: this.yjval.page
+      }).then(res => {
+        this.loading_yj = false;
+        this.yjlistJson = res.data.data;
+      });
+    },
+    showXiangqing(e) {
+      this.CHANGE_TIME_NUMBER();
+      this.SETTYPE(e.type.substr(0, 2));
+      localStorage.setItem("SchoolId", e.SchoolId);
+      localStorage.setItem("lishixiangqingid", e.id);
+      localStorage.setItem("lishixiangqingjing", e.type.substr(2));
+      this.$router.push("/alertDetails");
+    }
+  },
+  created() {
+    this.getbjweijieshou();
+    this.getyjweijieshou();
+  }
 };
 </script>
 <style lang="scss" scope>
@@ -260,6 +402,11 @@ export default {
         background: none;
         color: #37cfdc;
         border-color: #37cfdc;
+        &.dis {
+          background: none;
+          border-color: #90939985;
+          color: #90939985;
+        }
       }
       .el-button.is-disabled:hover {
         background: none;

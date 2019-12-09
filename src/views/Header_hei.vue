@@ -129,46 +129,79 @@ export default {
 
       TZList: [],
       TZId: Number,
-      fullscreenLoading: false
+      fullscreenLoading: false,
+      jilu: "",
+      userId: ""
     };
   },
   watch: {
-    $route(to, from) {
-      this.mianbaioxie();
-    }
+    // $route(to, from) {
+    //   console.log(111);
+    //   console.log(from.name);
+    //   this.jilu = from.name;
+    //   this.mianbaioxie();
+    // }
+  },
+  beforeRouteEnter(to, from, next) {
+    // this.jilu = from.name;
+    next(vm => {
+      vm.jilu = from.name;
+      vm.mianbaioxie();
+    });
   },
   methods: {
-    ...mapMutations(["CHENGE_ACTIVE","GO_OUT"]),
+    ...mapMutations(["SET_USER_INFO", "CHENGE_ACTIVE", "GO_OUT"]),
     mianbaioxie() {
       let path = this.$route.path;
       if (path === "/alertDetails") {
-        this.lujing = [
-          { url: "/", name: "首页" },
-          { url: "/header_hei", name: "预警信息" },
-          { url: "/header_hei", name: "预警信息详情页" }
-        ];
+        if (this.jilu === "AllWarning") {
+          this.lujing = [
+            { url: "/abnormal", name: "首页" },
+            { url: "/header_hei/allWarning", name: "预警信息" },
+            { url: "", name: "预警信息详情页" }
+          ];
+        } else if (this.lujing === "Allalarm") {
+          this.lujing = [
+            { url: "/abnormal", name: "首页" },
+            { url: "/header_hei/allalarm", name: "报警信息" },
+            { url: "", name: "报警信息详情页" }
+          ];
+        } else if (this.jilu === "Uncompletion") {
+          this.lujing = [
+            { url: "/uncompletion", name: "返回" },
+            { url: "", name: "报警信息详情页" }
+          ];
+        } else {
+          this.lujing = [
+            { url: "/completion", name: "返回" },
+            { url: "", name: "报警信息详情页" }
+          ];
+        }
       } else if (path === "/positioning") {
         this.lujing = [
           { url: "/", name: "首页" },
-          { url: "/header_hei", name: "学校详情页" }
+          { url: "", name: "学校详情页" }
         ];
       } else {
-        this.lujing = [
-          { url: "/", name: "首页" },
-          { url: "/header_hei", name: "预警信息" }
-        ];
+        const arr = path.split("/");
+        if (arr[2] === "allalarm") {
+          this.lujing = [
+            { url: "/", name: "首页" },
+            { url: "", name: "报警信息" }
+          ];
+        } else {
+          this.lujing = [
+            { url: "/", name: "首页" },
+            { url: "", name: "预警信息" }
+          ];
+        }
       }
     },
     change(e) {
       this.fullscreenLoading = true;
-
-      console.log("改变状态");
       this.TZId = e;
       setTimeout(() => {
-        console.log(this.TZId);
-
         this.$refs.changeId.click();
-
         this.CHENGE_ACTIVE("通知公告");
       }, 0);
 
@@ -188,47 +221,41 @@ export default {
       }, 1000);
     },
     seeMore() {
-      this.CHENGE_ACTIVE("通知公告");
-      this.to("completion");
+      // this.CHENGE_ACTIVE("通知公告");
+      this.to("/remind");
     },
     getHongList() {
       xinxiaoxi({
-        userId: 4,
+        userId: this.userId,
         supStatus: 2
       }).then(res => {
-        console.log("header-hei");
         this.TZList = res.data.data.records;
       });
-      // this.$http
-      //   .get("/api/manageWat/supervision/findForStatus", {
-      //     params: { userId: 4, supStatus: 2 }
-      //   })
-      //   .then(res => {
-      //     // console.log("userId");
-      //     // console.log(res.data.data.records);
-      //     this.TZList = res.data.data.records;
-      //   });
     },
     back() {
       this.$router.go(-1);
     },
     to(uri) {
       if (uri === "/login") {
-      this.GO_OUT();
+        this.GO_OUT();
       }
       this.$router.push(uri);
     }
   },
   mounted() {
-    console.log(this.$store.state.status);
     this.getHongList();
 
     this.mianbaioxie();
     setInterval(() => {
-      console.log("新通知");
+      // console.log("新通知");
 
       this.getHongList();
     }, 1000 * 5);
+  },
+  created() {
+    var user = JSON.parse(localStorage.getItem("userInfo"));
+    this.SET_USER_INFO(user);
+    this.userId = user.userId;
   }
 };
 </script>
