@@ -8,70 +8,22 @@
           :key="val.name"
         >{{val.name}}</el-breadcrumb-item>
       </el-breadcrumb>
-      <!-- <div class="link">
-        <span @click="to('/')" class="pointer">首页</span>
-        ==={{this.$store.state.status}}===
-        <span
-          class="pointer"
-          v-show="this.$store.state.status !=='Positioning'"
-        >
-          <span @click="to('/header_hei')">
-            <span class="yjxx" v-show="this.$store.state.status ==='Certificates'">
-              <i class="el-icon-arrow-right"></i>预警信息
-            </span>
-            <span v-show="this.$store.state.status ==='Allalarm'">
-              <i class="el-icon-arrow-right"></i>报警信息
-            </span>
-          </span>
 
-          <span v-show="this.$store.state.status ==='AlertDetails'">
-            <span class @click="to('/header_hei')">
-              <i class="el-icon-arrow-right"></i>预警信息
-            </span>
-            <span class="yjxx">
-              <i class="el-icon-arrow-right"></i>报警详情页
-            </span>
-          </span>
-        </span>
-
-        <span class="pointer" v-show="this.$store.state.status === 'Positioning'">
-          <span class="yjxx">
-            <i class="el-icon-arrow-right"></i>学校详情页
-          </span>
-        </span>
-      </div>-->
       <div class="title">
         <img src="/img/logo.d722d696.png" alt />
         <div>校园食品安全监测云平台</div>
       </div>
       <div class="user">
-        <!-- <div class="addres">
-          <span>北京</span>
-        </div>-->
         <div class="message">
           <i class="el-icon-message-solid"></i>
-          <!-- <ul class="tip-chuang list">
-               <li @click="to('remind')">
-                <span class>[通知中心]</span> 你的通知已下达，某某实验小学已查看校园食堂食品安全保险文件。
-              </li>
-              <li @click="to('remind')">
-                <span class="yujing">[预警消息]</span> 新增25条预警消息，快去看看
-              </li>
-              <li @click="to('remind')">
-                <span class="baojing">[报警消息]</span> 新增5条报警消息，快去看看
-              </li>
-              <p class="more">
-                <span @click="to('remind')">查看更多</span>
-              </p>
-          </ul>-->
-
           <ul class="tip-chuang list" v-show="TZList.length>0">
-            <li @click="change(val.id)" v-for="val of TZList" :key="val.id">
-              <span class>[通知中心]</span>
+            <li @click="seeMore(val)" v-for="val of TZList" :key="val.id">
+              <span v-show="val.type === '报警消息'" style="color:red;">[{{val.type}}]</span>
+              <span v-show="val.type === '预警消息'" style="color:#03a9f4;">[{{val.type}}]</span>
+              <span v-show="val.type === '通知中心'">[{{val.type}}]</span>
               {{val.title}}
             </li>
             <p class="more">
-              <!-- <span @click="to('remind')">查看更多</span> -->
               <span @click="seeMore()">查看更多</span>
             </p>
           </ul>
@@ -90,17 +42,6 @@
             <li @click="to('/notice')">通知中心</li>
             <li @click="to('/login')">退出</li>
           </ul>
-
-          <form
-            action="/api/manageWat/supervision/updateAnnouncement"
-            method="post"
-            target="nm_iframe"
-            style="    visibility: hidden;;display:none;"
-          >
-            <input type="text" name="id" v-model="TZId" />
-            <input type="submit" value="tijiao" ref="changeId" />
-          </form>
-          <iframe id="id_iframe" name="nm_iframe" style="visibility: hidden;display:none;"></iframe>
         </div>
       </div>
     </div>
@@ -192,38 +133,27 @@ export default {
         }
       }
     },
-    change(e) {
-      this.fullscreenLoading = true;
-      this.TZId = e;
-      setTimeout(() => {
-        this.$refs.changeId.click();
-        this.CHENGE_ACTIVE("通知公告");
-      }, 0);
-
-      setTimeout(() => {
-        console.log(
-          this.$el.getElementsByTagName("iframe")[0].contentWindow.document.body
-            .innerText
-        );
-        let html = this.$el.getElementsByTagName("iframe")[0].contentWindow
-          .document.body.innerText;
-        let moban =
-          '{"code":0,"msg":"success","data":{"code":0,"msg":"success","data":true}}';
-        if (html === moban) {
-          this.fullscreenLoading = false;
-          this.to("completion");
-        }
-      }, 1000);
-    },
-    seeMore() {
-      this.CHENGE_ACTIVE("通知公告");
-      this.to("/completion");
+    seeMore(e) {
+      console.log(e);
+      let active = "";
+      if (e.type === "报警消息") {
+        active = "未接收报警";
+      } else if (e.type === "预警消息") {
+        active = "未接收预警";
+      } else if (e.type === "通知中心") {
+        active = "通知公告";
+      }
+      this.CHENGE_ACTIVE(active);
+      localStorage.setItem("gaoliangID",e.id);
+      this.to("/uncompletion");
     },
     getHongList() {
       xinxiaoxi({
         userId: this.userId,
         supStatus: 2
       }).then(res => {
+        console.log("gongdian");
+
         console.log(res.data.data.records);
 
         this.TZList = res.data.data.records;

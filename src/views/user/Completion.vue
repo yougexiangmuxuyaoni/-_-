@@ -504,10 +504,6 @@ export default {
     }
   },
   mounted() {
-    if (this.YIBANSHIXIANG_ACTIVE) {
-      this.active = this.YIBANSHIXIANG_ACTIVE;
-      this.CHENGE_ACTIVE("");
-    }
     this.getJGList();
     this.getTZ();
     this.getbjjieshou();

@@ -917,7 +917,7 @@
         </div>
       </div>
     </div>
-    <el-dialog title="详情" :visible.sync="dialogVisible" width="60%">
+    <el-dialog title="详情" :visible.sync="dialogVisible" width="40%">
       <!-- 留样 -->
       <div v-show="tzActive == 1">
         <el-row>
@@ -1103,20 +1103,25 @@
           </el-col>
         </el-row>
         <el-row>
+          <el-col>
+            <span>备注信息:</span>
+            <span>测试更新记录</span>
+          </el-col>
+        </el-row>
+        <el-row>
           <div>
             <span>厨余处理实照</span>
           </div>
           <img
             src="https://img.jjkaifa.com/uploads1/allimg/191206/073ee46c76a9c17e.png"
-            style="width:100px;height:100px;"
+            style="width:500px;height:500px;"
             alt
           />
-        </el-row>
-        <el-row>
-          <el-col>
-            <span>备注信息:</span>
-            <span>测试更新记录</span>
-          </el-col>
+            <img
+            src="https://img.jjkaifa.com/uploads1/allimg/191206/073ee46c76a9c17e.png"
+            style="width:500px;height:500px;"
+            alt
+          />
         </el-row>
       </div>
     </el-dialog>
@@ -1696,8 +1701,7 @@ export default {
       }).then(res => {
         if (this.tzActive === 1) {
           this.lylistJson = res.data.data.data;
-        // console.log(res.data.data.data);
-
+          // console.log(res.data.data.data);
         } else if (this.tzActive === 2) {
           this.pclistJson = res.data.data.data;
         } else if (this.tzActive === 3) {
@@ -2701,7 +2705,7 @@ export default {
 }
 .el-dialog {
   background: #092969 !important;
-  span{
+  span {
     color: #fff;
     line-height: 3em;
   }

@@ -20,8 +20,6 @@ export function jianguanxidajilu(query) {
 }
 
 export function tongzhigonggao(query) {
-    console.log(query);
-
     return request({
         url: '/api/manageWat/supervision/findPage',
         method: 'get',
@@ -39,8 +37,8 @@ export function bjjieshou(query) {
 
 
 export function bjweijieshou(query) {
+    console.log("未接受——报警");
     console.log(query);
-
     return request({
         url: '/api/manageWat/statistics/getUpcomingAlarms',
         method: 'get',
@@ -48,6 +46,22 @@ export function bjweijieshou(query) {
     })
 }
 
+export function gaibianTZzhuangtai(query) {
+    return request({
+        url: '/api/manageWat/supervision/updateAnnouncement',
+        method: 'get',
+        params: query
+    })
+}
+
+
+export function gaibianJGzhuangtai(query) {
+    return request({
+        url: '/api/manageWat/supervision/updateopinion',
+        method: 'get',
+        params: query
+    })
+}
 
 
 

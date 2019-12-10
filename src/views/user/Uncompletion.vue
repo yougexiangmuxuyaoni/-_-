@@ -106,7 +106,26 @@
         <el-table-column prop="content" label="监管意见"></el-table-column>
         <el-table-column prop="schName" label="学校名称"></el-table-column>
         <el-table-column prop="createTime" label="接收时间"></el-table-column>
+        <el-table-column prop="status" label="学校查看状态"></el-table-column>
+        <el-table-column prop="supStatus" label="下发人查看状态"></el-table-column>
+
         <el-table-column prop="viewName" label="接收人"></el-table-column>
+        <el-table-column label="查看详情">
+          <template slot-scope="scope">
+            <el-button
+              v-show="scope.row.status === '已查看'"
+              size="mini"
+              type="primary"
+              @click="change_gaibianJGzhuangtai(scope.row.id)"
+            >完成{{scope.row.id}}</el-button>
+            <el-button
+              v-show="scope.row.status === '未查看'"
+              size="mini"
+              type="primary"
+              :disabled="boolean"
+            >完成</el-button>
+          </template>
+        </el-table-column>
       </el-table>
 
       <el-footer class="footer">
@@ -128,15 +147,33 @@
 
     <div class="biao" v-show="active==='通知公告'">
       <el-table height="calc(100% - 70)" :data="TZList" style="width: 100%">
+        <!-- :row-class-name="tableRowClassName" -->
+
         <el-table-column type="index" width="20"></el-table-column>
-        <el-table-column prop="schName" width="100" label="学校名称"></el-table-column>
-        <el-table-column prop="title" width="120" label=" 标题"></el-table-column>
+        <el-table-column prop="schName" label="学校名称"></el-table-column>
+        <el-table-column prop="title" label=" 标题"></el-table-column>
         <el-table-column prop="content" label="内容"></el-table-column>
-        <el-table-column prop="realName" width="70" label="发布人"></el-table-column>
-        <el-table-column prop="createTime" width="100" label="发布时间"></el-table-column>
-        <el-table-column prop="viewTime" width="100" label="学校查看时间"></el-table-column>
-        <el-table-column prop="status" width="70" label="学校查看状态"></el-table-column>
-        <el-table-column prop="supStatus" width="80" label="下发人查看状态"></el-table-column>
+        <el-table-column prop="realName" label="发布人"></el-table-column>
+        <el-table-column prop="createTime" label="发布时间"></el-table-column>
+        <el-table-column prop="viewTime" label="学校查看时间"></el-table-column>
+        <el-table-column prop="status" label="学校查看状态"></el-table-column>
+        <el-table-column prop="supStatus" label="下发人查看状态"></el-table-column>
+        <el-table-column label="查看详情">
+          <template slot-scope="scope">
+            <el-button
+              v-show="scope.row.status === '已查看'"
+              size="mini"
+              type="primary"
+              @click="change_gaibianTZzhuangtai(scope.row.id)"
+            >完成</el-button>
+            <el-button
+              v-show="scope.row.status === '未查看'"
+              size="mini"
+              type="primary"
+              :disabled="boolean"
+            >完成</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <el-footer class="footer">
         <div
@@ -157,12 +194,20 @@
   </div>
 </template>
 <script>
-import { bjweijieshou, jianguanxidajilu, tongzhigonggao } from "@/api/home";
+import {
+  bjweijieshou,
+  jianguanxidajilu,
+  tongzhigonggao,
+  gaibianTZzhuangtai,
+  gaibianJGzhuangtai
+} from "@/api/home";
 import { mapState, mapMutations } from "vuex";
 export default {
   name: "completion",
   data() {
     return {
+      boolean: true,
+      glId: "",
       userInfo: null,
       isJinyong: true,
       active: "未接收报警",
@@ -172,7 +217,7 @@ export default {
       bjlistJson: {
         records: [],
         total: 12,
-        size: 2,
+        size: 15,
         current: 3,
         searchCount: true,
         pages: 6
@@ -185,7 +230,7 @@ export default {
       yjlistJson: {
         records: [],
         total: 12,
-        size: 2,
+        size: 15,
         current: 3,
         searchCount: true,
         pages: 6
@@ -219,77 +264,55 @@ export default {
       tz_com_current: Number
     };
   },
+  computed: {
+    ...mapState(["YIBANSHIXIANG_ACTIVE"])
+  },
   methods: {
-    ...mapMutations(["CHANGE_TIME_NUMBER", "SETTYPE"]),
-    bjupPage() {
-      this.bjval.page--;
-      this.getbjweijieshou();
-    },
-    bjnextPage() {
-      this.bjval.page++;
-      this.getbjweijieshou();
-    },
-    getbjweijieshou() {
-      this.loading_bj = true;
-      bjweijieshou({
-        iswarning: 1,
-        regionalLevel: this.userInfo.userLevel,
-        areaCode: this.userInfo.areaCode,
-        size: this.bjval.size,
-        page: this.bjval.page
-      }).then(res => {
-        this.loading_bj = false;
-        this.bjlistJson = res.data.data;
-      });
-    },
-    yjupPage() {
-      this.yjval.page--;
-      this.getyjweijieshou();
-    },
-    yjnextPage() {
-      this.yjval.page++;
-      this.getyjweijieshou();
-    },
-    getyjweijieshou() {
-      this.loading_yj = true;
-      bjweijieshou({
-        iswarning: 0,
-        regionalLevel: this.userInfo.userLevel,
-        areaCode: this.userInfo.areaCode,
-        size: this.yjval.size,
-        page: this.yjval.page
-      }).then(res => {
-        this.loading_yj = false;
-        this.yjlistJson = res.data.data;
-      });
-    },
-    getJGList() {
-      jianguanxidajilu({
-        userId: this.userInfo.userId,
-        size: this.size,
-        current: this.current,
-        supStatus: 2
-      }).then(res => {
-        this.com_size = res.data.data.total;
-        this.com_current = res.data.data.pages;
-        let arr = [];
-        res.data.data.records.forEach(val => {
-          if (val.type === "1") {
-            val.type = "证照预警";
-          } else {
-            val.type = "其他预警";
-          }
-          if (val.status === "1") {
-            val.status = "已查看";
-          } else if (val.status === "2") {
-            val.status = "未查看";
-          }
-          arr.push(val);
-        });
+    ...mapMutations(["CHANGE_TIME_NUMBER", "SETTYPE", "CHENGE_ACTIVE"]),
+    /**
+     * 高亮选中
+     *
+     * **/
+    // tableRowClassName({ row }) {
+    //   if (row.viewTime === this.glId) {
+    //     return "warning-row";
+    //   }
+    // },
 
-        this.tableData = arr;
-        console.log(this.tableData);
+    /**
+     *
+     * 改变通知公告状态
+     *
+     * **/
+    change_gaibianTZzhuangtai(id) {
+      console.log(id);
+
+      gaibianTZzhuangtai({
+        id
+      }).then(res => {
+        this.getTZ();
       });
+    },
+    change_gaibianJGzhuangtai(id) {
+      gaibianJGzhuangtai({
+        id
+      }).then(res => {
+        console.log(res.data);
+        this.getJGList();
+      });
+    },
+    /**
+     *  通知公告
+     *
+     * */
+
+    tz_previousPage() {
+      this.tz_current = this.tz_current - 1;
+      this.getTZ();
+    },
+    tz_nextPage() {
+      this.tz_current = this.tz_current + 1;
+      this.getTZ();
     },
     getTZ() {
       console.log("tongzhi");
@@ -324,8 +347,108 @@ export default {
           arr.push(val);
         });
         this.TZList = arr;
+        console.log(this.TZList);
       });
     },
+    /**
+     * 监管意见
+     *
+     * **/
+    previousPage() {
+      this.current = this.current - 1;
+      this.getJGList();
+    },
+    nextPage() {
+      this.current = this.current + 1;
+      this.getJGList();
+    },
+    getJGList() {
+      jianguanxidajilu({
+        userId: this.userInfo.userId,
+        size: this.size,
+        current: this.current,
+        supStatus: 2
+      }).then(res => {
+        console.log(res.data.data);
+
+        this.com_size = res.data.data.total;
+        this.com_current = res.data.data.pages;
+        let arr = [];
+        res.data.data.records.forEach(val => {
+          if (val.type === "1") {
+            val.type = "证照预警";
+          } else {
+            val.type = "其他预警";
+          }
+          if (val.status === "1") {
+            val.status = "已查看";
+          } else if (val.status === "2") {
+            val.status = "未查看";
+          }
+          arr.push(val);
+        });
+
+        this.tableData = arr;
+        console.log(this.tableData);
+      });
+    },
+    /**
+     * 报警
+     *
+     * **/
+    bjupPage() {
+      this.bjval.page--;
+      this.getbjweijieshou();
+    },
+    bjnextPage() {
+      this.bjval.page++;
+      this.getbjweijieshou();
+    },
+    getbjweijieshou() {
+      console.log(11111111);
+
+      this.loading_bj = true;
+      bjweijieshou({
+        iswarning: 1,
+        regionalLevel: this.userInfo.userLevel,
+        areaCode: this.userInfo.areaCode,
+        size: this.bjval.size,
+        page: this.bjval.page
+      }).then(res => {
+        console.log(111111111);
+
+        console.log(res.data);
+
+        this.loading_bj = false;
+        this.bjlistJson = res.data.data;
+      });
+    },
+    /**
+     * 预警
+     *
+     * **/
+    yjupPage() {
+      this.yjval.page--;
+      this.getyjweijieshou();
+    },
+    yjnextPage() {
+      this.yjval.page++;
+      this.getyjweijieshou();
+    },
+    getyjweijieshou() {
+      this.loading_yj = true;
+      bjweijieshou({
+        iswarning: 0,
+        regionalLevel: this.userInfo.userLevel,
+        areaCode: this.userInfo.areaCode,
+        size: this.yjval.size,
+        page: this.yjval.page
+      }).then(res => {
+        this.loading_yj = false;
+        this.yjlistJson = res.data.data;
+      });
+    },
+
     showXiangqing(e) {
       this.CHANGE_TIME_NUMBER();
       this.SETTYPE(e.type.substr(0, 2));
@@ -333,11 +456,31 @@ export default {
       localStorage.setItem("lishixiangqingid", e.id);
       localStorage.setItem("lishixiangqingjing", e.type.substr(2));
       this.$router.push("/alertDetails");
+    },
+    /**
+     *
+     * 监管意见，通知公告 转到已办事项
+     *
+     * **/
+
+    finish(e) {
+      console.log(e);
+    }
+  },
+  mounted() {
+    if (this.YIBANSHIXIANG_ACTIVE) {
+      this.active = this.YIBANSHIXIANG_ACTIVE;
+      this.CHENGE_ACTIVE("");
     }
   },
   created() {
     this.userInfo = JSON.parse(localStorage.getItem("userInfo"));
     console.log(this.userInfo);
+    let glId = localStorage.getItem("gaoliangID");
+
+    if (glId) {
+      this.glId = glId;
+    }
 
     this.getbjweijieshou();
     this.getyjweijieshou();
@@ -348,6 +491,9 @@ export default {
 </script>
 <style lang="scss" scope>
 @import "@/assets/css/public.scss";
+.el-table .warning-row {
+  background: oldlace;
+}
 #completion2 {
   width: 100%;
   height: calc(100% - 30px);
