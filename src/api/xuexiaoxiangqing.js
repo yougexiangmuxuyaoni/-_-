@@ -112,6 +112,10 @@ export function jilulist(query) {
 
 
 export function jiluxiangqing(query) {
+    console.log("qingqiu");
+
+    console.log(query);
+
     return request({
         url: '/api/manageWat/statistics/getAccountDetail',
         method: 'get',

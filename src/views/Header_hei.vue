@@ -144,7 +144,7 @@ export default {
         active = "通知公告";
       }
       this.CHENGE_ACTIVE(active);
-      localStorage.setItem("gaoliangID",e.id);
+      localStorage.setItem("gaoliangID", e.id);
       this.to("/uncompletion");
     },
     getHongList() {
@@ -152,10 +152,6 @@ export default {
         userId: this.userId,
         supStatus: 2
       }).then(res => {
-        console.log("gongdian");
-
-        console.log(res.data.data.records);
-
         this.TZList = res.data.data.records;
       });
     },

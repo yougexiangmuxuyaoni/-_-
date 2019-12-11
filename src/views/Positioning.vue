@@ -971,71 +971,85 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="4">
-            <img
-              style="width:100px;height:width:100px;"
-              src="blob:https://element.eleme.cn/243a0638-92c1-4148-a3e2-23d4f2fccb97"
-              alt
-            />
-          </el-col>
+          <img
+            src="https://img.jjkaifa.com/uploads1/allimg/191206/073ee46c76a9c17e.png"
+            style="width:100%;"
+            alt
+          />
         </el-row>
       </div>
       <!-- 陪餐 -->
       <div v-show="tzActive == 2">
         <el-row>
           <el-col :span="12">
-            <span>配餐人员:</span>
-            <span>张磊</span>
+            <span>陪餐人员:</span>
+            <span>{{jiluxiangqingJson.ad_person || "暂无"}}</span>
           </el-col>
           <el-col :span="12">
-            <span>配餐日期:</span>
-            <span>2019-12-02</span>
+            <span>陪餐日期:</span>
+            <span>{{jiluxiangqingJson.ad_time || "暂无"}}</span>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <span>用餐餐次:</span>
-            <span>午餐</span>
+            <span v-show="jiluxiangqingJson.parameter ==1">早餐</span>
+            <span v-show="jiluxiangqingJson.parameter ==2">上午加餐</span>
+            <span v-show="jiluxiangqingJson.parameter ==3">午餐</span>
+            <span v-show="jiluxiangqingJson.parameter ==4">下午加餐</span>
+            <span v-show="jiluxiangqingJson.parameter ==5">晚餐</span>
           </el-col>
           <el-col :span="12">
             <span>陪餐情况:</span>
-            <span>满意</span>
+            <span v-show="jiluxiangqingJson.ad_ams == '1'">差</span>
+            <span v-show="jiluxiangqingJson.ad_ams == '2'">一般</span>
+            <span v-show="jiluxiangqingJson.ad_ams == '3'">满意</span>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <span>是否存在问题:</span>
-            <span>是</span>
+            <span v-show="jiluxiangqingJson.ad_isproblem == '1'">不存在</span>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="12" v-show="jiluxiangqingJson.ad_isproblem == '2'">
             <span>备注信息:</span>
-            <span>菜炒的有点辣</span>
+            <span>{{jiluxiangqingJson.remarks || "暂无"}}</span>
           </el-col>
         </el-row>
         <el-row>
+          <el-col :span="24">
+            <span>陪餐实照</span>
+          </el-col>
           <img
-            src="https://img.jjkaifa.com/uploads1/allimg/191206/073ee46c76a9c17e.png"
-            style="width:100px;height:100px;"
+            v-for="(val,index) of jiluxiangqingJson.ad_pic"
+            :key="index"
+            :src="val"
+            style="width:100%;"
             alt
           />
+          <span v-show="!jiluxiangqingJson.ad_pic">暂无</span>
         </el-row>
       </div>
       <!-- 洗消 -->
       <div v-show="tzActive == 3">
         <el-row>
           <el-col :span="12">
-            <span>洗消日期:</span>
-            <span>2019-12-14</span>
+            <span>消毒日期:</span>
+            <span>{{jiluxiangqingJson.dn_date}}</span>
           </el-col>
           <el-col :span="12">
             <span>餐次:</span>
-            <span>早</span>
+            <span v-show="jiluxiangqingJson.meal_time ==1">早餐</span>
+            <span v-show="jiluxiangqingJson.meal_time ==2">上午加餐</span>
+            <span v-show="jiluxiangqingJson.meal_time ==3">午餐</span>
+            <span v-show="jiluxiangqingJson.meal_time ==4">下午加餐</span>
+            <span v-show="jiluxiangqingJson.meal_time ==5">晚餐</span>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <span>洗消列表:</span>
-            <span>午餐</span>
+            <span>{{jiluxiangqingJson.dn_name}}</span>
           </el-col>
           <el-col :span="12">
             <span>陪餐情况:</span>
@@ -1055,7 +1069,7 @@
         <el-row>
           <img
             src="https://img.jjkaifa.com/uploads1/allimg/191206/073ee46c76a9c17e.png"
-            style="width:100px;height:100px;"
+            style="width:100%;"
             alt
           />
         </el-row>
@@ -1065,63 +1079,49 @@
         <el-row>
           <el-col :span="12">
             <span>收运时间:</span>
-            <span>2019-12-06</span>
+            <span>{{jiluxiangqingJson.recover_time || "暂无"}}</span>
           </el-col>
           <el-col :span="12">
             <span>产生量:</span>
-            <span>19</span>
+            <span>{{jiluxiangqingJson.yield || "暂无"}}</span>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <span>处理人:</span>
-            <span>张三</span>
+            <span>{{jiluxiangqingJson.disposer || "暂无"}}</span>
           </el-col>
           <el-col :span="12">
             <span>回收类别:</span>
-            <span>废弃油脂</span>
+            <span v-show="jiluxiangqingJson.rec_category=='1'">厨余垃圾</span>
+            <span v-show="jiluxiangqingJson.rec_category=='2'">废弃油脂</span>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <span>收运量:</span>
-            <span>112</span>
+            <span>{{jiluxiangqingJson.shipping_volume || "暂无"}}</span>
           </el-col>
           <el-col :span="12">
             <span>处理单位:</span>
-            <span>叙永厨余垃圾回收单位</span>
+            <span>{{jiluxiangqingJson.disposal_unit || "暂无"}}</span>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <span>收运车辆号:</span>
-            <span>川A12353</span>
+            <span>{{jiluxiangqingJson.car_number || "暂无"}}</span>
           </el-col>
           <el-col :span="12">
             <span>收运人:</span>
-            <span>李四</span>
+            <span>{{jiluxiangqingJson.kt_person || "暂无"}}</span>
           </el-col>
         </el-row>
         <el-row>
           <el-col>
             <span>备注信息:</span>
-            <span>测试更新记录</span>
+            <span>{{jiluxiangqingJson.remarks || "暂无"}}</span>
           </el-col>
-        </el-row>
-        <el-row>
-          <div>
-            <span>厨余处理实照</span>
-          </div>
-          <img
-            src="https://img.jjkaifa.com/uploads1/allimg/191206/073ee46c76a9c17e.png"
-            style="width:500px;height:500px;"
-            alt
-          />
-            <img
-            src="https://img.jjkaifa.com/uploads1/allimg/191206/073ee46c76a9c17e.png"
-            style="width:500px;height:500px;"
-            alt
-          />
         </el-row>
       </div>
     </el-dialog>
@@ -1152,7 +1152,32 @@ export default {
     return {
       dialogVisible: false,
       tzActive: 1,
-
+      jiluxiangqingJson: {
+        update_id: null,
+        del_flag: "0",
+        shipping_volume: null,
+        create_time: "2019-11-10 17:25:38",
+        disposal_unit: "叙永县厨余垃圾回收站",
+        rec_category: "1",
+        recover_time: "2019-11-11 21:00:00",
+        disposer: "李贺",
+        updateName: null,
+        kt_pic:
+          "http://shenning.oss-cn-beijing.aliyuncs.com/test3f9d917a-f28d-447f-8593-969fba5f97f4.png",
+        update_time: "2019-11-11 14:56:51",
+        school_id: 1,
+        create_id: null,
+        kt_num: "8",
+        contact: "13687903568",
+        car_number: "京A85001",
+        yield: null,
+        id: 1,
+        schoolName: "叙永县城西实验中学",
+        labelName: "厨余垃圾",
+        kt_person: "张培",
+        remarks: "",
+        createName: null
+      },
       cylistJson: {
         records: [],
         total: 4,
@@ -1724,13 +1749,34 @@ export default {
       this.getjilulist();
     },
     handleEdit(e) {
-      this.getjiluxiangqing();
+      this.getjiluxiangqing(e);
       this.dialogVisible = true;
-      // console.log(e);
     },
-    getjiluxiangqing() {
-      jiluxiangqing({}).then(res => {
-        // console.log(res.data.data.data);
+    getjiluxiangqing(e) {
+      jiluxiangqing({
+        ledgerId: e.id,
+        schoolId: this.schoolId,
+        isWho: e.isWho
+      }).then(res => {
+        console.log(res.data.data);
+        if (res.data.data.data.length > 0) {
+          if (this.tzActive === 2) {
+            this.jiluxiangqingJson = res.data.data.data[0];
+            console.log(this.jiluxiangqingJson.ad_pic);
+
+            if (this.jiluxiangqingJson.ad_pic) {
+              if (this.jiluxiangqingJson.ad_pic.indexOf != -1) {
+                this.jiluxiangqingJson.ad_pic = this.jiluxiangqingJson.ad_pic.split(
+                  ","
+                );
+              } else {
+                this.jiluxiangqingJson.ad_pic = [this.jiluxiangqingJson.ad_pic];
+              }
+            }
+          } else if (this.tzActive === 4) {
+            this.jiluxiangqingJson = res.data.data.data[0];
+          }
+        }
       });
     },
     //设置表格行的样式
@@ -2708,6 +2754,10 @@ export default {
   span {
     color: #fff;
     line-height: 3em;
+    padding-right:1em; 
   }
+  // span:nth-of-type(2) {
+  //   color: #9E9E9E;
+  // }
 }
 </style>

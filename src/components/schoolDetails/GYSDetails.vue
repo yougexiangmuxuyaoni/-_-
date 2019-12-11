@@ -238,7 +238,7 @@ export default {
       yjLength: 4,
       textarea: "",
       loading: false,
-      type:'',
+      type: "",
       lishixiangqingJson: {
         basicInformationW: {
           supplierName: "叙永县供应商A",
@@ -396,8 +396,6 @@ export default {
 
       // warningId 可以用 e参数
       //iswarning 0预警 1预警
-      console.log(type);
-      
       if (type === "证照") {
         lishixiangqing({
           schoolId: SchoolId,
@@ -405,13 +403,14 @@ export default {
           warningId: id
         }).then(res => {
           // console.log("证照详情");
-          // console.log(res.data);
+          console.log(res.data);
           if (res.data.data) {
-            if (this.lishixiangqingJson.schoolName) {
+            if (res.data.data.data.schoolName) {
               this.lishixiangqingJson = res.data.data.data;
             } else {
+              this.lishixiangqingJson = res.data.data.data;
               this.lishixiangqingJson.schoolName = {
-                schName: "叙永县城西实验中学",
+                schName: "实验中学",
                 id: 1
               };
             }
@@ -425,7 +424,7 @@ export default {
         }).then(res => {
           // console.log("人员详情");
           if (res.data.data) {
-            // console.log(res.data.data.data);
+            console.log(res.data.data.data);
             this.renyuanxiangqingJson = res.data.data.data;
           }
         });
@@ -437,7 +436,7 @@ export default {
         }).then(res => {
           // console.log("食材详情");
           // console.log(res.data);
-          if (this.shicaixiangqingJson.data) {
+          if (res.data.data.data) {
             this.shicaixiangqingJson = res.data.data.data;
           } else {
           }

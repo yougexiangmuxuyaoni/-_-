@@ -34,23 +34,59 @@
       </el-row>
       <el-row>
         <el-col :offset="8" :span="15">
-          <el-button type="primary">提交</el-button>
+          <el-button type="primary" @click="jiance">提交</el-button>
         </el-col>
       </el-row>
     </div>
   </div>
 </template>
 <script>
+import { xiugaimima } from "@/api/denglu.js";
+import { mapState, mapMutations } from "vuex";
 export default {
   name: "password",
   data() {
     return {
       oldmima: "",
       mima: "",
-      mima2: ""
+      mima2: "",
+      userId: ""
     };
   },
-  methods: {}
+  methods: {
+    ...mapMutations(["GO_OUT"]),
+    getxiugaimima() {
+      xiugaimima({
+        userId: this.userId,
+        oldPassword: this.oldmima,
+        newPassword: this.mima
+      }).then(res => {
+        console.log("密码");
+        console.log(res.data);
+        if (res.data.data) {
+          this.GO_OUT();
+          this.$router.push("/login");
+        } else {
+          this.$message(res.data.msg);
+        }
+      });
+    },
+    jiance() {
+      console.log(this.mima.length);
+
+      if (this.mima.length < 6) {
+        this.$message("密码至少6位");
+      } else if (this.mima === this.mima2) {
+        this.getxiugaimima();
+      } else {
+        this.$message("新密码不一致");
+      }
+    }
+  },
+  created() {
+    var user = JSON.parse(localStorage.getItem("userInfo"));
+    this.userId = user.userId;
+  }
 };
 </script>
 <style lang="scss" scope>

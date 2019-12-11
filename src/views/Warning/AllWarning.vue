@@ -144,16 +144,16 @@ export default {
           {
             supplierName: " ",
             Status: " ",
-            school: '',
+            school: "",
             description: " ",
-            warning: '',
+            warning: "",
             VALUE: "",
             time: ":",
-            id: '',
+            id: "",
             type: "",
             schoolName: "",
-            SchoolId: '',
-            sameWarning: ''
+            SchoolId: "",
+            sameWarning: ""
           }
         ],
         total: 3,
@@ -249,9 +249,10 @@ export default {
     showXiangqing(e) {
       this.CHANGE_TIME_NUMBER();
       this.SETTYPE(e.type.substr(0, 2));
-      localStorage.setItem("SchoolId",e.SchoolId);
-      localStorage.setItem("lishixiangqingid",e.id);
-      localStorage.setItem("lishixiangqingjing",e.type.substr(2));
+      localStorage.setItem("lishixiangqingtype", e.type.substr(0, 2));
+      localStorage.setItem("SchoolId", e.SchoolId);
+      localStorage.setItem("lishixiangqingid", e.id);
+      localStorage.setItem("lishixiangqingjing", e.type.substr(2));
       this.$router.push("/alertDetails");
     },
     hover(row, column, cell, event) {

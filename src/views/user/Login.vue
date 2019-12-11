@@ -84,6 +84,10 @@ export default {
       const _this = this;
       denglu(this.loginForm)
         .then(res => {
+          console.log("denglu");
+          
+          console.log(res.data);
+          
           const token = res.data.access_token;
           localStorage.setItem("token", token);
           getUserInfo().then(res => {

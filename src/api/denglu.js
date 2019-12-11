@@ -3,6 +3,17 @@ import request from 'axios'
 登录 API
 */
 
+export function xiugaimima(query) {
+    console.log(query);
+
+    return request({
+        url: "/api/manageWat/statistics/upPasswordByid",
+        method: 'get',
+        params: query
+    })
+}
+
+
 const scope = 'server'
 export function denglu(userInfo) {
     const user = encryption({

@@ -254,6 +254,7 @@ export default {
     showXiangqing(e) {
       this.CHANGE_TIME_NUMBER();
       this.SETTYPE(e.type.substr(0, 2));
+      localStorage.setItem("lishixiangqingtype",e.type.substr(0, 2));
       localStorage.setItem("SchoolId", e.SchoolId);
       localStorage.setItem("lishixiangqingid", e.id);
       localStorage.setItem("lishixiangqingjing", e.type.substr(2));
