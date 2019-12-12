@@ -112,16 +112,46 @@ export function jilulist(query) {
 
 
 export function jiluxiangqing(query) {
-    console.log("qingqiu");
-
-    console.log(query);
-
     return request({
         url: '/api/manageWat/statistics/getAccountDetail',
         method: 'get',
         params: query
     })
 }
+
+export function liuyangbtn(query) {
+    return request({
+        url: '/api/manageWat/statistics/getDailyIsExist',
+        method: 'get',
+        params: query
+    })
+}
+
+export function liuyangxiangqing(query) {
+    return request({
+        url: '/api/manageWat/statistics/getSample',
+        method: 'get',
+        params: query
+    })
+}
+
+export function liuyanglist(query) {
+    return request({
+        url: '/api/manageWat/statistics/getSampleDetails',
+        method: 'get',
+        params: query
+    })
+}
+
+export function xixiaoxiangqing(query) {
+    return request({
+        url: '/api/manageWat/statistics/getWashDetail',
+        method: 'get',
+        params: query
+    })
+}
+
+
 // export function baojingList(query) {
 //     return request({
 //         url: '/api/baojingList',

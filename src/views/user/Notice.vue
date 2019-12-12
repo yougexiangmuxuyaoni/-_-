@@ -107,7 +107,7 @@
 </template>
 <script>
 import axios from "axios";
-
+import { allSchools } from "@/api/home.js";
 export default {
   name: "notice",
   data() {
@@ -130,13 +130,14 @@ export default {
           label: "北京邮电大学"
         }
       ],
-      value: "1",
+      value: "",
       file_list: [],
       xuexiao: "",
       zhuti: "",
       neirong: "",
       SchoolId: 1,
-      userId:4,
+      userId: 4,
+      areaCode: ""
     };
   },
   methods: {
@@ -180,6 +181,7 @@ export default {
           this.zhuti = "";
           this.neirong = "";
           this.file_list = [];
+          this.value ='';
           this.$message({
             showClose: true,
             message: "通知下达成功",
@@ -187,12 +189,26 @@ export default {
           });
         }
       }, 1000);
+    },
+    /**
+     * 获取本地区 所有学校
+     * **/
+
+    getAllSchools() {
+      allSchools({
+        areaCode: this.areaCode
+      }).then(res => {
+        console.log(res.data.data);
+        this.options = res.data.data;
+      });
     }
   },
   created() {
     this.SchoolId = localStorage.getItem("SchoolId");
     var user = JSON.parse(localStorage.getItem("userInfo"));
     this.userId = user.userId;
+    this.areaCode = user.areaCode;
+    this.getAllSchools();
   }
 };
 </script>

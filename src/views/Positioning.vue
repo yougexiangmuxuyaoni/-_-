@@ -765,7 +765,7 @@
           <el-table-column prop="schoolName" label="学校名称"></el-table-column>
           <el-table-column label="操作" width="120">
             <template slot-scope="scope">
-              <div class="xiangqing" @click="handleEdit(scope.row)">查看详情</div>
+              <div class="xiangqing" @click="getliuyangbtn(scope.row)">查看详情</div>
             </template>
           </el-table-column>
         </el-table>
@@ -848,7 +848,7 @@
           <el-table-column prop="sch_name" label="学校名称"></el-table-column>
           <el-table-column label="操作" width="120">
             <template slot-scope="scope">
-              <div class="xiangqing" @click="handleEdit(scope.row)">查看详情</div>
+              <div class="xiangqing" @click="getxixiaoxiangqing(scope.row)">查看详情</div>
             </template>
           </el-table-column>
         </el-table>
@@ -917,65 +917,84 @@
         </div>
       </div>
     </div>
-    <el-dialog title="详情" :visible.sync="dialogVisible" width="40%">
+    <el-dialog title="详情" :visible.sync="dialogVisible" width="40%" id="xiangqingchuang">
       <!-- 留样 -->
       <div v-show="tzActive == 1">
         <el-row>
           <el-col :span="12">
             <span>留样编号:</span>
-            <span>LY201912261</span>
+            <span>{{jiluxiangqingJson.srNumber || '暂无'}}</span>
           </el-col>
           <el-col :span="12">
             <span>食谱日期:</span>
-            <span>2019-12-26</span>
+            <span>{{jiluxiangqingJson.rdDate || '暂无'}}</span>
           </el-col>
+        </el-row>
+        <el-row>
+          <el-radio-group v-model="liuyangType" size="mini" @change="getliuyangxiang">
+            <el-radio-button :label="val" v-for="val of liuyangTypearr" :key="val"></el-radio-button>
+          </el-radio-group>
+        </el-row>
+        <el-row style="margin-top:10px;">
+          <el-table
+            :data="liuyangxiang_listarr"
+            style="width: 100%"
+            :row-style="tableRowStyle"
+            :header-cell-style="tableHeaderColor"
+          >
+            <el-table-column prop="rdType" label="餐次" :formatter="isLiuyangshipu"></el-table-column>
+            <el-table-column prop="reName" label="食谱名称"></el-table-column>
+            <el-table-column prop="srType" label="是否已留样" :formatter="isLiuyang"></el-table-column>
+          </el-table>
         </el-row>
         <el-row>
           <el-col :span="12">
             <span>留样时间:</span>
-            <span>2019-11-11</span>
+            <span>{{jiluxiangqingJson.samplerecordTime || '暂无'}}</span>
           </el-col>
           <el-col :span="12">
             <span>留样人:</span>
-            <span>东方</span>
+            <span>{{jiluxiangqingJson.sampleName|| '暂无'}}</span>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <span>处理时间:</span>
-            <span>2019-11-11</span>
+            <span>{{jiluxiangqingJson.processingTime|| '暂无'}}</span>
           </el-col>
           <el-col :span="12">
             <span>处理人:</span>
-            <span>李地方</span>
+            <span>{{jiluxiangqingJson.transactor|| '暂无'}}</span>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <span>食谱餐次:</span>
-            <span>LY201912261</span>
-          </el-col>
-          <el-col :span="12">
             <span>重量:</span>
-            <span>12kg</span>
+            <span>{{jiluxiangqingJson.weight|| '暂无'}}</span>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <span>储存方法及温度:</span>
-            <span>20°</span>
+            <span>{{jiluxiangqingJson.temperature|| '暂无'}}</span>
           </el-col>
           <el-col :span="12">
             <span>审核人:</span>
-            <span>张三</span>
+            <span>{{jiluxiangqingJson.checker|| '暂无'}}</span>
           </el-col>
         </el-row>
         <el-row>
+          <el-col :span="24">
+            <span>留样实照</span>
+          </el-col>
           <img
-            src="https://img.jjkaifa.com/uploads1/allimg/191206/073ee46c76a9c17e.png"
+            v-for="(val,index) of jiluxiangqingJson.sample_keeping"
+            :key="index"
+            :src="val"
             style="width:100%;"
             alt
           />
+          <span v-show="!jiluxiangqingJson.sample_keeping">暂无</span>
         </el-row>
       </div>
       <!-- 陪餐 -->
@@ -1035,43 +1054,61 @@
         <el-row>
           <el-col :span="12">
             <span>消毒日期:</span>
-            <span>{{jiluxiangqingJson.dn_date}}</span>
+            <span>{{xixiaoxiangqingJson.dn_date || "暂无"}}</span>
           </el-col>
           <el-col :span="12">
             <span>餐次:</span>
-            <span v-show="jiluxiangqingJson.meal_time ==1">早餐</span>
-            <span v-show="jiluxiangqingJson.meal_time ==2">上午加餐</span>
-            <span v-show="jiluxiangqingJson.meal_time ==3">午餐</span>
-            <span v-show="jiluxiangqingJson.meal_time ==4">下午加餐</span>
-            <span v-show="jiluxiangqingJson.meal_time ==5">晚餐</span>
+            <span v-show="xixiaoxiangqingJson.meal_time ==1">早餐</span>
+            <span v-show="xixiaoxiangqingJson.meal_time ==2">午餐</span>
+            <span v-show="xixiaoxiangqingJson.meal_time ==3">晚餐</span>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
+          <el-col :span="24">
             <span>洗消列表:</span>
-            <span>{{jiluxiangqingJson.dn_name}}</span>
-          </el-col>
-          <el-col :span="12">
-            <span>陪餐情况:</span>
-            <span>满意</span>
+            <el-row style="margin-top:10px;">
+              <el-table
+                :data="xixiaoxiangqingJson.washlist"
+                style="width: 100%"
+                :row-style="tableRowStyle"
+                :header-cell-style="tableHeaderColor"
+              >
+                <el-table-column prop="tableware" label="名称"></el-table-column>
+                <el-table-column prop="number" label="数量"></el-table-column>
+                <el-table-column prop="disinfection" label="消毒方法"></el-table-column>
+              </el-table>
+            </el-row>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <span>是否存在问题:</span>
-            <span>是</span>
+            <span>开始时间:</span>
+            <span>{{xixiaoxiangqingJson.dn_start || "暂无"}}</span>
+          </el-col>
+          <el-col :span="12">
+            <span>结束时间:</span>
+            <span>{{xixiaoxiangqingJson.dn_end || "暂无"}}</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <span>消毒时长:</span>
+            <span>{{xixiaoxiangqingJson.dn_dislength || "暂无"}}</span>
+          </el-col>
+          <el-col :span="12">
+            <span>温度:</span>
+            <span>{{xixiaoxiangqingJson.temperature || "暂无"}}</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <span>操作人:</span>
+            <span>{{xixiaoxiangqingJson.operator || "暂无"}}</span>
           </el-col>
           <el-col :span="12">
             <span>备注信息:</span>
-            <span>菜炒的有点辣</span>
+            <span>{{xixiaoxiangqingJson.remarks || "暂无"}}</span>
           </el-col>
-        </el-row>
-        <el-row>
-          <img
-            src="https://img.jjkaifa.com/uploads1/allimg/191206/073ee46c76a9c17e.png"
-            style="width:100%;"
-            alt
-          />
         </el-row>
       </div>
       <!-- 厨余 -->
@@ -1142,7 +1179,11 @@ import {
   taizhangxinxi,
   lishibaojing,
   jilulist,
-  jiluxiangqing
+  jiluxiangqing,
+  liuyangbtn,
+  liuyangxiangqing,
+  liuyanglist,
+  xixiaoxiangqing
 } from "@/api/xuexiaoxiangqing";
 import { log } from "util";
 import { mapState, mapMutations } from "vuex";
@@ -1150,6 +1191,13 @@ export default {
   name: "positioning",
   data() {
     return {
+      /**
+       * 留样详情
+       * **/
+      liuyangType: "",
+      liuyangTypearr: [],
+      liuyang_row: {},
+      liuyangxiang_listarr: [],
       dialogVisible: false,
       tzActive: 1,
       jiluxiangqingJson: {
@@ -1177,6 +1225,33 @@ export default {
         kt_person: "张培",
         remarks: "",
         createName: null
+      },
+      /**
+       * 洗消详情
+       * **/
+      xixiaoxiangqingJson: {
+        dn_dislength: "30",
+        dn_start: "17:19:00",
+        temperature: null,
+        dn_end: "21:19:00",
+        meal_time: "1",
+        washlist: [
+          {
+            number: "100",
+            tableware: "盘子",
+            disinfection: "热力消毒"
+          },
+          {
+            number: "200",
+            tableware: "食品盒",
+            disinfection: "化学消毒"
+          }
+        ],
+        updateName: "李志",
+        dn_date: "2019-11-11 00:00:00",
+        operator: null,
+        remarks: "",
+        createName: "无"
       },
       cylistJson: {
         records: [],
@@ -1255,217 +1330,6 @@ export default {
             schoolName: "叙永县城西实验中学",
             value: "7",
             tital: "牛肉"
-          },
-          {
-            health_pic: null,
-            description: "营业执照过期",
-            food_pic: null,
-            label: "营业执照报警",
-            type: "证照报警",
-            permit_pic: null,
-            bulicense_pic: null,
-            school: {
-              schName: "叙永县城西实验中学",
-              id: 1
-            },
-            supplier: "供应商A",
-            schoolId: 1,
-            alarm: "1",
-            time: "2019-11-10 17:32:59",
-            identity_pic: null,
-            id: 4,
-            schoolName: "叙永县城西实验中学",
-            value: "1",
-            tital: "营业执照"
-          },
-          {
-            health_pic: null,
-            description: "健康证过期",
-            food_pic: null,
-            label: "健康证报警",
-            type: "人员报警",
-            permit_pic:
-              "http://shenning.oss-cn-beijing.aliyuncs.com/testafe36fa8-0da9-4279-9bb0-cccb9c80337e.jpg",
-            bulicense_pic:
-              "http://shenning.oss-cn-beijing.aliyuncs.com/test40e100ba-e888-4a8c-86de-f0385cb05cee.jpg",
-            school: {
-              schName: "叙永县城西实验中学",
-              id: 1
-            },
-            supplier: "供应商A",
-            schoolId: 1,
-            alarm: "3",
-            time: "2019-11-10 17:32:59",
-            identity_pic: null,
-            id: 1,
-            schoolName: "叙永县城西实验中学",
-            value: "3",
-            tital: "和撒"
-          },
-          {
-            health_pic: null,
-            description: "健康证过期",
-            food_pic: null,
-            label: "健康证报警",
-            type: "人员报警",
-            permit_pic: null,
-            bulicense_pic: null,
-            school: {
-              schName: "叙永县城西实验中学",
-              id: 1
-            },
-            supplier: "供应商A",
-            schoolId: 1,
-            alarm: "3",
-            time: "2019-11-10 17:32:59",
-            identity_pic: null,
-            id: 2,
-            schoolName: "叙永县城西实验中学",
-            value: "3",
-            tital: null
-          },
-          {
-            health_pic: null,
-            description: "健康证过期",
-            food_pic: null,
-            label: "健康证报警",
-            type: "人员报警",
-            permit_pic: null,
-            bulicense_pic: null,
-            school: {
-              schName: "叙永县城西实验中学",
-              id: 1
-            },
-            supplier: "供应商A",
-            schoolId: 1,
-            alarm: "3",
-            time: "2019-10-10 17:32:59",
-            identity_pic: null,
-            id: 3,
-            schoolName: "叙永县城西实验中学",
-            value: "3",
-            tital: null
-          },
-          {
-            health_pic: null,
-            description: "采购时未上传索证索票",
-            food_pic:
-              "http://shenning.oss-cn-beijing.aliyuncs.com/test3e01f7a7-567f-4502-ae2c-89be965e2dac.jpg",
-            label: "采购时未上传索证索票",
-            type: "食材预警",
-            permit_pic:
-              "http://shenning.oss-cn-beijing.aliyuncs.com/testafe36fa8-0da9-4279-9bb0-cccb9c80337e.jpg",
-            bulicense_pic:
-              "http://shenning.oss-cn-beijing.aliyuncs.com/test40e100ba-e888-4a8c-86de-f0385cb05cee.jpg",
-            school: {
-              schName: "测试",
-              id: 2
-            },
-            supplier: "叙永县供应商b",
-            schoolId: 1,
-            alarm: "4",
-            time: "2019-11-10 17:32:50",
-            identity_pic: null,
-            id: 8,
-            schoolName: "test",
-            value: "4",
-            tital: "2019-11-25"
-          },
-          {
-            health_pic: null,
-            description: "营业执照即将过期",
-            food_pic: null,
-            label: "营业执照即将过期",
-            type: "证照预警",
-            permit_pic:
-              "http://shenning.oss-cn-beijing.aliyuncs.com/testafe36fa8-0da9-4279-9bb0-cccb9c80337e.jpg",
-            bulicense_pic:
-              "http://shenning.oss-cn-beijing.aliyuncs.com/test40e100ba-e888-4a8c-86de-f0385cb05cee.jpg",
-            school: {
-              schName: "叙永县城西实验中学",
-              id: 1
-            },
-            supplier: "叙永县供应商A",
-            schoolId: 1,
-            alarm: "1",
-            time: "2019-11-10 17:32:50",
-            identity_pic: null,
-            id: 1,
-            schoolName: "叙永县城西实验中学",
-            value: "1",
-            tital: "营业执照"
-          },
-          {
-            health_pic: null,
-            description: "许可证即将过期",
-            food_pic: null,
-            label: "许可证即将过期",
-            type: "证照预警",
-            permit_pic:
-              "http://shenning.oss-cn-beijing.aliyuncs.com/testafe36fa8-0da9-4279-9bb0-cccb9c80337e.jpg",
-            bulicense_pic:
-              "http://shenning.oss-cn-beijing.aliyuncs.com/test40e100ba-e888-4a8c-86de-f0385cb05cee.jpg",
-            school: {
-              schName: "叙永县城西实验中学",
-              id: 1
-            },
-            supplier: "叙永县供应商A",
-            schoolId: 1,
-            alarm: "2",
-            time: "2019-11-10 17:32:50",
-            identity_pic: null,
-            id: 2,
-            schoolName: "叙永县城西实验中学",
-            value: "2",
-            tital: "许可证"
-          },
-          {
-            health_pic: null,
-            description: "许可证即将过期",
-            food_pic: null,
-            label: "许可证即将过期",
-            type: "证照预警",
-            permit_pic:
-              "http://shenning.oss-cn-beijing.aliyuncs.com/testb05e02a6-49f5-479b-ada0-2555c2e0d97b.jpg",
-            bulicense_pic:
-              "http://shenning.oss-cn-beijing.aliyuncs.com/testdd3fb457-3133-4d47-ae6b-a92da3f18e2d.jpg",
-            school: {
-              schName: "叙永县城西实验中学",
-              id: 1
-            },
-            supplier: "叙永县供应商b",
-            schoolId: 1,
-            alarm: "2",
-            time: "2019-11-10 17:32:50",
-            identity_pic: null,
-            id: 4,
-            schoolName: "test",
-            value: "2",
-            tital: "许可证"
-          },
-          {
-            health_pic: null,
-            description: "健康证即将过期",
-            food_pic: null,
-            label: "健康证即将过期",
-            type: "人员预警",
-            permit_pic:
-              "http://shenning.oss-cn-beijing.aliyuncs.com/testafe36fa8-0da9-4279-9bb0-cccb9c80337e.jpg",
-            bulicense_pic:
-              "http://shenning.oss-cn-beijing.aliyuncs.com/test40e100ba-e888-4a8c-86de-f0385cb05cee.jpg",
-            school: {
-              schName: "叙永县城西实验中学",
-              id: 1
-            },
-            supplier: "叙永县供应商b",
-            schoolId: 1,
-            alarm: "3",
-            time: "2019-11-10 17:32:50",
-            identity_pic: null,
-            id: 6,
-            schoolName: "test",
-            value: "3",
-            tital: ""
           }
         ],
         total: 10,
@@ -1711,6 +1575,109 @@ export default {
   },
   methods: {
     ...mapMutations(["SETTYPE", "CHANGE_TIME_NUMBER"]),
+    /**
+     * 洗消详情
+     * **/
+    getxixiaoxiangqing(e) {
+      this.dialogVisible = true;
+      xixiaoxiangqing({
+        schoolId: this.schoolId,
+        id: e.id
+      }).then(res => {
+        this.xixiaoxiangqingJson = res.data.data;
+      });
+    },
+    /**
+     * 留样详情
+     * **/
+
+    getliuyangxiang(e) {
+      let can = 1;
+      if (e === "早餐") {
+        can = 1;
+      } else if (e === "午餐") {
+        can = 2;
+      } else if (e === "晚餐") {
+        can = 3;
+      }
+
+      liuyanglist({
+        time: this.liuyang_row.rdDate,
+        mealTime: can,
+        schoolId: this.liuyang_row.schoolId
+      }).then(res => {
+        this.liuyangxiang_listarr = res.data.data;
+      });
+
+      liuyangxiangqing({
+        time: this.liuyang_row.rdDate,
+        mealTime: can,
+        schoolId: this.liuyang_row.schoolId
+      }).then(res => {
+        if (res.data.data) {
+          this.jiluxiangqingJson = res.data.data;
+          if (this.jiluxiangqingJson.sample_keeping) {
+            if (this.jiluxiangqingJson.sample_keeping.indexOf != -1) {
+              this.jiluxiangqingJson.sample_keeping = this.jiluxiangqingJson.sample_keeping.split(
+                ","
+              );
+            } else {
+              this.jiluxiangqingJson.sample_keeping = [
+                this.jiluxiangqingJson.sample_keeping
+              ];
+            }
+          }
+        }
+      });
+    },
+    /**
+     * 留样详情 显示按钮
+     * **/
+
+    getliuyangbtn(e) {
+      this.liuyang_row = e;
+      this.dialogVisible = true;
+      liuyangbtn({
+        schoolId: e.schoolId,
+        time: e.rdDate
+      }).then(res => {
+        // console.log("btn");
+        // console.log(res.data.data);
+        let json = res.data.data;
+        let arr = [];
+        json.forEach(item => {
+          if (item.rdType == 1) {
+            arr.push("早餐");
+          } else if (item.rdType == 2) {
+            arr.push("午餐");
+          } else if (item.rdType == 3) {
+            arr.push("晚餐");
+          }
+        });
+        this.liuyangTypearr = arr;
+        this.liuyangType = arr[0];
+        this.getliuyangxiang(arr[0]);
+      });
+    },
+    // 食谱类型 数字转 汉字
+    isLiuyangshipu(row) {
+      if (row.rdType == 1) {
+        return "早餐";
+      } else if (row.rdType == 2) {
+        return "午餐";
+      } else if (row.rdType == 3) {
+        return "晚餐";
+      }
+    },
+    // 是否留样 数字转 汉字
+    isLiuyang(row) {
+      if (row.srType == 1) {
+        return "已留样";
+      } else {
+        return "未留样";
+      }
+    },
+
     jiluseeall() {
       jiluval.jilu_date = "";
       jiluval.page = 1;
@@ -1726,7 +1693,6 @@ export default {
       }).then(res => {
         if (this.tzActive === 1) {
           this.lylistJson = res.data.data.data;
-          // console.log(res.data.data.data);
         } else if (this.tzActive === 2) {
           this.pclistJson = res.data.data.data;
         } else if (this.tzActive === 3) {
@@ -1758,12 +1724,9 @@ export default {
         schoolId: this.schoolId,
         isWho: e.isWho
       }).then(res => {
-        console.log(res.data.data);
         if (res.data.data.data.length > 0) {
           if (this.tzActive === 2) {
             this.jiluxiangqingJson = res.data.data.data[0];
-            console.log(this.jiluxiangqingJson.ad_pic);
-
             if (this.jiluxiangqingJson.ad_pic) {
               if (this.jiluxiangqingJson.ad_pic.indexOf != -1) {
                 this.jiluxiangqingJson.ad_pic = this.jiluxiangqingJson.ad_pic.split(
@@ -2750,14 +2713,25 @@ export default {
   border: none !important;
 }
 .el-dialog {
-  background: #092969 !important;
+  background: #1445a9eb !important;
   span {
     color: #fff;
     line-height: 3em;
-    padding-right:1em; 
+    padding-right: 1em;
   }
   // span:nth-of-type(2) {
   //   color: #9E9E9E;
   // }
+  .el-radio-button__inner {
+    background: #00156226;
+  }
+}
+#xiangqingchuang {
+  .el-radio-button--mini .el-radio-button__inner {
+    padding: 0 10px;
+  }
+  .el-radio-button__inner {
+    border-color: #dcdfe661;
+  }
 }
 </style>

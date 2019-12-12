@@ -1313,136 +1313,143 @@ export default {
       let uri = shengshi;
 
       // if (this.USER_INFO.userLevel === "4") {
-      uri = quxian;
+      // uri = quxian;
       // }
-      axios.get(uri).then(response => {
-        // console.log(this.map);
-        // console.log(response.data);
+      axios
+        .get({
+          url: uri,
+          headers: {
+            'Content-MD5': 'u/tjMreaSVaTUgL8fpLHRQ=='
+          }
+        })
+        .then(response => {
+          // console.log(this.map);
+          // console.log(response.data);
 
-        this.$echarts.registerMap(this.map.nameMap, response.data);
-        var geoCoordMap = {
-          泸州市: [105.443348, 28.889138],
-          巴中市: [106.753669, 31.858809]
-        };
-        var b_data = [
-          {
-            name: "巴中市",
-            value: 1
-          }
-        ];
-        var y_data = [
-          {
-            name: "泸州市",
-            value: 4
-          }
-        ];
-        var convertData = function(data) {
-          var res = [];
-          for (var i = 0; i < data.length; i++) {
-            var geoCoord = geoCoordMap[data[i].name];
-            if (geoCoord) {
-              res.push({
-                name: data[i].name,
-                value: geoCoord.concat(data[i].value)
-              });
+          this.$echarts.registerMap(this.map.nameMap, response.data);
+          var geoCoordMap = {
+            泸州市: [105.443348, 28.889138],
+            巴中市: [106.753669, 31.858809]
+          };
+          var b_data = [
+            {
+              name: "巴中市",
+              value: 1
             }
-          }
-          return res;
-        };
+          ];
+          var y_data = [
+            {
+              name: "泸州市",
+              value: 4
+            }
+          ];
+          var convertData = function(data) {
+            var res = [];
+            for (var i = 0; i < data.length; i++) {
+              var geoCoord = geoCoordMap[data[i].name];
+              if (geoCoord) {
+                res.push({
+                  name: data[i].name,
+                  value: geoCoord.concat(data[i].value)
+                });
+              }
+            }
+            return res;
+          };
 
-        this.mapOption = {
-          legend: {
-            bottom: 10,
-            borderRadius: 0,
-            itemGap: 100,
-            textStyle: {
-              color: "white"
-            }
-          },
-          geo: {
-            map: this.map.nameMap,
-            zoom: 1.1,
-            roam: true,
-            itemStyle: {
-              normal: {
-                areaColor: "#26a3d2"
+          this.mapOption = {
+            legend: {
+              bottom: 10,
+              borderRadius: 0,
+              itemGap: 100,
+              textStyle: {
+                color: "white"
               }
             },
-            label: {
-              normal: {
-                show: true, //是否显示标签
-                position: "insideTopLeft",
-                align: "center",
-                offset: [0, 0]
-                // formatter: "{b}:"
-              }
-            },
-            regions: []
-          },
-          series: [
-            {
-              name: "报警",
-              type: "scatter",
-              coordinateSystem: "geo",
-              data: convertData(b_data),
-              symbolSize: function(val) {
-                return 60;
-              },
-              label: {
-                normal: {
-                  show: true,
-                  formatter: function(value) {
-                    var str = `${value.name} ${value.value[2]}个报警`;
-                    return str.split(" ").join("\n");
-                  },
-                  align: "center",
-                  textStyle: {
-                    color: "white",
-                    fontSize: 12,
-                    lineHeight: 16
-                  },
-                  rich: {
-                    a: {}
-                  }
-                }
-              }
-            },
-            {
-              name: "预警",
-              type: "scatter",
-              coordinateSystem: "geo",
-              data: convertData(y_data),
-              symbolSize: function(val) {
-                return 60;
-              },
-              symbolOffset: [0, 0],
-              label: {
-                normal: {
-                  show: true,
-                  formatter: function(value) {
-                    // console.log(value);
-                    var str = `${value.name} ${value.value[2]}个预警`;
-                    return str.split(" ").join("\n");
-                  },
-                  align: "center",
-                  textStyle: {
-                    color: "white",
-                    fontSize: 12,
-                    lineHeight: 16
-                  },
-                  rich: {
-                    a: {}
-                  }
-                }
-              },
+            geo: {
+              map: this.map.nameMap,
+              zoom: 1.1,
+              roam: true,
               itemStyle: {
-                color: "#a96c00"
+                normal: {
+                  areaColor: "#26a3d2"
+                }
+              },
+              label: {
+                normal: {
+                  show: true, //是否显示标签
+                  position: "insideTopLeft",
+                  align: "center",
+                  offset: [0, 0]
+                  // formatter: "{b}:"
+                }
+              },
+              regions: []
+            },
+            series: [
+              {
+                name: "报警",
+                type: "scatter",
+                coordinateSystem: "geo",
+                data: convertData(b_data),
+                symbolSize: function(val) {
+                  return 60;
+                },
+                label: {
+                  normal: {
+                    show: true,
+                    formatter: function(value) {
+                      var str = `${value.name} ${value.value[2]}个报警`;
+                      return str.split(" ").join("\n");
+                    },
+                    align: "center",
+                    textStyle: {
+                      color: "white",
+                      fontSize: 12,
+                      lineHeight: 16
+                    },
+                    rich: {
+                      a: {}
+                    }
+                  }
+                }
+              },
+              {
+                name: "预警",
+                type: "scatter",
+                coordinateSystem: "geo",
+                data: convertData(y_data),
+                symbolSize: function(val) {
+                  return 60;
+                },
+                symbolOffset: [0, 0],
+                label: {
+                  normal: {
+                    show: true,
+                    formatter: function(value) {
+                      // console.log(value);
+                      var str = `${value.name} ${value.value[2]}个预警`;
+                      return str.split(" ").join("\n");
+                    },
+                    align: "center",
+                    textStyle: {
+                      color: "white",
+                      fontSize: 12,
+                      lineHeight: 16
+                    },
+                    rich: {
+                      a: {}
+                    }
+                  }
+                },
+                itemStyle: {
+                  color: "#a96c00"
+                }
               }
-            }
-          ]
-        };
-        this.myChart8.setOption(this.mapOption);
-      });
+            ]
+          };
+          this.myChart8.setOption(this.mapOption);
+        });
     }
   },
   mounted() {

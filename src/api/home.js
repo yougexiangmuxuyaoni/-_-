@@ -63,6 +63,13 @@ export function gaibianJGzhuangtai(query) {
     })
 }
 
+export function allSchools(query) {
+    return request({
+        url: '/api/manageWat/supervision/getSchoolName',
+        method: 'get',
+        params: query
+    })
+}
 
 
 // export function baojingList(query) {
