@@ -84,6 +84,16 @@ export function quyuma(query) {
     })
 }
 
+export function xiazuan(query) {
+    console.log(query);
+    
+    return request({
+        url: '/api/manageWat/statistics/getcity',
+        method: 'get',
+        params: query
+
+    })
+}
 // export function baojingList(query) {
 //     return request({
 //         url: '/api/baojingList',

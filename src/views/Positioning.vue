@@ -1592,6 +1592,7 @@ export default {
      * **/
 
     getliuyangxiang(e) {
+      this.jiluxiangqingJson = {};
       let can = 1;
       if (e === "早餐") {
         can = 1;
@@ -2001,7 +2002,7 @@ export default {
     this.getlishibaojing();
   },
   created() {
-    let id = localStorage.getItem("yichangId");
+    let id = localStorage.getItem("SchoolId");
 
     // console.log("学校id");
     this.schoolId = id;
