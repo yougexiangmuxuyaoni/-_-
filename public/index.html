@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
-    <link
-      rel="stylesheet"
-      href="//at.alicdn.com/t/font_1360298_jsvc3a40yp.css"
-    />
-    <title>航信食品安全监管云平台</title>
-  </head>
-  <body>
-    <noscript>
-      <strong
-        >We're sorry but demo1 doesn't work properly without JavaScript enabled.
-        Please enable it to continue.</strong
-      >
-    </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
-  <script src="<%= BASE_URL %>util/crypto-js.js" charset="utf-8"></script>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1360298_jsvc3a40yp.css" />
+  <title>航信食品安全监管云平台</title>
+</head>
+
+<body>
+  <noscript>
+    <strong>We're sorry but demo1 doesn't work properly without JavaScript enabled.
+      Please enable it to continue.</strong>
+  </noscript>
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+</body>
+<script src="<%= BASE_URL %>util/crypto-js.js" charset="utf-8"></script>
+
 </html>
+<script>
+  window.onbeforeunload  = function (event) {
+    localStorage.clear();
+    console.log(localStorage.getItem('userInfo'))
+    return confirm("确定离开此页面吗？");
+  };</script>
