@@ -6,7 +6,7 @@
         <div class="form">
           <div class="title">用户登录</div>
           <el-input v-model="loginForm.username" placeholder="账户"></el-input>
-          <el-input v-model="loginForm.password" placeholder="密码"></el-input>
+          <el-input type="password" v-model="loginForm.password" placeholder="密码"></el-input>
           <div class="ma">
             <el-input v-model="loginForm.code" placeholder="验证码"></el-input>
             <img
@@ -46,9 +46,9 @@ export default {
   data() {
     return {
       loginForm: {
-        username: "xySupAdmin",
+        username: "",
         // username: "xyEduAdmin",
-        password: "123456",
+        password: "",
         code: "",
         redomStr: "",
         randomStr: ""
@@ -84,10 +84,7 @@ export default {
       const _this = this;
       denglu(this.loginForm)
         .then(res => {
-          console.log("denglu");
-          
-          console.log(res.data);
-          
+
           const token = res.data.access_token;
           localStorage.setItem("token", token);
           getUserInfo().then(res => {
@@ -146,6 +143,7 @@ export default {
             }
             this.userInfo.userId = json.sysUser.userId;
             this.SET_USER_INFO(this.userInfo);
+            // localStorage.setItem("denglushijian",new Date().getTime());
             this.$router.push("/");
           });
         })
