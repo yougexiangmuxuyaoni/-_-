@@ -21,9 +21,3 @@
 <script src="<%= BASE_URL %>util/crypto-js.js" charset="utf-8"></script>
 
 </html>
-<script>
-  window.onbeforeunload  = function (event) {
-    localStorage.clear();
-    console.log(localStorage.getItem('userInfo'))
-    return confirm("确定离开此页面吗？");
-  };</script>

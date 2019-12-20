@@ -218,13 +218,13 @@ export default {
   data() {
     return {
       renyuanxiangqingJson: {
-        supplierName: "叙永县供应商A",
-        early_warning: "1",
-        description: "营业执照即将过期",
-        VALUE: "1",
-        time: "2019-11-10 17:32:50",
-        type: "证照预警",
-        schoolName: "叙永县城西实验中学abc",
+        supplierName: "",
+        early_warning: "",
+        description: "",
+        VALUE: "",
+        time: "",
+        type: "",
+        schoolName: "",
         human: null,
         SchoolId: 1,
         sup_id: 1,
@@ -241,107 +241,81 @@ export default {
       type: "",
       lishixiangqingJson: {
         basicInformationW: {
-          supplierName: "叙永县供应商A",
-          early_warning: "1",
-          description: "营业执照即将过期",
-          VALUE: "1",
-          time: "2019-11-10 17:32:50",
-          type: "证照预警",
-          schoolName: "叙永县城西实验中学abcdef",
+          supplierName: "",
+          early_warning: "",
+          description: "",
+          VALUE: "",
+          time: "",
+          type: "",
+          schoolName: "",
           SchoolId: 1,
           sup_id: 1
         },
         historyWarning: [
           {
             total: 1,
-            description: "营业执照即将过期",
-            label: "营业执照预警",
-            value: "1"
+            description: "",
+            label: "",
+            value: ""
           },
           {
             total: 2,
-            description: "许可证即将过期",
-            label: "许可证预警",
-            value: "2"
+            description: "",
+            label: "",
+            value: ""
           },
           {
             total: 1,
-            description: "营业执照即将过期",
-            label: "营业执照预警",
-            value: "1"
+            description: "",
+            label: "",
+            value: ""
           },
           {
             total: 2,
-            description: "许可证即将过期",
-            label: "许可证预警",
-            value: "2"
+            description: "",
+            label: "",
+            value: ""
           },
           {
             total: 1,
-            description: "营业执照即将过期",
-            label: "营业执照预警",
-            value: "1"
+            description: "",
+            label: "",
+            value: ""
           },
           {
             total: 2,
-            description: "许可证即将过期",
-            label: "许可证预警",
-            value: "2"
+            description: "",
+            label: "",
+            value: ""
           }
         ],
         schoolName: {
-          schName: "叙永县城西实验中学",
+          schName: "",
           id: 1
         },
         sameWarning: 1,
         historyAlarm: [
           {
             total: 1,
-            description: "营业执照过期",
-            label: "营业执照报警",
-            value: "1"
+            description: "",
+            label: "",
+            value: ""
           }
         ]
       },
       shicaixiangqingJson: {
-        supplierName: "供应商shicai",
-        foodName: "牛肉",
+        supplierName: "",
+        foodName: "",
         foodId: 1,
-        alarm: "7",
+        alarm: "",
         schNameFood: [
-          {
-            schoolName: "叙永县城西实验中学"
-          },
-          {
-            schoolName: "叙永县城西实验中学"
-          },
-          {
-            schoolName: "叙永县城西实验中学"
-          },
-          {
-            schoolName: "叙永县城西实验中学"
-          },
-          {
-            schoolName: "叙永县城西实验中学"
-          },
-          {
-            schoolName: "叙永县城西实验中学"
-          },
-          {
-            schoolName: "叙永县城西实验中学"
-          },
-          {
-            schoolName: "叙永县城西实验中学"
-          },
-          {
-            schoolName: "叙永县城西实验中学"
-          }
+        
         ],
-        description: "食材快检报告未上传",
-        VALUE: "7",
-        time: "2019-12-10 17:32:59",
-        type: "食材报警",
-        schoolName: "叙永县城西实验中学fgh",
+        description: "",
+        VALUE: "",
+        time: "",
+        type: "",
+        schoolName: "",
         SchoolId: 1,
         sameWarning: 1
       }
@@ -390,9 +364,6 @@ export default {
       if (jing === "报警") {
         isBAO = 1;
       }
-      // console.log("报警/预警||预警报警ID||学校ID");
-
-      // console.log(isBAO, id, SchoolId);
 
       // warningId 可以用 e参数
       //iswarning 0预警 1预警
@@ -402,8 +373,6 @@ export default {
           iswarning: isBAO,
           warningId: id
         }).then(res => {
-          // console.log("证照详情");
-          console.log(res.data);
           if (res.data.data) {
             if (res.data.data.data.schoolName) {
               this.lishixiangqingJson = res.data.data.data;
@@ -422,9 +391,7 @@ export default {
           iswarning: isBAO,
           warningId: id
         }).then(res => {
-          // console.log("人员详情");
           if (res.data.data) {
-            console.log(res.data.data.data);
             this.renyuanxiangqingJson = res.data.data.data;
           }
         });
@@ -434,8 +401,6 @@ export default {
           iswarning: isBAO,
           warningId: id
         }).then(res => {
-          // console.log("食材详情");
-          // console.log(res.data);
           if (res.data.data.data) {
             this.shicaixiangqingJson = res.data.data.data;
           } else {
@@ -469,10 +434,8 @@ export default {
             message: "已取消下达"
           });
         });
-      console.log("send");
     },
     to(uri) {
-      // console.log(uri);
       this.$router.push(uri);
     }
   },
@@ -480,8 +443,6 @@ export default {
     this.getlsxiangqing();
     // 历史信息
     // let id = localStorage.getItem("yichangId");
-    // console.log("学校id");
-    // console.log(id);
     // this.schoolId = id;
   }
 };

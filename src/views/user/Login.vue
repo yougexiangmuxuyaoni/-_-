@@ -84,7 +84,6 @@ export default {
       const _this = this;
       denglu(this.loginForm)
         .then(res => {
-
           const token = res.data.access_token;
           localStorage.setItem("token", token);
           getUserInfo().then(res => {
@@ -144,6 +143,8 @@ export default {
             this.userInfo.userId = json.sysUser.userId;
             this.SET_USER_INFO(this.userInfo);
             // localStorage.setItem("denglushijian",new Date().getTime());
+            sessionStorage.setItem("denglubiaoji", "denglubiaoji");
+
             this.$router.push("/");
           });
         })

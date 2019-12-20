@@ -106,29 +106,38 @@
     </div>
     <div class="main-mid">
       <div class="top hezi">
-        <el-input class="el-input1" v-model="keys" placeholder="请输入关键字查找"></el-input>
-        <el-cascader
-          v-model="area_value"
-          placeholder="区域查找"
-          :options="quyu_options"
-          @change="handleChange"
-        ></el-cascader>
-
-        <el-select v-model="yj_value" placeholder="预警程度">
+        <el-select v-model="shi_value" placeholder="市" @change="diquchange('shi')">
           <el-option
-            v-for="item in yj_options"
+            v-for="item in shi_options"
             :key="item.value"
             :label="item.label"
             :value="item.value"
           ></el-option>
         </el-select>
+
+        <el-select v-model="qu_value" placeholder="区" @change="diquchange('qu')">
+          <el-option
+            v-for="item in qu_options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+
+        <el-input class="el-input1" v-model="keys" placeholder="请输入关键字查找"></el-input>
+        <!-- <el-cascader
+          v-model="area_value"
+          placeholder="区域查找"
+          :options="quyu_options"
+          @change="handleChange"
+        ></el-cascader>-->
+
         <div class="anniu btn" @click="find()">搜索</div>
       </div>
       <div class="map hezi">
         <div class="title">
           <span>{{USER_INFO.areaName}} 地域分布图</span>
-
-          <span v-show="USER_INFO.areaName !== map.nameMap" class="time" @click="map_back()">返回</span>
+          <span v-show="USER_INFO.userLevel != Level" class="time" @click="map_back()">返回</span>
           <!-- <span class="time">2019-08-16 18:00</span> -->
         </div>
         <div
@@ -251,7 +260,9 @@ import {
   baojingshu,
   zhengzhaolv,
   quyuma,
-  xiazuan
+  xiazuan,
+  sanjiliandong,
+  mohusousuo
 } from "@/api/qushifengxi";
 import { mapState, mapMutations } from "vuex";
 import { log } from "util";
@@ -275,118 +286,14 @@ export default {
       },
       Level: "",
       mapOption: "",
-      quyu_options: [
-        // {
-        //   value: "全部区域",
-        //   label: "全部区域"
-        // },
-        // {
-        //   value: "泸州市",
-        //   label: "泸州市"
-        // },
-        // {
-        //   value: "张家口市",
-        //   label: "张家口市"
-        // },
-        // {
-        //   value: "承德市",
-        //   label: "承德市"
-        // },
-        // {
-        //   value: "秦皇岛市",
-        //   label: "秦皇岛市"
-        // },
-        // {
-        //   value: "唐山市",
-        //   label: "唐山市"
-        // },
-        // {
-        //   value: "廊坊市",
-        //   label: "廊坊市"
-        // },
-        // {
-        //   value: "保定市",
-        //   label: "保定市"
-        // },
-        // {
-        //   value: "沧州市",
-        //   label: "沧州市"
-        // },
-        // {
-        //   value: "衡水市",
-        //   label: "衡水市"
-        // },
-        // {
-        //   value: "邢台市",
-        //   label: "邢台市"
-        // },
-        // {
-        //   value: "邯郸市",
-        //   label: "邯郸市"
-        // }
-      ],
-      yj_options: [
-        {
-          value: "全部警报",
-          label: "全部警报"
-        },
-        {
-          value: "预警",
-          label: "预警"
-        },
-        {
-          value: "报警",
-          label: "报警"
-        }
-      ],
+      quyu_options: [],
+      shi_options: [],
+      qu_options: [],
       value: "",
       keys: "",
-      area_value: "",
-      yj_value: "",
-      area_options: [
-        // {
-        //   value: "zhinan",
-        //   label: "指南",
-        //   children: [
-        //     {
-        //       value: "shejiyuanze",
-        //       label: "设计原则",
-        //       children: [
-        //         {
-        //           value: "yizhi",
-        //           label: "一致"
-        //         },
-        //         {
-        //           value: "fankui",
-        //           label: "反馈"
-        //         },
-        //         {
-        //           value: "xiaolv",
-        //           label: "效率"
-        //         },
-        //         {
-        //           value: "kekong",
-        //           label: "可控"
-        //         }
-        //       ]
-        //     },
-        //     {
-        //       value: "daohang",
-        //       label: "导航",
-        //       children: [
-        //         {
-        //           value: "cexiangdaohang",
-        //           label: "侧向导航"
-        //         },
-        //         {
-        //           value: "dingbudaohang",
-        //           label: "顶部导航"
-        //         }
-        //       ]
-        //     }
-        //   ]
-        // }
-      ], //学校报警top5
+      shi_value: "",
+      qu_value: "",
+      //学校报警top5
       baojingxuexiaoArr: {
         schoolNameArr: [],
         baiArr: [],
@@ -438,13 +345,13 @@ export default {
       myChart2: null,
       myChart: null,
       zhengzhaolvJson: {
-        businessLicense: 1,
+        businessLicense: 0,
         accompany: 0,
         lealthy: 0,
         quickCheck: 0,
         invoice: 0,
         retentionSample: 0,
-        live: 4
+        live: 0
       }
     };
   },
@@ -453,11 +360,99 @@ export default {
   },
   methods: {
     ...mapMutations(["SET_USER_INFO"]),
+    find() {
+      mohusousuo({
+        areaCode: this.qu_value || this.shi_value || this.map.mapCode,
+        schName: this.keys
+      }).then(res => {
+        this.Level = 4;
+        this.map.mapCode = this.qu_value || this.shi_value || this.map.mapCode;
+        this.loading_quyu = false;
+        let json = res.data.data;
+        let bj_arr = [];
+        let yj_arr = [];
+        let qiu_boj = {};
+        json.forEach(item => {
+          if (item.schAlarmNum) {
+            if (this.Level > 3) {
+              bj_arr.push({
+                name: item.name,
+                value: `${item.schAlarmNum.sch_pic} ${item.schAlarmNum.alarmnum} ${item.schAlarmNum.warningnum} ${item.schAlarmNum.rtotal} ${item.sch_id} ${item.schAlarmNum.ztotal} ${item.schAlarmNum.stotal}`
+              });
+
+              yj_arr.push({
+                name: item.name,
+                value: `${item.schAlarmNum.sch_pic} ${item.schAlarmNum.alarmnum} ${item.schAlarmNum.warningnum} ${item.schAlarmNum.rtotal} ${item.sch_id} ${item.schAlarmNum.ztotal} ${item.schAlarmNum.stotal}`
+              });
+            } else {
+              bj_arr.push({
+                name: item.name,
+                value: item.schAlarmNum.alarmnum
+              });
+
+              yj_arr.push({
+                name: item.name,
+                value: item.schAlarmNum.warningnum
+              });
+            }
+
+            qiu_boj[item.name] = [
+              item.schAlarmNum.longitude,
+              item.schAlarmNum.latitude
+            ];
+          }
+        });
+        this.qiu_boj = qiu_boj;
+        this.yj_arr = yj_arr;
+        this.bj_arr = bj_arr;
+
+        this.initEcharts8();
+      });
+    },
+    diquchange(e) {
+      if (e == "shi") {
+        this.getsanjiliandongqu(this.shi_value);
+        this.qu_value = "";
+      } else if (e == "qu") {
+      }
+    },
+    getsanjiliandongshi(e) {
+      sanjiliandong({
+        areaCode: e
+      }).then(res => {
+        let arr = [];
+        res.data.data.forEach(item => {
+          arr.push({
+            value: item.code,
+            label: item.name
+          });
+        });
+        this.shi_options = arr;
+      });
+    },
+    getsanjiliandongqu(e) {
+      sanjiliandong({
+        areaCode: e
+      }).then(res => {
+        let arr = [];
+        res.data.data.forEach(item => {
+          arr.push({
+            value: item.code,
+            label: item.name
+          });
+        });
+        this.qu_options = arr;
+      });
+    },
     map_back() {
       this.map.nameMap = this.USER_INFO.areaName;
       this.map.mapCode = this.USER_INFO.areaCode;
       this.Level = Number(this.USER_INFO.userLevel);
-      this.loadingMap(this);
+      this.shi_value = "";
+      this.qu_value = "";
+      this.keys = "";
+      this.getxiazuan();
+      // this.loadingMap(this);
     },
     //获取区域码
     getquyuma(name) {
@@ -476,9 +471,10 @@ export default {
     },
     //获取学校统计
     getxuexiaotongji() {
-      xuexiaotongji().then(res => {
+      xuexiaotongji({
+        areaCode: this.map.mapCode
+      }).then(res => {
         const json = res.data.data;
-
         this.xuexiaotongjiJson.schoolNum = json.schoolNum;
         this.xuexiaotongjiJson.stuNum = json.stuNum;
         json.place.forEach(item => {
@@ -492,15 +488,13 @@ export default {
         setTimeout(() => {
           this.initEcharts();
         }, 1000);
-        // console.log("学校统计");
-        // console.log(this.xuexiaotongjiJson);
       });
-    }, // console.log("食堂");
+    },
     getshitangxinxi() {
-      shitangxinxi().then(res => {
+      shitangxinxi({
+        areaCode: this.map.mapCode
+      }).then(res => {
         this.shitangJson = res.data.data;
-        // console.log("shitang");
-        // console.log(this.shitangJson);
       });
     },
     //获取预警环节
@@ -516,8 +510,6 @@ export default {
         areaCode: this.USER_INFO.areaCode
       }).then(res => {
         const json = res.data.data;
-        // console.log("获取预警环节");
-        // console.log(json);
         json.forEach(item => {
           this.yujinghuanjie.type.push(item.type);
           this.yujinghuanjie.total.push(item.total);
@@ -547,9 +539,6 @@ export default {
           this.baojinghuanjie.baiArr.push(99.9);
           this.baojinghuanjie.kuangArr.push(100);
         });
-        // console.log(this.yujinghuanjie);
-        // console.log(json);
-
         this.initEcharts7();
       });
     },
@@ -572,9 +561,6 @@ export default {
           this.yujingxuexiaoArr.baiArr.push(99.9);
           this.yujingxuexiaoArr.kuangArr.push(100);
         });
-        // console.log("预警");
-
-        // console.log(this.yujingxuexiaoArr.schoolNameArr);
         if (!json) {
         }
         this.initEcharts4();
@@ -599,7 +585,6 @@ export default {
           this.baojingxuexiaoArr.baiArr.push(99.9);
           this.baojingxuexiaoArr.kuangArr.push(100);
         });
-        // console.log(this.baojingxuexiaoArr);
         this.initEcharts5();
       });
     },
@@ -615,13 +600,10 @@ export default {
         regionalLevel: this.USER_INFO.userLevel,
         areaCode: this.USER_INFO.areaCode
       }).then(res => {
-        // console.log(res.data);
         this.baojingshuJson = res.data.data;
       });
     },
-    handleChange(e) {
-      // console.log(e);
-    },
+    handleChange(e) {},
     // Echarts 的 resize 方法
     resizeHandler() {
       this.myChart.resize();
@@ -769,13 +751,15 @@ export default {
         ],
         yAxis: [
           {
+            width: "10",
             axisTick: "none",
             axisLine: "none",
             offset: "0",
             axisLabel: {
               textStyle: {
                 color: "white",
-                fontSize: "12"
+                fontSize: "10",
+                nameRotate: "10"
               }
             },
             data: this.yujingxuexiaoArr.schoolNameArr
@@ -787,7 +771,7 @@ export default {
             axisLabel: {
               textStyle: {
                 color: "#ffffff",
-                fontSize: "12"
+                fontSize: "10"
               }
             },
             data: []
@@ -912,7 +896,7 @@ export default {
             axisLabel: {
               textStyle: {
                 color: "white",
-                fontSize: "12"
+                fontSize: "10"
               }
             },
             data: this.baojingxuexiaoArr.schoolNameArr
@@ -924,7 +908,7 @@ export default {
             axisLabel: {
               textStyle: {
                 color: "#ffffff",
-                fontSize: "12"
+                fontSize: "10"
               }
             },
             data: []
@@ -1310,12 +1294,10 @@ export default {
         this.myChart8 = this.$echarts.init(this.$refs.sheng);
         //地图放大
         this.myChart8.on("click", async params => {
-          console.log(params);
-
           if (params.componentType === "series") {
             if (this.Level > 3) {
-              // localStorage.setItem("SchoolId", e.schoolId);
-              // this.$router.push("/positioning");
+              localStorage.setItem("SchoolId", params.value[2].split(" ")[4]);
+              this.$router.push("/positioning");
               return;
             }
             this.map.nameMap = params.name;
@@ -1331,64 +1313,67 @@ export default {
       });
     },
     getxiazuan() {
+      this.loading_quyu = true;
       let _this = this;
       return xiazuan({
         regionalLevel: this.Level,
         areaCode: this.map.mapCode
-      }).then(res => {
-        this.loading_quyu = false;
-        let json = res.data.data;
-        let bj_arr = [];
-        let yj_arr = [];
-        let qiu_boj = {};
-        json.forEach(item => {
-          if (item.schAlarmNum) {
-            if (_this.Level > 3) {
-              bj_arr.push({
-                name: item.name,
-                value: `${item.schAlarmNum.sch_pic} ${item.schAlarmNum.alarmnum} ${item.schAlarmNum.warningnum} ${item.schAlarmNum.sch_address}`
-              });
+      })
+        .then(res => {
+          this.loading_quyu = false;
+          let json = res.data.data;
+          let bj_arr = [];
+          let yj_arr = [];
+          let qiu_boj = {};
+          json.forEach(item => {
+            if (item.schAlarmNum) {
+              if (_this.Level > 3) {
+                bj_arr.push({
+                  name: item.name,
+                  value: `${item.schAlarmNum.sch_pic} ${item.schAlarmNum.alarmnum} ${item.schAlarmNum.warningnum} ${item.schAlarmNum.rtotal} ${item.sch_id} ${item.schAlarmNum.ztotal} ${item.schAlarmNum.stotal}`
+                });
 
-              yj_arr.push({
-                name: item.name,
-                value: `${item.schAlarmNum.sch_pic} ${item.schAlarmNum.alarmnum} ${item.schAlarmNum.warningnum} ${item.schAlarmNum.sch_address}`
-              });
-            } else {
-              bj_arr.push({
-                name: item.name,
-                value: item.schAlarmNum.alarmnum
-              });
+                yj_arr.push({
+                  name: item.name,
+                  value: `${item.schAlarmNum.sch_pic} ${item.schAlarmNum.alarmnum} ${item.schAlarmNum.warningnum} ${item.schAlarmNum.rtotal} ${item.sch_id} ${item.schAlarmNum.ztotal} ${item.schAlarmNum.stotal}`
+                });
+              } else {
+                bj_arr.push({
+                  name: item.name,
+                  value: item.schAlarmNum.alarmnum
+                });
 
-              yj_arr.push({
-                name: item.name,
-                value: item.schAlarmNum.warningnum
-              });
+                yj_arr.push({
+                  name: item.name,
+                  value: item.schAlarmNum.warningnum
+                });
+              }
+
+              qiu_boj[item.name] = [
+                item.schAlarmNum.longitude,
+                item.schAlarmNum.latitude
+              ];
             }
+          });
+          this.qiu_boj = qiu_boj;
+          this.yj_arr = yj_arr;
+          this.bj_arr = bj_arr;
 
-            qiu_boj[item.name] = [
-              item.schAlarmNum.longitude,
-              item.schAlarmNum.latitude
-            ];
-          }
+          this.initEcharts8();
+        })
+        .catch((err)=> {
+          console.log("接口或处理逻辑出错");
+          // error
+          this.initEcharts8();
+
         });
-        console.log(json);
-
-        console.log(qiu_boj);
-        this.qiu_boj = qiu_boj;
-        this.yj_arr = yj_arr;
-        this.bj_arr = bj_arr;
-
-        this.initEcharts8();
-      });
     },
     loadingMap(e) {
-      console.log(e.Level);
       let uri = `http://datavmap-public.oss-cn-hangzhou.aliyuncs.com/areas/children/${e.map.mapCode}.json`;
       let quxian = `http://datavmap-public.oss-cn-hangzhou.aliyuncs.com/areas/bound/${e.map.mapCode}.json`;
       if (e.Level > 3) {
         uri = quxian;
       }
-
       axios.get(uri).then(response => {
         e.$echarts.registerMap(e.map.nameMap, response.data);
         var geoCoordMap = e.qiu_boj;
@@ -1498,12 +1483,7 @@ export default {
             }
           ]
         };
-        let img =
-          "http://shenning.oss-cn-beijing.aliyuncs.com/testf0c50cec-4c3a-4fe3-978f-e98167ed603c.jpg";
-        let bj_num = 12;
-        let yj_num = 10;
-        let lu = "和平东路";
-        let i = 0;
+
         let mapOption2 = {
           tooltip: {
             formatter: function(params) {
@@ -1514,7 +1494,7 @@ export default {
                               params.value[2].split(" ")[0]
                             }" />
                           </div>
-                          <div style="width: 160px;font-size: 12px;line-height: 22px">
+                          <div style="width: 160px;font-size: 12px;line-height: 22px;white-space: normal">
                             <div style="font-weight: 700">${params.name}</div>
                             <div style="display: flex;">
                               <div style="font-weight: 700;margin-right: 12px;">报警：${
@@ -1524,11 +1504,24 @@ export default {
                                 params.value[2].split(" ")[2]
                               }次</div>
                             </div>
-                            <span style="color: #848484">${
-                              params.value[2].split(" ")[3]
-                            }</span>
+
+                            <div style="display: flex;color: #848484">
+                              <div style="font-weight: 700;">人员:${
+                                params.value[2].split(" ")[3]
+                              }</div>
+                              <div style="font-weight: 700">证照:${
+                                params.value[2].split(" ")[5]
+                              }</div>
+                               <div style="font-weight: 700">食材:${
+                                 params.value[2].split(" ")[6]
+                               }</div>
+                            </div>
+                            
                           </div>
                         </div>`;
+              // <span style="color: #848484">${
+              //       params.value[2].split(" ")[3]
+              //     }</span>
               return tipHtml;
             }
           },
@@ -1569,7 +1562,6 @@ export default {
                 normal: {
                   show: true,
                   formatter: function(value) {
-                    i++;
                     var str = `{b|${value.name}}`;
                     return str;
                   },
@@ -1611,9 +1603,7 @@ export default {
               label: {
                 normal: {
                   show: true,
-
                   formatter: function(value) {
-                    i++;
                     var str = `{b|${value.name}}`;
                     return str;
                   },
@@ -1673,7 +1663,11 @@ export default {
     this.SET_USER_INFO(user);
     this.map.mapCode = user.areaCode;
     this.Level = Number(this.USER_INFO.userLevel);
-
+    if (this.Level == 2) {
+      this.getsanjiliandongshi(this.map.mapCode);
+    } else if (this.Level == 3) {
+      this.getsanjiliandongqu(this.map.mapCode);
+    }
     this.getxiazuan();
     this.getxuexiaobaojingpaiming();
     this.getxuexiaoyujingpaiming();
@@ -1685,6 +1679,10 @@ export default {
 
     this.getbaojingshu();
     this.getzhengzhaolv();
+
+    setTimeout(() => {
+      window.addEventListener("resize", this.resizeHandler);
+    }, 2000);
   },
   beforeDestroy() {
     // 清理工作 避免内存泄漏
@@ -1965,6 +1963,9 @@ export default {
           border-radius: 0.1rem;
           background: linear-gradient(180deg, #227ee2 0%, #0646dd 100%);
           font-size: 0.14rem;
+          &:hover {
+            cursor: pointer;
+          }
         }
       }
       .tu {

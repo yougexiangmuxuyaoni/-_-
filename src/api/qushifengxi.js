@@ -3,6 +3,20 @@ import request from 'axios'
 异常检测页面 API
 */
 
+
+request.interceptors.request.use((config) => {
+    // 在发送请求之前做些什么，例如加入token
+    // config.headers['Authorization'] = "ASJID231";
+if(true){
+    console.log(this)
+}
+    return config;
+
+}, function (error) {
+    // 对请求错误做些什么
+    return Promise.reject(error);
+});
+
 export function xuexiaoyujingpaiming(query) {
     return request({
         url: '/api/manageWat/statistics/getEarlyWarningRank',
@@ -35,24 +49,18 @@ export function baojinghuanjie(query) {
     })
 }
 
-export function xuexiaotongji() {
-    let token = localStorage.getItem('token');
+export function xuexiaotongji(query) {
     return request({
         url: '/api/manageWat/school/getAnalysisSchoolData',
         method: 'get',
-        headers: {
-            'Authorization': 'Bearer ' + token
-        }
+        params: query
     })
 }
-export function shitangxinxi() {
-    let token = localStorage.getItem('token');
+export function shitangxinxi(query) {
     return request({
         url: '/api/manageWat/school/getMesshallMessageByArea',
         method: 'get',
-        headers: {
-            'Authorization': 'Bearer ' + token
-        }
+        params: query
     })
 }
 
@@ -85,10 +93,26 @@ export function quyuma(query) {
 }
 
 export function xiazuan(query) {
-    console.log(query);
-    
     return request({
         url: '/api/manageWat/statistics/getcity',
+        method: 'get',
+        params: query
+
+    })
+}
+
+export function sanjiliandong(query) {
+    return request({
+        url: '/api/schoolMan/trendAnalysis/getAllCities',
+        method: 'get',
+        params: query
+
+    })
+}
+
+export function mohusousuo(query) {
+    return request({
+        url: '/api/manageWat/statistics/findSchName',
         method: 'get',
         params: query
 

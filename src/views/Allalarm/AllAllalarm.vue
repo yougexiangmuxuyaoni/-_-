@@ -168,9 +168,9 @@ export default {
       navType: "1",
       baojingshuJson: {
         alarmTotalByYear: {
-          cardTotal: 30,
-          foodTotal: 20,
-          personTotal: 50
+          cardTotal: 0,
+          foodTotal: 0,
+          personTotal: 0
         }
       },
       activeIndex: "",
@@ -189,10 +189,8 @@ export default {
         this.jsonval.startingTime = this.shicai_date[0];
         this.jsonval.endTime = this.shicai_date[1];
       }
-      console.log(this.shicai_date);
     },
     radio1() {
-      console.log(this.radio1);
       this.topNav();
     }
   },
@@ -261,7 +259,6 @@ export default {
       this.$router.push("/alertDetails");
     },
     hover(row, column, cell, event) {
-      console.log(row);
     },
     getbaojingshu() {
       let date = new Date();

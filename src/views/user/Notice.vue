@@ -112,24 +112,7 @@ export default {
   name: "notice",
   data() {
     return {
-      options: [
-        {
-          value: "1",
-          label: "叙永县西城实验中学"
-        },
-        {
-          value: "2",
-          label: "北京大学"
-        },
-        {
-          value: "3",
-          label: "北京航空航天大学"
-        },
-        {
-          value: "4",
-          label: "北京邮电大学"
-        }
-      ],
+      options: [],
       value: "",
       file_list: [],
       xuexiao: "",
@@ -181,7 +164,7 @@ export default {
           this.zhuti = "";
           this.neirong = "";
           this.file_list = [];
-          this.value ='';
+          this.value = "";
           this.$message({
             showClose: true,
             message: "通知下达成功",
@@ -196,10 +179,14 @@ export default {
 
     getAllSchools() {
       allSchools({
-        areaCode: this.areaCode
+        areaCode: this.areaCode,
+        size:10,
+        current: 1
       }).then(res => {
         console.log(res.data.data);
-        this.options = res.data.data;
+        // this.options = res.data.data;
+        this.options = res.data.data.records;
+
       });
     }
   },

@@ -4,8 +4,6 @@ import request from 'axios'
 */
 
 export function yujingList(query) {
-    console.log(query);
-
     return request({
         url: '/api/manageWat/statistics/getEarlywarningListYear',
         method: 'get',

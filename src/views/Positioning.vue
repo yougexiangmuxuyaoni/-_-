@@ -69,27 +69,27 @@
                 <table style="line-height:2.5em;">
                   <tr>
                     <td>学校名称：</td>
-                    <td>{{zizhixinxiJson.sch_name}}</td>
+                    <td>{{zizhixinxiJson.sch_name || "暂无"}}</td>
                   </tr>
                   <tr>
                     <td>所属市场监管：</td>
-                    <td>{{zizhixinxiJson.reg_name}}</td>
+                    <td>{{zizhixinxiJson.reg_name|| "暂无"}}</td>
                   </tr>
                   <tr>
                     <td>所属教育监管：</td>
-                    <td>{{zizhixinxiJson.reg_name}}</td>
+                    <td>{{zizhixinxiJson.reg_name|| "暂无"}}</td>
                   </tr>
                   <tr>
                     <td>学校校长：</td>
-                    <td>{{zizhixinxiJson.principal}}</td>
+                    <td>{{zizhixinxiJson.principal|| "暂无"}}</td>
                   </tr>
                   <tr>
                     <td>联系方式：</td>
-                    <td>{{zizhixinxiJson.tel}}</td>
+                    <td>{{zizhixinxiJson.tel|| "暂无"}}</td>
                   </tr>
                   <tr>
                     <td>学校地址：</td>
-                    <td>{{zizhixinxiJson.address}}</td>
+                    <td>{{zizhixinxiJson.address|| "暂无"}}</td>
                   </tr>
                 </table>
               </div>
@@ -446,7 +446,8 @@
                     <div
                       style="width:25%;text-align:center;"
                     >{{val.time | formatTime('yyyy-MM-dd')}}</div>
-                    <div style="width:25%;text-align:center;">{{val.qualified}}</div>
+                    <!-- <div style="width:25%;text-align:center;">{{val.qualified}}</div> -->
+                    <div style="width:25%;text-align:center;">合格</div>
                   </div>
                 </div>
               </div>
@@ -605,7 +606,7 @@
                   </div>
                 </div>
                 <div
-                  v-if="val.type==='食材预警'"
+                  v-if="val.type.substr(0,2)==='食材'"
                   class="yujing_guanlian"
                   style="flex-direction: column;"
                 >
@@ -621,7 +622,7 @@
                     <p>{{val.label}}</p>
                   </div>
                 </div>
-                <div v-if="val.type==='食材预警'" class="xuexiao_guanlian" style="padding-top: 0.2rem">
+                <div v-if="val.type.substr(0,2)==='食材'" class="xuexiao_guanlian" style="padding-top: 0.2rem">
                   <div>
                     <p>供应学校：</p>
                   </div>
@@ -631,7 +632,9 @@
                 </div>
                 <div v-else class="xuexiao_guanlian" style>
                   <div>
-                    <p>{{val.type.substr(2)}}学校：</p>
+                    <!-- <p>{{val.type.substr(2)}}学校：</p> -->
+                    <p>关联学校：</p>
+
                   </div>
                   <div>
                     <p>{{val.school.schName}}</p>
@@ -1204,25 +1207,24 @@ export default {
         update_id: null,
         del_flag: "0",
         shipping_volume: null,
-        create_time: "2019-11-10 17:25:38",
-        disposal_unit: "叙永县厨余垃圾回收站",
-        rec_category: "1",
-        recover_time: "2019-11-11 21:00:00",
-        disposer: "李贺",
+        create_time: "",
+        disposal_unit: "",
+        rec_category: "",
+        recover_time: "",
+        disposer: "",
         updateName: null,
-        kt_pic:
-          "http://shenning.oss-cn-beijing.aliyuncs.com/test3f9d917a-f28d-447f-8593-969fba5f97f4.png",
-        update_time: "2019-11-11 14:56:51",
+        kt_pic: "",
+        update_time: "",
         school_id: 1,
         create_id: null,
         kt_num: "8",
-        contact: "13687903568",
-        car_number: "京A85001",
+        contact: "",
+        car_number: "",
         yield: null,
         id: 1,
-        schoolName: "叙永县城西实验中学",
-        labelName: "厨余垃圾",
-        kt_person: "张培",
+        schoolName: "",
+        labelName: "",
+        kt_person: "",
         remarks: "",
         createName: null
       },
@@ -1230,28 +1232,17 @@ export default {
        * 洗消详情
        * **/
       xixiaoxiangqingJson: {
-        dn_dislength: "30",
-        dn_start: "17:19:00",
+        dn_dislength: "",
+        dn_start: "",
         temperature: null,
-        dn_end: "21:19:00",
-        meal_time: "1",
-        washlist: [
-          {
-            number: "100",
-            tableware: "盘子",
-            disinfection: "热力消毒"
-          },
-          {
-            number: "200",
-            tableware: "食品盒",
-            disinfection: "化学消毒"
-          }
-        ],
-        updateName: "李志",
-        dn_date: "2019-11-11 00:00:00",
+        dn_end: "",
+        meal_time: "",
+        washlist: [],
+        updateName: "",
+        dn_date: "",
         operator: null,
         remarks: "",
-        createName: "无"
+        createName: ""
       },
       cylistJson: {
         records: [],
@@ -1305,33 +1296,7 @@ export default {
       },
       //历史报警信息
       lishibaojingJson: {
-        records: [
-          {
-            health_pic: null,
-            description: "食材快检报告未上传",
-            food_pic:
-              "http://shenning.oss-cn-beijing.aliyuncs.com/test7717c152-57a4-400f-9222-30232b0a52c7.png",
-            label: "食材快检报告未上传报告",
-            type: "食材报警",
-            permit_pic:
-              "http://shenning.oss-cn-beijing.aliyuncs.com/testafe36fa8-0da9-4279-9bb0-cccb9c80337e.jpg",
-            bulicense_pic:
-              "http://shenning.oss-cn-beijing.aliyuncs.com/test40e100ba-e888-4a8c-86de-f0385cb05cee.jpg",
-            school: {
-              schName: "无",
-              id: 0
-            },
-            supplier: "供应商A",
-            schoolId: 1,
-            alarm: "7",
-            time: "2019-12-10 17:32:59",
-            identity_pic: null,
-            id: 8,
-            schoolName: "叙永县城西实验中学",
-            value: "7",
-            tital: "牛肉"
-          }
-        ],
+        records: [],
         total: 10,
         size: 10,
         current: 1,
@@ -1339,14 +1304,7 @@ export default {
         pages: 1
       },
       //食材信息
-      shicaixinxiJson: [
-        {
-          qualified: "合格",
-          foodName: "韭菜",
-          time: "2019-11-22 00:00:00",
-          food_id: "18"
-        }
-      ],
+      shicaixinxiJson: [],
       //台账信息
       taizhangxinxiJson: {
         meal: 3,
@@ -1362,15 +1320,7 @@ export default {
           total: 5,
           eqRatio: 1
         },
-        deviceInformation: [
-          {
-            use_year: "5",
-            label: "消毒柜",
-            brand: "美的",
-            start_date: "2017-01-22",
-            restaurant_name: "A餐厅"
-          }
-        ]
+        deviceInformation: []
       },
       //人员信息
       renyuanxinxiJson: {
@@ -1379,64 +1329,30 @@ export default {
           eqRatio: 0.17
         },
         manNumber: [
-          {
-            number: 2,
-            label: "厨师"
-          },
-          {
-            number: 1,
-            label: "食品安全管理员"
-          },
-          {
-            number: 1,
-            label: "陪餐人员"
-          },
-          {
-            number: 1,
-            label: "校长"
-          },
-          {
-            number: 1,
-            label: "超级管理员"
-          }
+         
         ],
         foodEscortInformation: [
-          {
-            realName: "张勇",
-            healthNumber: "43554657676776",
-            label: "陪餐人员",
-            userId: 12
-          }
+         
         ],
         healthCheck: {
           healthCard: 4
         },
         foodSafetyInformation: [
-          {
-            realName: "张勇",
-            healthNumber: "43554657676776",
-            label: "食品安全管理员",
-            userId: 22
-          }
+        
         ],
         chefInformation: [
-          {
-            realName: "张三",
-            healthNumber: "464556456",
-            label: "厨师",
-            userId: 13
-          }
+        
         ]
       }, //资质信息
       zizhixinxiJson: {
-        principal: "策校长",
-        area: "510104",
-        address: "四川省泸州市叙永县G321(广成线)",
-        sch_name: "叙永县城西实验中学",
-        quantitative: "A",
-        reg_name: "泸州市叙永县市场监管局",
-        tel: "0830－6800552",
-        edu_name: "泸州市叙永县教育局",
+        principal: "",
+        area: "",
+        address: "",
+        sch_name: "",
+        quantitative: "",
+        reg_name: "",
+        tel: "",
+        edu_name: "",
         ratingScore: 100
       }, //学校信息
       xuexiaoxinxiJson: {
@@ -1447,12 +1363,12 @@ export default {
           alarmNumber: 100
         },
         schoolInformation: {
-          schArea: "四川省成都市锦江区",
-          schAddress: "四川省泸州市叙永县G321(广成线)",
-          officeNature: "民办",
-          schoolType: "小学",
+          schArea: "",
+          schAddress: "",
+          officeNature: "",
+          schoolType: "",
           id: 1,
-          schoolName: "叙永县城西实验中学abc"
+          schoolName: ""
         }
       },
       //供应商信息
@@ -1466,12 +1382,12 @@ export default {
         supplierInformation: [
           {
             school: {
-              schName: "叙永县城西实验中学",
+              schName: "",
               id: 1
             },
-            name: "叙永县供应商A",
+            name: "",
             id: 1,
-            license_number: "123123123"
+            license_number: ""
           }
         ],
         open: {
@@ -1502,56 +1418,7 @@ export default {
       shicai_date: "",
 
       activeArr: [
-        {
-          title: "辣椒",
-          img:
-            "https://gss3.bdstatic.com/-Po3dSag_xI4khGkpoWK1HF6hhy/baike/w%3D268%3Bg%3D0/sign=36d68c68d339b6004dce08b1d16b5217/962bd40735fae6cd589124ea09b30f2442a70f17.jpg",
-          type: "食材预警"
-        },
-        { title: "营业执照", img: "/static/zhengzhao.jpg", type: "证照报警" },
-        { title: "苦瓜", img: "/static/shicai.jpg", type: "食材报警" },
-        {
-          title: "苦瓜",
-          img:
-            "https://gss2.bdstatic.com/-fo3dSag_xI4khGkpoWK1HF6hhy/baike/w%3D268%3Bg%3D0/sign=939629403af33a879e6d071cfe677705/34fae6cd7b899e51491c906442a7d933c8950d2b.jpg",
-          type: "食材报警"
-        },
-        {
-          title: "丁方/食品安全员",
-          img:
-            "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1112845355,3446301139&fm=26&gp=0.jpg",
-          type: "证照预警"
-        },
-        {
-          title: "秦超/切菜师",
-          img:
-            "https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2534390145,2107709878&fm=26&gp=0.jpg",
-          type: "证照预警"
-        },
-        {
-          title: "茄子",
-          img:
-            "https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1536952701,2166650769&fm=26&gp=0.jpg",
-          type: "食材预警"
-        },
-        {
-          title: "西红柿",
-          img:
-            "https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=4050908148,177600855&fm=26&gp=0.jpg",
-          type: "食物预警"
-        },
-        { title: "苦瓜", img: "/static/shicai.jpg", type: "食材预警" },
-        {
-          title: "健康证",
-          img: "/static/jiankangzhewng.jpg",
-          type: "人员预警"
-        },
-        {
-          title: "辣椒",
-          img:
-            "https://gss3.bdstatic.com/-Po3dSag_xI4khGkpoWK1HF6hhy/baike/w%3D268%3Bg%3D0/sign=36d68c68d339b6004dce08b1d16b5217/962bd40735fae6cd589124ea09b30f2442a70f17.jpg",
-          type: "食材预警"
-        }
+       
       ],
       shicai_img: "/static/shicai.jpg",
       title: "营业执照",
@@ -1570,7 +1437,6 @@ export default {
     shicai_date() {
       this.shicaival.startingTime = this.shicai_date[0];
       this.shicaival.endTime = this.shicai_date[1];
-      // console.log(this.shicaival);
     }
   },
   methods: {
@@ -1642,8 +1508,6 @@ export default {
         schoolId: e.schoolId,
         time: e.rdDate
       }).then(res => {
-        // console.log("btn");
-        // console.log(res.data.data);
         let json = res.data.data;
         let arr = [];
         json.forEach(item => {
@@ -1827,8 +1691,6 @@ export default {
         page: this.lishival.page,
         size: this.lishival.size
       }).then(res => {
-        // console.log("历史报警");
-        // console.log(res.data);
         if (res.data.data) {
           this.lishibaojingJson = res.data.data.data;
         }
@@ -1842,15 +1704,11 @@ export default {
         endTime: this.shicaival.endTime,
         page: this.shicaival.page
       }).then(res => {
-        // console.log("食材信息");
-        // console.log(res.data.data.data);
         this.shicaixinxiJson = res.data.data.data;
       });
     }, //台账信息
     gettaizhangxinxi() {
       taizhangxinxi({ schoolId: this.schoolId }).then(res => {
-        // console.log("台账");
-        // console.log(res.data.data.data);
 
         this.taizhangxinxiJson = res.data.data.data;
         if (res.data.data.data.meal == "0") {
@@ -1860,7 +1718,8 @@ export default {
     }, //设备信息
     getshebeixinxi() {
       shebeixinxi({ schoolId: this.schoolId }).then(res => {
-        // console.log(res.data.data.data);
+        console.log(res.data.data);
+        
         this.shebeixinxiJson = res.data.data.data;
       });
     },
@@ -1892,7 +1751,6 @@ export default {
         this.zhiboliebiaoJson = res.data.data;
         zhiboliu({ eqId: res.data.data[res.data.data.length - 1].eqId }).then(
           res => {
-            // console.log(res.data.data);
             if (res.data.data.path) {
               this.$refs.videoPlayer.player.src(res.data.data.path);
               this.$refs.videoPlayer.player.load();
@@ -1903,7 +1761,6 @@ export default {
       });
     },
     rowClass({ row, rowIndex }) {
-      // console.log(rowIndex); //表头行标号为0
       return "background:#6e72792a;color:#fff; font-size:16px; font-weight:normal";
     },
     hideVideo() {
@@ -1911,7 +1768,6 @@ export default {
       document.querySelector(".vjs-control-bar").style.display = "none";
     },
     getYuJing(type) {
-      // console.log(type);
       this.yuJing_active = type;
     },
     geshihua(row, column, ceLLValue) {
@@ -1919,7 +1775,6 @@ export default {
     },
     changeVideo(e) {
       zhiboliu({ eqId: e }).then(res => {
-        // console.log(res.data.data.path);
         if (res.data.data.path) {
           this.$message("直播切换中请稍等");
           this.$refs.videoPlayer.player.src(res.data.data.path);
@@ -1954,8 +1809,6 @@ export default {
         schoolId: this.schoolId
       }).then(res => {
         const json = res.data.data.data;
-        // console.log("资质信息");
-        // console.log(json);
         if (json) {
           this.zizhixinxiJson = json;
         }
@@ -2004,12 +1857,10 @@ export default {
   created() {
     let id = localStorage.getItem("SchoolId");
 
-    // console.log("学校id");
     this.schoolId = id;
     if (!this.schoolId || this.schoolId === "null") {
       this.schoolId = 1;
     }
-    // console.log(this.schoolId);
   }
 };
 </script>
@@ -2644,7 +2495,8 @@ export default {
   background: #092969;
   position: absolute;
   width: 12rem;
-  height: auto;
+  height: 80%;
+  overflow: auto;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);

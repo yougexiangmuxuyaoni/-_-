@@ -245,17 +245,7 @@ export default {
       size: 20,
       com_size: "",
       com_current: "",
-      tableData: [
-        {
-          number: "0001",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "未接收",
-          details: "查看详情"
-        }
-      ],
+      tableData: [],
 
       TZList: [],
       tz_current: 1,
@@ -285,8 +275,6 @@ export default {
      *
      * **/
     change_gaibianTZzhuangtai(id) {
-      console.log(id);
-
       gaibianTZzhuangtai({
         id
       }).then(res => {
@@ -297,7 +285,6 @@ export default {
       gaibianJGzhuangtai({
         id
       }).then(res => {
-        console.log(res.data);
         this.getJGList();
       });
     },
@@ -315,9 +302,6 @@ export default {
       this.getTZ();
     },
     getTZ() {
-      console.log("tongzhi");
-      console.log(this.userInfo);
-
       tongzhigonggao({
         userId: this.userInfo.userId,
         size: this.tz_size,
@@ -326,8 +310,6 @@ export default {
       }).then(res => {
         this.tz_com_size = res.data.data.total;
         this.tz_com_current = res.data.data.pages;
-        // console.log(res.data.data.records);
-
         let arr = [];
         res.data.data.records.forEach(val => {
           //（1已查看2未查看 ）
@@ -347,7 +329,6 @@ export default {
           arr.push(val);
         });
         this.TZList = arr;
-        console.log(this.TZList);
       });
     },
     /**
@@ -369,8 +350,6 @@ export default {
         current: this.current,
         supStatus: 2
       }).then(res => {
-        console.log(res.data.data);
-
         this.com_size = res.data.data.total;
         this.com_current = res.data.data.pages;
         let arr = [];
@@ -389,7 +368,6 @@ export default {
         });
 
         this.tableData = arr;
-        console.log(this.tableData);
       });
     },
     /**
@@ -405,8 +383,6 @@ export default {
       this.getbjweijieshou();
     },
     getbjweijieshou() {
-      console.log(11111111);
-
       this.loading_bj = true;
       bjweijieshou({
         iswarning: 1,
@@ -415,10 +391,6 @@ export default {
         size: this.bjval.size,
         page: this.bjval.page
       }).then(res => {
-        console.log(111111111);
-
-        console.log(res.data);
-
         this.loading_bj = false;
         this.bjlistJson = res.data.data;
       });
@@ -464,7 +436,6 @@ export default {
      * **/
 
     finish(e) {
-      console.log(e);
     }
   },
   mounted() {
@@ -475,7 +446,6 @@ export default {
   },
   created() {
     this.userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    console.log(this.userInfo);
     let glId = localStorage.getItem("gaoliangID");
 
     if (glId) {

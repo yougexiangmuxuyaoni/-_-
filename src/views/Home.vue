@@ -82,7 +82,6 @@ export default {
   methods: {
     ...mapMutations(["SET_USER_INFO", "CHENGE_ACTIVE", "GO_OUT"]),
     seeMore(e) {
-      console.log(e);
       let active = "";
       if (e.type === "报警消息") {
         active = "未接收报警";
@@ -100,8 +99,6 @@ export default {
         userId: this.userId,
         supStatus: 2
       }).then(res => {
-        // console.log(res.data.data.records);
-
         this.TZList = res.data.data.records;
       });
     },
@@ -123,8 +120,6 @@ export default {
     }
   },
   mounted() {
-    // console.log(this.USER_INFO);
-
     this.linkActive = this.$route.path;
     if (!this.USER_INFO.areaCode) {
       this.$router.push("/login");
@@ -141,13 +136,26 @@ export default {
     }, 0);
 
     // setInterval(() => {
-    //   // console.log("新通知");
     //   this.getHongList();
     // }, 1000 * 5);
   },
   created() {
     var user = JSON.parse(localStorage.getItem("userInfo"));
     try {
+      // let shijia = localStorage.getItem("denglushijian");
+      // let date = new Date().getTime();
+      // console.log(shijia, date);
+      // if (date - shijia > 3600000) {
+      //   this.$router.push("/login");
+      // }
+      if (sessionStorage.getItem("denglubiaoji") != "denglubiaoji") {
+        // sessionStorage.setItem("denglubiaoji", "denglubiaoji");
+        this.$router.push("/login");
+      }
+      // setTimeout(() => {
+      //   this.$router.push("/login");
+      // }, 30 * 60 * 1000);
+
       this.SET_USER_INFO(user);
       this.userId = user.userId;
     } catch {

@@ -28,7 +28,6 @@ export function baojingshu(query) {
 }
 
 export function baojingliebiao(query) {
-    console.log(query);
     return request({
         url: '/api/manageWat/statistics/getAlarms',
         method: 'get',

@@ -266,7 +266,6 @@ export default {
       this.initEcharts8();
     },
     handleChange(e) {
-      console.log(e);
     },
     // Echarts 的 resize 方法
     resizeHandler() {

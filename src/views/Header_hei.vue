@@ -65,8 +65,6 @@ export default {
   },
   watch: {
     // $route(to, from) {
-    //   console.log(111);
-    //   console.log(from.name);
     //   this.jilu = from.name;
     //   this.mianbaioxie();
     // }
@@ -82,7 +80,6 @@ export default {
     ...mapMutations(["SET_USER_INFO", "CHENGE_ACTIVE", "GO_OUT"]),
     mianbaioxie() {
       let path = this.$route.path;
-      console.log(path, this.jilu);
 
       if (path === "/alertDetails") {
         if (this.jilu === "AllWarning") {
@@ -134,7 +131,6 @@ export default {
       }
     },
     seeMore(e) {
-      console.log(e);
       let active = "";
       if (e.type === "报警消息") {
         active = "未接收报警";
@@ -170,8 +166,6 @@ export default {
 
     this.mianbaioxie();
     // setInterval(() => {
-    //   // console.log("新通知");
-
     //   this.getHongList();
     // }, 1000 * 5);
   },

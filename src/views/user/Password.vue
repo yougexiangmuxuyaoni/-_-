@@ -4,11 +4,11 @@
     <div class="zhuti">
       <el-row>
         <el-col :span="8">
-          <div class="grid-content bg-purple">请输入旧密码</div>
+          <div  class="grid-content bg-purple">请输入旧密码</div>
         </el-col>
         <el-col :span="16">
           <div class="grid-content bg-purple-light">
-            <el-input v-model="oldmima" placeholder="请输入"></el-input>
+            <el-input type="password" v-model="oldmima" placeholder="请输入"></el-input>
           </div>
         </el-col>
       </el-row>
@@ -18,7 +18,7 @@
         </el-col>
         <el-col :span="16">
           <div class="grid-content bg-purple-light">
-            <el-input v-model="mima" placeholder="请输入"></el-input>
+            <el-input type="password" v-model="mima" placeholder="请输入"></el-input>
           </div>
         </el-col>
       </el-row>
@@ -28,7 +28,7 @@
         </el-col>
         <el-col :span="16">
           <div class="grid-content bg-purple-light">
-            <el-input v-model="mima2" placeholder="请输入"></el-input>
+            <el-input type="password" v-model="mima2" placeholder="请输入"></el-input>
           </div>
         </el-col>
       </el-row>
@@ -61,8 +61,6 @@ export default {
         oldPassword: this.oldmima,
         newPassword: this.mima
       }).then(res => {
-        console.log("密码");
-        console.log(res.data);
         if (res.data.data) {
           this.GO_OUT();
           this.$router.push("/login");
@@ -72,8 +70,6 @@ export default {
       });
     },
     jiance() {
-      console.log(this.mima.length);
-
       if (this.mima.length < 6) {
         this.$message("密码至少6位");
       } else if (this.mima === this.mima2) {

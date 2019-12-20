@@ -44,13 +44,8 @@ export default {
     ...mapMutations(["SET_USER_INFO"])
   },
   mounted() {
-    console.log("trend");
-
-    console.log(this.USER_INFO);
     // let user = localStorage.getItem("userInfo");
 
-    // console.log( JSON.parse(user))
-    // console.log(this.user);
 
     // if (!this.USER_INFO) {
     //   this.$router.push("/login");

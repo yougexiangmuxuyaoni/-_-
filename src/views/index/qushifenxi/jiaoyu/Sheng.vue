@@ -246,7 +246,6 @@ export default {
       this.initEcharts8();
     },
     handleChange(e) {
-      console.log(e);
     },
     // Echarts 的 resize 方法
     resizeHandler() {
@@ -1133,7 +1132,6 @@ export default {
                 normal: {
                   show: true,
                   formatter: function(value) {
-                    // console.log(value);
                     var str = `${value.name} ${value.value[2]}个预警`;
                     return str.split(" ").join("\n");
                   },
@@ -1159,8 +1157,6 @@ export default {
     }
   },
   mounted() {
-    console.log(localStorage.getItem("user_info"));
-
     if (this.$echarts) {
       this.init1();
     } else {

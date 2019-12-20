@@ -7,13 +7,13 @@
           <i @click="search" class="el-icon-search"></i>
           <div v-show="isSearch" class="school_wrap">
             <div class="jie_wrap">
-              <p>叙永县食品药品监督管理所</p>
+              <p>济南市历城区监督管理局</p>
               <p>
                 <span>预警：30次</span>
                 <span>报警：30次</span>
                 <span>学校：30次</span>
               </p>
-              <p>G312（广成线）</p>
+              <p>济南市历城区花园路33号</p>
             </div>
             <div class="school_list_wrap">
               <div class="tap">
@@ -97,61 +97,54 @@ export default {
       search_type: "街道", //搜索结果的类型 （街道/学校）
       isClick: 1,
       zoom: 7,
-      center: [104.069855,30.658281],
+      center: [117.120098,36.6512],
       shiMarkers: [],
       jieMarkers: [],
       xueMarkers: [],
       activeMarers: [],
       events: {
         // init(o) {
-        //   console.log(o.getCenter());
-        //   // console.log(this.$refs.map.$$getInstance());
         //   o.getCity(result => {
-        //     console.log(result);
         //   });
         // },
         // click(e) {
-        // console.log(e);
-        // console.log(e.$$getExtData());
-        // console.log((vm.isClick = false));
         // vm.isClick = 2;
         // },
         // mouseover(e) {
-        // console.log(e);
         // }
       },
       keys: "",
       area_value: "全部区域",
       yj_value: "全部警报",
       quyu_options: [
-        {
-          value: "全部区域",
-          label: "全部区域"
-        },
-        {
-          value: "朝阳区",
-          label: "朝阳区"
-        },
-        {
-          value: "海淀区",
-          label: "海淀区"
-        },
-        {
-          value: "昌平区",
-          label: "昌平区"
-        },
-        {
-          value: "大兴区",
-          label: "大兴区"
-        },
-        {
-          value: "东城区",
-          label: "东城区"
-        },
-        {
-          value: "西城区",
-          label: "西城区"
-        }
+        // {
+        //   value: "全部区域",
+        //   label: "全部区域"
+        // },
+        // {
+        //   value: "朝阳区",
+        //   label: "朝阳区"
+        // },
+        // {
+        //   value: "海淀区",
+        //   label: "海淀区"
+        // },
+        // {
+        //   value: "昌平区",
+        //   label: "昌平区"
+        // },
+        // {
+        //   value: "大兴区",
+        //   label: "大兴区"
+        // },
+        // {
+        //   value: "东城区",
+        //   label: "东城区"
+        // },
+        // {
+        //   value: "西城区",
+        //   label: "西城区"
+        // }
       ],
       yj_options: [
         {
@@ -251,13 +244,10 @@ export default {
       }
     },
     xiaZuan(e) {
-      console.log(e);
     },
     baojing_handleChange(e) {
-      console.log(e);
     },
     quyu_handleChange(e) {
-      console.log(e);
     },
     getshi() {
       axios.get("/static/shi.json").then(res => {
@@ -273,7 +263,6 @@ export default {
           val.events = {
             click(e) {
               vm.zoom = 9;
-              console.log(e);
               vm.search();
             }
           };

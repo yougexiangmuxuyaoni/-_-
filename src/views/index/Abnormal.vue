@@ -271,12 +271,8 @@ export default {
         localStorage.setItem("lishixiangqingtype", e.type.substr(0, 2));
         localStorage.setItem("lishixiangqingjing", e.type.substr(2));
         if (e.alarmId) {
-          console.log(e.alarmId);
-
           localStorage.setItem("lishixiangqingid", e.alarmId);
         } else {
-          console.log(e.earlyId);
-
           localStorage.setItem("lishixiangqingid", e.earlyId);
         }
       }
@@ -764,7 +760,6 @@ export default {
       }).then(res => {
         this.yujinglistJson = res.data.data;
         this.loading_yujing = false;
-        // console.log(this.yujinglistJson);
       });
     },
     //报警列表
@@ -774,8 +769,6 @@ export default {
         areaCode: this.parmes.areaCode,
         regionalLevel: this.parmes.regionalLevel
       }).then(res => {
-        // console.log("报警");
-        // console.log(res.data);
         this.baojinglistJson = res.data.data;
         this.loading_baojing = false;
       });
@@ -787,8 +780,6 @@ export default {
         areaCode: this.parmes.areaCode,
         regionalLevel: this.parmes.regionalLevel
       }).then(res => {
-        // console.log("报警数量统计");
-        // console.log(res.data);
         this.baojingshuliangJson = res.data.data;
         this.initEcharts();
       });
@@ -800,8 +791,6 @@ export default {
         areaCode: this.parmes.areaCode,
         regionalLevel: this.parmes.regionalLevel
       }).then(res => {
-        // console.log("报警类别统计");
-        // console.log(res.data);
         this.baojingleibieJson = res.data.data;
         this.initEcharts2();
       });
@@ -834,13 +823,15 @@ export default {
         let yujingArr = [];
         let baojingArr = [];
         json.forEach(item => {
-          nameArr.push(item.name);
+          nameArr.push(item.NAME);
           yujingArr.push(item.warningTotal);
           baojingArr.push(item.alramTotal);
         });
         this.nameArr = nameArr;
         this.yujingArr = yujingArr;
         this.baojingArr = baojingArr;
+        console.log(json);
+        
         this.initEcharts3();
       });
     }
@@ -848,13 +839,10 @@ export default {
   mounted() {
     var date = new Date();
     this.parmes.year = date.getFullYear();
-    // console.log(this.parmes.year);
-
     let user = JSON.parse(localStorage.getItem("userInfo"));
     // 登录后取得 个人信息 动态赋值
     this.parmes.areaCode = user.areaCode;
     this.parmes.regionalLevel = user.userLevel;
-    // console.log(user);
 
     this.getYuJingList();
     this.getBaoJingList();

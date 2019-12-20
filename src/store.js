@@ -21,8 +21,6 @@ export default new Vuex.Store({
     },
     //设置用户信息
     SET_USER_INFO(state, user) {
-      // console.log("保存USER_INFO");
-      // console.log(user);
       state.USER_INFO = user;
       localStorage.setItem("userInfo", JSON.stringify(user));
     },
@@ -30,10 +28,8 @@ export default new Vuex.Store({
       state.YIBANSHIXIANG_ACTIVE = e;
     },
     GO_OUT(state) {
-      // console.log("清楚USER_INFO");
       state.USER_INFO = null;
       localStorage.setItem("userInfo", '');
-      console.log(localStorage.getItem('userInfo'));
       localStorage.removeItem("token");
     },
     SETTYPE(state, type) {

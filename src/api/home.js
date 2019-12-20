@@ -37,8 +37,6 @@ export function bjjieshou(query) {
 
 
 export function bjweijieshou(query) {
-    console.log("未接受——报警");
-    console.log(query);
     return request({
         url: '/api/manageWat/statistics/getUpcomingAlarms',
         method: 'get',

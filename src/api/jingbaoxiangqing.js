@@ -4,8 +4,6 @@ import request from 'axios'
 */
 
 export function lishixiangqing(query) {
-    console.log("证照");
-    console.log(query);
     return request({
         url: '/api/manageWat/statistics/getHistoryDetails',
         method: 'get',
@@ -14,8 +12,6 @@ export function lishixiangqing(query) {
 }
 
 export function renyuanxiangqing(query) {
-    console.log("人员");
-    console.log(query);
     return request({
         url: '/api/manageWat/statistics/getHistoryMan',
         method: 'get',
@@ -23,8 +19,6 @@ export function renyuanxiangqing(query) {
     })
 }
 export function shicaixiangqing(query) {
-    console.log("食材");
-    console.log(query);
     return request({
         url: '/api/manageWat/statistics/getHistoryFood',
         method: 'get',

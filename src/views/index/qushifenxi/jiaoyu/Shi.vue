@@ -258,7 +258,6 @@ export default {
       this.initEcharts8();
     },
     handleChange(e) {
-      console.log(e);
     },
     // Echarts 的 resize 方法
     resizeHandler() {
@@ -1035,13 +1034,10 @@ export default {
       let nameMap = "泸州市";
       _this.myChart8 = this.$echarts.init(this.$refs.shi);
       this.myChart8.on("click", params => {
-        console.log(params);
         this.SET_USER_INFO("qujiaoyu");
       });
       // axios.get("/static/beijing.json").then(response => {
       axios.get("/static/四川省/泸州市/datas.json").then(response => {
-        console.log(response);
-
         this.$echarts.registerMap(nameMap, response.data);
         var geoCoordMap = {
           叙永县: [105.437775, 28.167919],
@@ -1142,7 +1138,6 @@ export default {
                 normal: {
                   show: true,
                   formatter: function(value) {
-                    // console.log(value);
                     var str = `${value.name} ${value.value[2]}个预警`;
                     return str.split(" ").join("\n");
                   },
@@ -1168,7 +1163,6 @@ export default {
     }
   },
   mounted() {
-    console.log(localStorage.getItem("userInfo"));
 
     if (!localStorage.getItem("userInfo")) {
       this.$router.push("/login");

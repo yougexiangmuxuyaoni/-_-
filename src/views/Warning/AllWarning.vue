@@ -165,9 +165,9 @@ export default {
       navType: "1",
       yujingshuJson: {
         warningNumber: {
-          cardTotal: 2,
-          foodTotal: 1,
-          personTotal: 5
+          cardTotal: 0,
+          foodTotal: 0,
+          personTotal: 0
         }
       },
       activeIndex: "",
@@ -256,7 +256,6 @@ export default {
       this.$router.push("/alertDetails");
     },
     hover(row, column, cell, event) {
-      console.log(row);
     },
     getyujingshu() {
       let date = new Date();

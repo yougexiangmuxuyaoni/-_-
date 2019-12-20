@@ -211,143 +211,7 @@ export default {
         searchCount: true,
         pages: 1
       },
-      tableData: [
-        {
-          number: "0001",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "快速补齐证件",
-          details: "查看详情"
-        },
-        {
-          number: "0002",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "快速补齐证件",
-          details: "查看详情"
-        },
-        {
-          number: "0003",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "快速补齐证件",
-          details: "查看详情"
-        },
-        {
-          number: "0004",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "快速补齐证件",
-          details: "查看详情"
-        },
-        {
-          number: "0002",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "快速补齐证件",
-          details: "查看详情"
-        },
-        {
-          number: "0003",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "快速补齐证件",
-          details: "查看详情"
-        },
-        {
-          number: "0004",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "快速补齐证件",
-          details: "查看详情"
-        },
-        {
-          number: "0002",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "快速补齐证件",
-          details: "查看详情"
-        },
-        {
-          number: "0003",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "快速补齐证件",
-          details: "查看详情"
-        },
-        {
-          number: "0004",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "快速补齐证件",
-          details: "查看详情"
-        },
-        {
-          number: "0002",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "快速补齐证件",
-          details: "查看详情"
-        },
-        {
-          number: "0003",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "快速补齐证件",
-          details: "查看详情"
-        },
-        {
-          number: "0004",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "快速补齐证件",
-          details: "查看详情"
-        },
-        {
-          number: "0003",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "快速补齐证件",
-          details: "查看详情"
-        },
-        {
-          number: "0004",
-          info: "企业无商业资格证",
-          type: "证照报警",
-          name: "朝阳区实验小学",
-          date: "2019-09-16",
-          opinion: "快速补齐证件",
-          details: "查看详情"
-        }
-      ],
+      tableData: [],
       TZList: [],
       current: 1,
       size: 20,
@@ -419,7 +283,6 @@ export default {
       }).then(res => {
         this.tz_com_size = res.data.data.total;
         this.tz_com_current = res.data.data.pages;
-        // console.log(res.data.data.records);
 
         let arr = [];
         res.data.data.records.forEach(val => {
@@ -467,7 +330,6 @@ export default {
         });
 
         this.tableData = arr;
-        // console.log(this.tableData);
       });
     },
     getbjjieshou() {
@@ -479,9 +341,7 @@ export default {
         size: this.bjval.size,
         iswarning: this.bjval.iswarning
       }).then(res => {
-        // console.log(111);
 
-        // console.log(res.data.data);
         this.bjList = res.data.data;
         this.loading_bj = false;
       });
@@ -495,9 +355,6 @@ export default {
         size: this.yjval.size,
         iswarning: this.yjval.iswarning
       }).then(res => {
-        // console.log("yujing");
-
-        // console.log(res.data.data);
         this.yjList = res.data.data;
         this.loading_yj = false;
       });
@@ -511,7 +368,6 @@ export default {
   },
   created() {
     this.userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    console.log(this.userInfo);
   }
 };
 </script>

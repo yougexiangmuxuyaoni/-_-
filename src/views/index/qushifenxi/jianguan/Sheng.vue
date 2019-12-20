@@ -236,7 +236,6 @@ export default {
     ...mapMutations(["SET_USER_INFO"]),
     getxuexiaotongji() {
       xuexiaotongji({ areaCode: 1 }).then(res => {
-        console.log(res.data);
       });
     },
     find() {
@@ -248,7 +247,6 @@ export default {
       this.initEcharts8();
     },
     handleChange(e) {
-      console.log(e);
     },
     getyujinghuangjie() {
       yujinghuanjie({
@@ -263,9 +261,6 @@ export default {
           this.yujinghuanjie.baiArr.push(99.9);
           this.yujinghuanjie.kuangArr.push(100);
         });
-        // console.log(this.yujinghuanjie);
-        console.log(json);
-        
         this.initEcharts6();
       });
     },
@@ -282,7 +277,6 @@ export default {
           this.yujingxuexiaoArr.baiArr.push(99.9);
           this.yujingxuexiaoArr.kuangArr.push(100);
         });
-        console.log(this.yujingxuexiaoArr);
         this.initEcharts4();
       });
     },
@@ -299,7 +293,6 @@ export default {
           this.baojingxuexiaoArr.baiArr.push(99.9);
           this.baojingxuexiaoArr.kuangArr.push(100);
         });
-        // console.log(this.baojingxuexiaoArr);
         this.initEcharts5();
       });
     },
@@ -1212,7 +1205,6 @@ export default {
                 normal: {
                   show: true,
                   formatter: function(value) {
-                    // console.log(value);
                     var str = `${value.name} ${value.value[2]}个预警`;
                     return str.split(" ").join("\n");
                   },
@@ -1238,7 +1230,6 @@ export default {
     }
   },
   mounted() {
-    // console.log(localStorage.getItem("user_info"));
 
     // if (this.$echarts) {
     //   this.init1();
