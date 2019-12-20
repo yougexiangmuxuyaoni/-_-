@@ -52,47 +52,9 @@ Vue.config.productionTip = false;
 
 
 Vue.prototype.$http= axios;
+//Vue函数添加一个原型属性$axios 指向axios,这样vue实例或组件中不用再去重复引用Axios 直接用this.$axios就能执行axios 方法
 const CancelToken = axios.CancelToken;
-let cancel;
-
-Vue.prototype.$ajax = (type, url, data) => {
-    return new Promise((resolve, reject) => {   //封装ajax
-        var aa = {
-            method: type,
-            url: url,
-            headers: { 'token': sessionStorage.getItem('token') },
-            cancelToken: new CancelToken(c => {  //强行中断请求要用到的
-                cancel = c
-            })
-        }
-        var json = (type == 'get') ? Object.assign(aa, { params: data }) : Object.assign(aa, { data: data });
-        var ajax = Vue.prototype.$http(json).then(res => {
-            if (Object.is(res.data.code,200)) {
-                resolve(res.data);
-            } else {
-                Vue.prototype.$message.error(res.data.msg);
-            }
-        }).catch(error => {   //中断请求和请求出错的处理
-                if (error.message == "interrupt") {
-                    console.log('已中断请求');
-                    return;
-                } else {
-                    Vue.prototype.$message.error(res.data.msg);
-                }
-            })
-        return ajax;
-    })
-};
-
-
-router.beforeEach((to, from, next) => {   //路由切换检测是否强行中断，
-  console.log(cancel)
-	if(cancel){        //强行中断时才向下执行
-		cancel('interrupt');   //给个标志，中断请求
-	}
-	next();	
-});
-
+Vue.$httpRequestList=[];
 const originalPush = Router.prototype.push;
 Router.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err);

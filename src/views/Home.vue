@@ -140,25 +140,15 @@ export default {
     // }, 1000 * 5);
   },
   created() {
-    var user = JSON.parse(localStorage.getItem("userInfo"));
-    try {
-      // let shijia = localStorage.getItem("denglushijian");
-      // let date = new Date().getTime();
-      // console.log(shijia, date);
-      // if (date - shijia > 3600000) {
-      //   this.$router.push("/login");
-      // }
+    if (typeof localStorage.getItem("userInfo") !== "undefined") {
       if (sessionStorage.getItem("denglubiaoji") != "denglubiaoji") {
-        // sessionStorage.setItem("denglubiaoji", "denglubiaoji");
         this.$router.push("/login");
+        return;
       }
-      // setTimeout(() => {
-      //   this.$router.push("/login");
-      // }, 30 * 60 * 1000);
-
+      var user = JSON.parse(localStorage.getItem("userInfo"));
       this.SET_USER_INFO(user);
       this.userId = user.userId;
-    } catch {
+    } else {
       this.$router.push("/login");
     }
   }

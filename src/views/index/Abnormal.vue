@@ -9,7 +9,10 @@
           <div class="t-right">
             <span @click="to('/header_hei/allWarning')">
               预警总数
-              <span class="btn" v-if="yujinglistJson.earlyTotal">{{yujinglistJson.earlyTotal}}</span>
+              <span
+                class="btn"
+                v-if="yujingbaojingJson.warningTotal"
+              >{{yujingbaojingJson.warningTotal}}</span>
             </span>
             <span @click="to('/header_hei/allWarning')">全部预警</span>
           </div>
@@ -46,7 +49,10 @@
           <div class="t-right">
             <span @click="to('/header_hei/allalarm')">
               待处理
-              <span class="btn" v-if="baojinglistJson.alarmTotal">{{baojinglistJson.alarmTotal}}</span>
+              <span
+                class="btn"
+                v-if="yujingbaojingJson.alarmTotal"
+              >{{yujingbaojingJson.alarmTotal}}</span>
             </span>
             <span @click="to('/header_hei/allalarm')">全部报警</span>
           </div>
@@ -229,12 +235,17 @@ import {
   baojingshuliang,
   baojingleibie,
   xuexiaobaojing,
-  quyubaojing
+  quyubaojing,
+  yujingbaojingsum
 } from "@/api/yichangjiance";
 export default {
   name: "abnormal",
   data() {
     return {
+      yujingbaojingJson: {
+        alarmTotal: 0,
+        warningTotal: 0
+      },
       yujinglistJson: {},
       baojinglistJson: {},
       baojingshuliangJson: [],
@@ -265,6 +276,21 @@ export default {
     };
   },
   methods: {
+    // 预警报警总数
+    getyujingbaojingsum() {
+      yujingbaojingsum({
+        month: `${this.parmes.year}-${new Date().getMonth() + 1}`,
+        regionalLevel: this.parmes.regionalLevel,
+        areaCode: this.parmes.areaCode,
+        upComing: 1
+      }).then(res => {
+        console.log("预警报警总数");
+        let json = res.data.data;
+        this.yujingbaojingJson = json;
+
+        console.log(this.yujingbaojingJson);
+      });
+    },
     to(uri, e) {
       if (uri === "/alertDetails") {
         localStorage.setItem("SchoolId", e.schoolId);
@@ -831,7 +857,7 @@ export default {
         this.yujingArr = yujingArr;
         this.baojingArr = baojingArr;
         console.log(json);
-        
+
         this.initEcharts3();
       });
     }
@@ -851,6 +877,7 @@ export default {
     this.getBaoJingleibie();
     this.getxXueXiaoBaoJing();
     this.getxQuYuBaoJing();
+    this.getyujingbaojingsum();
     // 绑定监听事件
     window.addEventListener("resize", this.resizeHandler);
   },

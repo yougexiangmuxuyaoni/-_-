@@ -88,13 +88,15 @@ export default {
           localStorage.setItem("token", token);
           getUserInfo().then(res => {
             let json = res.data.data;
+            console.log(json);
+            // 1 监管 2教育
             this.geterweima();
-            let isdenglu = json.sysUser.userType;
             this.userInfo.areaName = json.sysUser.areaName;
             this.userInfo.areaCode = json.sysUser.areaCode;
-            this.userInfo.userLevel = json.sysUser.userLevel;
+            this.userInfo.userLevel = json.sysUser.level;
             this.userInfo.roleCodes = json.roleCodes;
-            if (isdenglu !== "3") {
+             this.userInfo.type =  json.sysUser.userType;
+            if (json.sysUser.userType !== "1" && json.sysUser.userType !== "2") {
               localStorage.removeItem("token");
               this.$message({
                 showClose: true,
@@ -116,35 +118,9 @@ export default {
               });
               return;
             }
-
-            if (this.userInfo.roleCodes[0] === "shichangjianguan") {
-              if (this.userInfo.userLevel === "2") {
-                //省
-                this.userInfo.type = "shengjianguan";
-              } else if (this.userInfo.userLevel === "3") {
-                //市
-                this.userInfo.type = "shijianguan";
-              } else if (this.userInfo.userLevel === "4") {
-                //区
-                this.userInfo.type = "qujianguan";
-              }
-            } else if (this.userInfo.roleCodes[0] === "jiaoyujuguanli") {
-              if (this.userInfo.userLevel === "2") {
-                //省
-                this.userInfo.type = "shengjiaoyu";
-              } else if (this.userInfo.userLevel === "3") {
-                //市
-                this.userInfo.type = "shijiaoyu";
-              } else if (this.userInfo.userLevel === "4") {
-                //区
-                this.userInfo.type = "qujiaoyu";
-              }
-            }
             this.userInfo.userId = json.sysUser.userId;
             this.SET_USER_INFO(this.userInfo);
-            // localStorage.setItem("denglushijian",new Date().getTime());
             sessionStorage.setItem("denglubiaoji", "denglubiaoji");
-
             this.$router.push("/");
           });
         })

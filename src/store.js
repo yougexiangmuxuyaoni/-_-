@@ -6,8 +6,8 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     status: "",
-    TYPE:'',
-    TIME_NUMBER:0,
+    TYPE: '',
+    TIME_NUMBER: 0,
     USER_INFO: {//用户信息
       // roleCodes: null,
       // areaCode: "",
@@ -31,11 +31,13 @@ export default new Vuex.Store({
       state.USER_INFO = null;
       localStorage.setItem("userInfo", '');
       localStorage.removeItem("token");
+      // 从sessionStorage删除所有保存的数据
+      sessionStorage.clear();
     },
     SETTYPE(state, type) {
       state.TYPE = type;
     },
-    CHANGE_TIME_NUMBER(state){
+    CHANGE_TIME_NUMBER(state) {
       state.TIME_NUMBER++;
     }
   },

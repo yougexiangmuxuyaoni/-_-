@@ -50,6 +50,15 @@ export function quyubaojing(query) {
         params: query
     })
 }
+
+export function yujingbaojingsum(query) {
+    console.log(query)
+    return request({
+        url: '/api/manageWat/statistics/getWarnAlarmTotalContrast',
+        method: 'get',
+        params: query
+    })
+}
 // export function baojingList(query) {
 //     return request({
 //         url: '/api/baojingList',

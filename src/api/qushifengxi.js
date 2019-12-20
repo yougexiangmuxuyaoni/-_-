@@ -2,14 +2,10 @@ import request from 'axios'
 /*
 异常检测页面 API
 */
-
-
+// 获取CancelToken
 request.interceptors.request.use((config) => {
     // 在发送请求之前做些什么，例如加入token
     // config.headers['Authorization'] = "ASJID231";
-if(true){
-    console.log(this)
-}
     return config;
 
 }, function (error) {
@@ -51,7 +47,7 @@ export function baojinghuanjie(query) {
 
 export function xuexiaotongji(query) {
     return request({
-        url: '/api/manageWat/school/getAnalysisSchoolData',
+        url: '/api/manageWat/school/getSchoolData',
         method: 'get',
         params: query
     })
