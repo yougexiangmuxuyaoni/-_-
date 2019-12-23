@@ -125,7 +125,7 @@
         <el-table-column property="label" label="学校名称"></el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="saveschool">确 定</el-button>
       </span>
 
       <el-footer class="footer">
@@ -196,6 +196,10 @@ export default {
     };
   },
   methods: {
+    savescholl() {
+      // this.centerDialogVisible = false;
+      
+    },
     handleSelectionChange(val) {
       console.log(val);
       if (val.length == 0) {
@@ -212,7 +216,6 @@ export default {
       this.multipleSelection.forEach(item => {
         this.value.push(item);
       });
-        
 
       // } else {
       // this.value = this.multipleSelection;
@@ -224,11 +227,10 @@ export default {
       done();
     },
     huixianSelect() {
-
       // rows.forEach(row => {
-        console.log(this.value[0]);
-        
-        this.$refs.multipleTable.toggleRowSelection(this.value[0]);
+      console.log(this.value[0]);
+
+      this.$refs.multipleTable.toggleRowSelection(this.value[0]);
       // });
     },
     scupPage() {
