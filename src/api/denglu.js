@@ -30,6 +30,8 @@ export function denglu(userInfo) {
     })
 }
 
+
+
 export const getUserInfo = () => {
     let token = localStorage.getItem('token');
     return request({

@@ -1,18 +1,8 @@
 import request from 'axios'
+// import request from './index.js';
 /*
 异常检测页面 API
 */
-// 获取CancelToken
-request.interceptors.request.use((config) => {
-    // 在发送请求之前做些什么，例如加入token
-    // config.headers['Authorization'] = "ASJID231";
-    return config;
-
-}, function (error) {
-    // 对请求错误做些什么
-    return Promise.reject(error);
-});
-
 export function xuexiaoyujingpaiming(query) {
     return request({
         url: '/api/manageWat/statistics/getEarlyWarningRank',
@@ -88,7 +78,7 @@ export function quyuma(query) {
     })
 }
 
-export function xiazuan(query) {
+export function chengshiweizhi(query) {
     return request({
         url: '/api/manageWat/statistics/getcity',
         method: 'get',
