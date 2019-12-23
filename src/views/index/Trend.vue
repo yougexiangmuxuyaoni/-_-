@@ -60,7 +60,7 @@
         <div class="shitang">
           <div class="title" style="height:100%;">
             <p>食材供应商总量</p>
-            <p>4,498</p>
+            <p>{{shitangJson.foodSupplier}}</p>
           </div>
         </div>
       </div>
@@ -106,7 +106,12 @@
     </div>
     <div class="main-mid" style="margin:0 10px;">
       <div class="top hezi">
-        <el-select v-model="shi_value" placeholder="市" @change="diquchange('shi')">
+        <el-select
+          v-model="shi_value"
+          placeholder="市"
+          :disabled="shiDis"
+          @change="diquchange('shi')"
+        >
           <el-option
             v-for="item in shi_options"
             :key="item.value"
@@ -115,7 +120,7 @@
           ></el-option>
         </el-select>
 
-        <el-select v-model="qu_value" placeholder="区" @change="diquchange('qu')">
+        <el-select v-model="qu_value" placeholder="区" :disabled="quDis" @change="diquchange('qu')">
           <el-option
             v-for="item in qu_options"
             :key="item.value"
@@ -141,8 +146,19 @@
           <!-- <span class="time">2019-08-16 18:00</span> -->
         </div>
         <div
+        v-show="!isSousuomap"
           class="tu"
           ref="sheng"
+          v-loading="loading_quyu"
+          element-loading-text="拼命加载中"
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(0, 0, 0, 0.1)"
+        ></div>
+
+          <div
+          v-show="isSousuomap"
+          class="tu"
+          ref="sousuo"
           v-loading="loading_quyu"
           element-loading-text="拼命加载中"
           element-loading-spinner="el-icon-loading"
@@ -271,6 +287,10 @@ export default {
   name: "trend",
   data() {
     return {
+      isSousuomap:false,
+      shiDis: false,
+      quDis: false,
+
       qiu_boj: "",
       yj_arr: "",
       bj_arr: "",
@@ -361,13 +381,14 @@ export default {
   methods: {
     ...mapMutations(["SET_USER_INFO"]),
     find() {
+      this.isSousuomap = true;
+      this.loading_quyu = true;
       mohusousuo({
         areaCode: this.qu_value || this.shi_value || this.map.mapCode,
         schName: this.keys
       }).then(res => {
         this.Level = 4;
-        this.map.mapCode = this.qu_value || this.shi_value || this.map.mapCode;
-        this.loading_quyu = false;
+        // this.map.mapCode = this.qu_value || this.shi_value || this.map.mapCode;
         let json = res.data.data;
         let bj_arr = [];
         let yj_arr = [];
@@ -397,17 +418,212 @@ export default {
             }
 
             qiu_boj[item.name] = [
-              item.schAlarmNum.longitude,
-              item.schAlarmNum.latitude
+              item.schAlarmNum.latitude,
+              item.schAlarmNum.longitude
             ];
           }
         });
         this.qiu_boj = qiu_boj;
         this.yj_arr = yj_arr;
         this.bj_arr = bj_arr;
+        // console.log(this.qiu_boj);
 
-        this.initEcharts8();
+        this.myChart8 = this.$echarts.init(this.$refs.sousuo);
+        //地图放大
+        this.myChart8.on("click", async params => {
+          if (params.componentType === "series") {
+            // if (this.Level > 3) {
+              localStorage.setItem("SchoolId", params.value[2].split(" ")[4]);
+              this.$router.push("/positioning");
+              // return;
+            // }
+
+          
+          }
+        });
       });
+      let uri = `http://datavmap-public.oss-cn-hangzhou.aliyuncs.com/areas/bound/${this.map.mapCode}.json`;
+      axios.get(uri).then(response => {
+        this.$echarts.registerMap(this.map.nameMap, response.data);
+
+        var b_data = this.bj_arr;
+        var y_data = this.yj_arr;
+        var geoCoordMap = this.qiu_boj;
+
+        var convertData = function(data) {
+          var res = [];
+          for (var i = 0; i < data.length; i++) {
+            var geoCoord = geoCoordMap[data[i].name];
+            if (geoCoord) {
+              res.push({
+                name: data[i].name,
+                value: geoCoord.concat(data[i].value)
+              });
+            }
+          }
+          return res;
+        };
+
+        let mapOption2 = {
+          tooltip: {
+            formatter: function(params) {
+              var tipHtml = "";
+              tipHtml = `<div style="width: 280px;height: 80px;;display: flex;justify-content: space-around;align-items: center;border-radius: 10px;">
+                          <div style="width: 80px;height: 50px;">
+                            <img width="100%" height="100%" src="${
+                              params.value[2].split(" ")[0]
+                            }" />
+                          </div>
+                          <div style="width: 160px;font-size: 12px;line-height: 22px;white-space: normal">
+                            <div style="font-weight: 700">${params.name}</div>
+                            <div style="display: flex;">
+                              <div style="font-weight: 700;margin-right: 12px;">报警：${
+                                params.value[2].split(" ")[1]
+                              }次</div>
+                              <div style="font-weight: 700">预警：${
+                                params.value[2].split(" ")[2]
+                              }次</div>
+                            </div>
+
+                            <div style="display: flex;color: #848484">
+                              <div style="font-weight: 700;">人员:${
+                                params.value[2].split(" ")[3]
+                              }</div>
+                              <div style="font-weight: 700">证照:${
+                                params.value[2].split(" ")[5]
+                              }</div>
+                               <div style="font-weight: 700">食材:${
+                                 params.value[2].split(" ")[6]
+                               }</div>
+                            </div>
+                            
+                          </div>
+                        </div>`;
+              // <span style="color: #848484">${
+              //       params.value[2].split(" ")[3]
+              //     }</span>
+              return tipHtml;
+            }
+          },
+          legend: {
+            bottom: 10,
+            borderRadius: 0,
+            itemGap: 100,
+            textStyle: {
+              color: "white"
+            }
+          },
+          geo: {
+            map: this.map.nameMap,
+            zoom: 0.5,
+            roam: true,
+            center: geoCoordMap[0],
+            itemStyle: {
+              normal: {
+                areaColor: "#26a3d2"
+              }
+            },
+            label: {
+              normal: {
+                show: true //是否显示标签
+              }
+            },
+            regions: []
+          },
+          series: [
+            {
+              name: "报警",
+              type: "scatter",
+              coordinateSystem: "geo",
+              data: convertData(this.bj_arr),
+              symbolSize: function(val) {
+                return 30;
+              },
+              label: {
+                normal: {
+                  show: true,
+                  formatter: function(value) {
+                    var str = `{b|${value.name}}`;
+                    return str;
+                  },
+                  // align: "center",
+                  textStyle: {
+                    color: "white",
+                    fontSize: 12,
+                    lineHeight: 16
+                  },
+                  rich: {
+                    a: {
+                      backgroundColor: "red",
+                      color: "white",
+                      padding: 2,
+                      borderRadius: 10
+                    },
+                    b: {
+                      backgroundColor: "red",
+                      color: "white",
+                      borderRadius: 5,
+                      padding: 5
+                    },
+                    k: {
+                      width: 5
+                    }
+                  }
+                }
+              }
+            },
+            {
+              name: "预警",
+              type: "scatter",
+              coordinateSystem: "geo",
+              data: convertData(this.yj_arr),
+              symbolSize: function(val) {
+                return 30;
+              },
+              symbolOffset: ["-60%", -20],
+              label: {
+                normal: {
+                  show: true,
+                  formatter: function(value) {
+                    var str = `{b|${value.name}}`;
+                    return str;
+                  },
+                  align: "center",
+                  textStyle: {
+                    color: "white",
+                    fontSize: 12,
+                    lineHeight: 16
+                  },
+                  rich: {
+                    a: {
+                      backgroundColor: "#a96c00",
+                      color: "white",
+                      padding: 2,
+                      borderRadius: 10
+                    },
+                    b: {
+                      backgroundColor: "#a96c00",
+                      color: "white",
+                      borderRadius: 5,
+                      padding: 5
+                    },
+                    k: {
+                      width: 5
+                    }
+                  }
+                }
+              },
+              itemStyle: {
+                color: "#a96c00"
+              }
+            }
+          ]
+        };
+
+        this.myChart8.setOption(mapOption2);
+      });
+      // this.initEcharts8();
+      // });
     },
     diquchange(e) {
       if (e == "shi") {
@@ -445,19 +661,19 @@ export default {
       });
     },
     map_back() {
+      this.isSousuomap = false;
       this.map.nameMap = this.USER_INFO.areaName;
       this.map.mapCode = this.USER_INFO.areaCode;
       this.Level = Number(this.USER_INFO.userLevel);
       this.shi_value = "";
       this.qu_value = "";
       this.keys = "";
-      this.getxiazuan();
-      // this.loadingMap(this);
+      this.getweizhi();
     },
     //获取区域码
     getquyuma(name) {
       return quyuma({ name }).then(res => {
-        this.map.mapCode = res.data.data.code;
+        this.map.mapCode = res.data.data.code || res.data.data.CODE;
       });
     },
     //获取证照率
@@ -1301,10 +1517,12 @@ export default {
       _this.myChart7.setOption(option);
     }, //区域分布图
     initEcharts8() {
+      this.loading_quyu = false;
       this.$nextTick(() => {
         try {
           this.myChart8.dispose();
         } catch {}
+
         this.myChart8 = this.$echarts.init(this.$refs.sheng);
         //地图放大
         this.myChart8.on("click", async params => {
@@ -1314,85 +1532,29 @@ export default {
               this.$router.push("/positioning");
               return;
             }
+
             this.map.nameMap = params.name;
             await this.getquyuma(params.name);
             this.Level++;
-
-            await this.getxiazuan();
-            this.loadingMap(this);
+            this.getweizhi();
           }
         });
-
-        this.loadingMap(this);
       });
-    },
-    getweizhi() {
-      // chengshiweizhi({
-      //   regionalLevel: this.Level,
-      //   areaCode: this.map.mapCode
-      // }).then(res => {
-      //   console.log(res.data.data);
-      //   this.initEcharts8();
-
-      // });
-
-      chengshiweizhi({
-        regionalLevel: this.Level,
-        areaCode: this.map.mapCode
-      }).then(res => {
-        this.loading_quyu = false;
-        let json = res.data.data;
-        let bj_arr = [];
-        let yj_arr = [];
-        let qiu_boj = {};
-        json.forEach(item => {
-          if (item.schAlarmNum) {
-            if (this.Level > 3) {
-              bj_arr.push({
-                name: item.name,
-                value: `${item.schAlarmNum.sch_pic} ${item.schAlarmNum.alarmnum} ${item.schAlarmNum.warningnum} ${item.schAlarmNum.rtotal} ${item.sch_id} ${item.schAlarmNum.ztotal} ${item.schAlarmNum.stotal}`
-              });
-
-              yj_arr.push({
-                name: item.name,
-                value: `${item.schAlarmNum.sch_pic} ${item.schAlarmNum.alarmnum} ${item.schAlarmNum.warningnum} ${item.schAlarmNum.rtotal} ${item.sch_id} ${item.schAlarmNum.ztotal} ${item.schAlarmNum.stotal}`
-              });
-            } else {
-              bj_arr.push({
-                name: item.name,
-                value: item.schAlarmNum.alarmnum
-              });
-
-              yj_arr.push({
-                name: item.name,
-                value: item.schAlarmNum.warningnum
-              });
-            }
-
-            qiu_boj[item.name] = [
-              item.schAlarmNum.longitude,
-              item.schAlarmNum.latitude
-            ];
-          }
-        });
-        this.qiu_boj = qiu_boj;
-        this.yj_arr = yj_arr;
-        this.bj_arr = bj_arr;
-
-        this.initEcharts8();
-      });
-    },
-    loadingMap(e) {
-      let uri = `http://datavmap-public.oss-cn-hangzhou.aliyuncs.com/areas/children/${e.map.mapCode}.json`;
-      let quxian = `http://datavmap-public.oss-cn-hangzhou.aliyuncs.com/areas/bound/${e.map.mapCode}.json`;
-      if (e.Level > 3) {
+      let uri = `http://datavmap-public.oss-cn-hangzhou.aliyuncs.com/areas/children/${this.map.mapCode}.json`;
+      let quxian = `http://datavmap-public.oss-cn-hangzhou.aliyuncs.com/areas/bound/${this.map.mapCode}.json`;
+      if (this.Level > 3) {
         uri = quxian;
       }
+
       axios.get(uri).then(response => {
-        e.$echarts.registerMap(e.map.nameMap, response.data);
-        var geoCoordMap = e.qiu_boj;
-        var b_data = e.bj_arr;
-        var y_data = e.yj_arr;
+        this.$echarts.registerMap(this.map.nameMap, response.data);
+
+        var b_data = this.bj_arr;
+        var y_data = this.yj_arr;
+        var geoCoordMap = this.qiu_boj;
+        // var geoCoordMap = {
+        //   济南市: [117.1062, 36.7244]
+        // };
         var convertData = function(data) {
           var res = [];
           for (var i = 0; i < data.length; i++) {
@@ -1406,7 +1568,7 @@ export default {
           }
           return res;
         };
-
+        let option = null;
         let mapOption = {
           legend: {
             bottom: 10,
@@ -1417,7 +1579,7 @@ export default {
             }
           },
           geo: {
-            map: e.map.nameMap,
+            map: this.map.nameMap,
             zoom: 1.1,
             roam: true,
             itemStyle: {
@@ -1441,7 +1603,7 @@ export default {
               name: "报警",
               type: "scatter",
               coordinateSystem: "geo",
-              data: convertData(e.bj_arr),
+              data: convertData(this.bj_arr),
               symbolSize: function(val) {
                 return 60;
               },
@@ -1468,7 +1630,7 @@ export default {
               name: "预警",
               type: "scatter",
               coordinateSystem: "geo",
-              data: convertData(e.yj_arr),
+              data: convertData(this.yj_arr),
               symbolSize: function(val) {
                 return 60;
               },
@@ -1497,7 +1659,6 @@ export default {
             }
           ]
         };
-
         let mapOption2 = {
           tooltip: {
             formatter: function(params) {
@@ -1548,9 +1709,10 @@ export default {
             }
           },
           geo: {
-            map: e.map.nameMap,
-            zoom: 1,
+            map: this.map.nameMap,
+            zoom: 0.5,
             roam: true,
+            center: geoCoordMap[0],
             itemStyle: {
               normal: {
                 areaColor: "#26a3d2"
@@ -1568,7 +1730,7 @@ export default {
               name: "报警",
               type: "scatter",
               coordinateSystem: "geo",
-              data: convertData(e.bj_arr),
+              data: convertData(this.bj_arr),
               symbolSize: function(val) {
                 return 30;
               },
@@ -1609,7 +1771,7 @@ export default {
               name: "预警",
               type: "scatter",
               coordinateSystem: "geo",
-              data: convertData(e.yj_arr),
+              data: convertData(this.yj_arr),
               symbolSize: function(val) {
                 return 30;
               },
@@ -1652,13 +1814,56 @@ export default {
             }
           ]
         };
-        let option = "";
-        if (e.Level > 3) {
+        if (this.Level > 3) {
           option = mapOption2;
         } else {
           option = mapOption;
         }
-        e.myChart8.setOption(mapOption);
+        this.myChart8.setOption(option);
+      });
+    },
+    getweizhi() {
+      this.loading_quyu = true;
+      chengshiweizhi({
+        regionalLevel: this.Level,
+        areaCode: this.map.mapCode
+      }).then(res => {
+        let json = res.data.data;
+        let bj_arr = [];
+        let yj_arr = [];
+        let qiu_boj = new Object();
+        json.forEach(item => {
+          // if (item.schAlarmNum) {
+          if (this.Level > 3) {
+            bj_arr.push({
+              name: item.name,
+              value: `${item.schAlarmNum.sch_pic} ${item.schAlarmNum.alarmnum} ${item.schAlarmNum.warningnum} ${item.schAlarmNum.rtotal} ${item.sch_id} ${item.schAlarmNum.ztotal} ${item.schAlarmNum.stotal}`
+            });
+
+            yj_arr.push({
+              name: item.name,
+              value: `${item.schAlarmNum.sch_pic} ${item.schAlarmNum.alarmnum} ${item.schAlarmNum.warningnum} ${item.schAlarmNum.rtotal} ${item.sch_id} ${item.schAlarmNum.ztotal} ${item.schAlarmNum.stotal}`
+            });
+            qiu_boj[item.name] = [item.schAlarmNum.latitude, item.schAlarmNum.longitude];
+          } else {
+            bj_arr.push({
+              name: item.codeName,
+              value: item.alarmTotal
+            });
+
+            yj_arr.push({
+              name: item.codeName,
+              value: item.warningTotal
+            });
+            qiu_boj[item.codeName] = [item.latitude, item.longitude];
+          }
+
+          // }
+        });
+        this.qiu_boj = qiu_boj;
+        this.yj_arr = yj_arr;
+        this.bj_arr = bj_arr;
+        this.initEcharts8();
       });
     }
   },
@@ -1668,27 +1873,32 @@ export default {
     this.SET_USER_INFO(user);
     this.map.mapCode = user.areaCode;
     this.Level = Number(this.USER_INFO.userLevel);
+
     if (this.Level == 2) {
       this.getsanjiliandongshi(this.map.mapCode);
     } else if (this.Level == 3) {
+      this.shiDis = true;
       this.getsanjiliandongqu(this.map.mapCode);
+    } else if (this.Level == 4) {
+      this.shiDis = true;
+      this.quDis = true;
     }
     // 临时
-    // this.loadingMap(this);
+    // this.initEcharts8();
     let _this = this;
     async function init() {
       await _this.getxuexiaobaojingpaiming();
       await _this.getxuexiaoyujingpaiming();
       await _this.getyujinghuangjie();
       await _this.getbaojinghuangjie();
+      await _this.getweizhi();
 
       await _this.getxuexiaotongji();
       await _this.getshitangxinxi();
 
       await _this.getbaojingshu();
-      await _this.getzhengzhaolv();
 
-      await _this.getweizhi();
+      await _this.getzhengzhaolv();
     }
     init();
     setTimeout(() => {

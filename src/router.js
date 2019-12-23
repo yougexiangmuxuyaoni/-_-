@@ -122,12 +122,10 @@ const vueRouter = new Router({
 vueRouter.beforeEach((to, from, next) => {
   if (window._cancel) {
     window._cancel.forEach((item, index) => {
-      item.cancel();
+      item.cancel("中断请求");
       delete window._cancel[index];
-      console.log(window._cancel)
     })
   }
-  console.log(window._cancel)
   next();
 })
 

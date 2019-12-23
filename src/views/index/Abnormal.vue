@@ -849,7 +849,7 @@ export default {
         let yujingArr = [];
         let baojingArr = [];
         json.forEach(item => {
-          nameArr.push(item.NAME);
+          nameArr.push(item.NAME || item.name);
           yujingArr.push(item.warningTotal);
           baojingArr.push(item.alramTotal);
         });
