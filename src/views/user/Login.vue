@@ -88,7 +88,6 @@ export default {
           localStorage.setItem("token", token);
           getUserInfo().then(res => {
             let json = res.data.data;
-            console.log(json);
             // 1 监管 2教育
             this.geterweima();
             this.userInfo.areaName = json.sysUser.areaName;
