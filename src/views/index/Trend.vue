@@ -20,14 +20,14 @@
         </div>
       </div>
 
-      <div style="display: flex;height: 57%;align-items: center;">
+      <div
+        style="display: flex;height: 57%;align-items: center;"
+        v-if="USER_INFO.type !== '2'||USER_INFO.userLevel !== '3' "
+      >
         <!-- 市监管/省监管/区监管/市教育/区教育  -->
-        <div
-          v-if="USER_INFO.type !== 'shengjiaoyu'"
-          class="hezi"
-          style="width: 100%;display: flex;height: 90%;justify-content: center;"
-        >
-          <!-- style="position:absolute;top:60%;width:4.65rem;padding:.2rem 0;" -->
+        <!-- style="display: flex;justify-content: center;" -->
+        <!-- style="width: 100%;display: flex;height: 90%;justify-content: center;" -->
+        <div class="hezi" style="display: flex;justify-content: center;width: 100%;height: 90%">
           <div class="shitang">
             <div class="title">
               <p>食材供应商总量</p>
@@ -54,11 +54,11 @@
       <!-- 市教育局 -->
       <div
         class="hezi"
-        v-if="USER_INFO.type === 'shijiaoyu'"
-        style="display: flex;justify-content: center;"
+        v-if="USER_INFO.type === '2'&&USER_INFO.userLevel === '3' "
+        style="width: 100%;display: flex;height: 50%;justify-content: center;margin:10px 0;"
       >
         <div class="shitang">
-          <div class="title">
+          <div class="title" style="height:100%;">
             <p>食材供应商总量</p>
             <p>4,498</p>
           </div>
@@ -67,7 +67,7 @@
 
       <!-- 省教育局 市教育 区教育 区监管 -->
       <div
-        v-if="USER_INFO.type === 'shengjiaoyu'|| USER_INFO.type === 'shijiaoyu'|| USER_INFO.type === 'qujiaoyu' ||USER_INFO.type === 'qujianguan'"
+        v-if="(USER_INFO.type === '2'&&USER_INFO.userLevel ==='2')|| (USER_INFO.type === '2'&&USER_INFO.userLevel ==='3')|| (USER_INFO.type === '2'&&USER_INFO.userLevel ==='4') ||(USER_INFO.type === '1'&&USER_INFO.userLevel ==='4')"
         style="height:4.5rem;"
       >
         <div class="zhengzhao hezi" style="display: flex;flex-direction: column;">
@@ -104,7 +104,7 @@
         </div>
       </div>
     </div>
-    <div class="main-mid">
+    <div class="main-mid" style="margin:0 10px;">
       <div class="top hezi">
         <el-select v-model="shi_value" placeholder="市" @change="diquchange('shi')">
           <el-option
@@ -260,7 +260,7 @@ import {
   baojingshu,
   zhengzhaolv,
   quyuma,
-  xiazuan,
+  chengshiweizhi,
   sanjiliandong,
   mohusousuo
 } from "@/api/qushifengxi";
@@ -475,6 +475,21 @@ export default {
         areaCode: this.map.mapCode
       }).then(res => {
         const json = res.data.data;
+        let obj = {
+          total: 0,
+          label: "中学"
+        };
+        json.schoolDatafL.forEach((item, index) => {
+          if (item.label === "初中") {
+            obj.total += item.total;
+            delete json.schoolDatafL[index];
+          }
+          if (item.label === "高中") {
+            obj.total += item.total;
+            delete json.schoolDatafL[index];
+          }
+        });
+        json.schoolDatafL.splice(2, 0, obj);
         this.xuexiaotongjiJson.schoolNum = json.schoolData.schoolTotal;
         this.xuexiaotongjiJson.stuNum = json.schoolData.stuTotal;
         json.schoolDatafL.forEach(item => {
@@ -1311,10 +1326,17 @@ export default {
         this.loadingMap(this);
       });
     },
-    getxiazuan() {
-      this.loading_quyu = true;
-      let _this = this;
-      return xiazuan({
+    getweizhi() {
+      // chengshiweizhi({
+      //   regionalLevel: this.Level,
+      //   areaCode: this.map.mapCode
+      // }).then(res => {
+      //   console.log(res.data.data);
+      //   this.initEcharts8();
+
+      // });
+
+      chengshiweizhi({
         regionalLevel: this.Level,
         areaCode: this.map.mapCode
       }).then(res => {
@@ -1325,7 +1347,7 @@ export default {
         let qiu_boj = {};
         json.forEach(item => {
           if (item.schAlarmNum) {
-            if (_this.Level > 3) {
+            if (this.Level > 3) {
               bj_arr.push({
                 name: item.name,
                 value: `${item.schAlarmNum.sch_pic} ${item.schAlarmNum.alarmnum} ${item.schAlarmNum.warningnum} ${item.schAlarmNum.rtotal} ${item.sch_id} ${item.schAlarmNum.ztotal} ${item.schAlarmNum.stotal}`
@@ -1371,10 +1393,6 @@ export default {
         var geoCoordMap = e.qiu_boj;
         var b_data = e.bj_arr;
         var y_data = e.yj_arr;
-        console.log(b_data);
-        console.log(y_data);
-        console.log(geoCoordMap);
-
         var convertData = function(data) {
           var res = [];
           for (var i = 0; i < data.length; i++) {
@@ -1647,8 +1665,6 @@ export default {
   mounted() {},
   created() {
     var user = JSON.parse(localStorage.getItem("userInfo"));
-    console.log(user);
-    
     this.SET_USER_INFO(user);
     this.map.mapCode = user.areaCode;
     this.Level = Number(this.USER_INFO.userLevel);
@@ -1658,19 +1674,23 @@ export default {
       this.getsanjiliandongqu(this.map.mapCode);
     }
     // 临时
-    this.loadingMap(this);
-    this.getxiazuan();
-    this.getxuexiaobaojingpaiming();
-    this.getxuexiaoyujingpaiming();
-    this.getyujinghuangjie();
-    this.getbaojinghuangjie();
+    // this.loadingMap(this);
+    let _this = this;
+    async function init() {
+      await _this.getxuexiaobaojingpaiming();
+      await _this.getxuexiaoyujingpaiming();
+      await _this.getyujinghuangjie();
+      await _this.getbaojinghuangjie();
 
-    this.getxuexiaotongji();
-    this.getshitangxinxi();
+      await _this.getxuexiaotongji();
+      await _this.getshitangxinxi();
 
-    this.getbaojingshu();
-    this.getzhengzhaolv();
+      await _this.getbaojingshu();
+      await _this.getzhengzhaolv();
 
+      await _this.getweizhi();
+    }
+    init();
     setTimeout(() => {
       window.addEventListener("resize", this.resizeHandler);
     }, 2000);
