@@ -23,11 +23,6 @@ import AllAllalarm from "./views/Allalarm/AllAllalarm.vue";//全部报警
 import AlertDetails from "./views/AlertDetails.vue";//预警详情页
 import Positioning from "./views/Positioning.vue";//学校详情
 
-
-
-
-
-
 Vue.use(Router);
 
 const vueRouter = new Router({
@@ -123,14 +118,16 @@ const vueRouter = new Router({
     }
   ]
 });
-window._cancel = [];
 
 vueRouter.beforeEach((to, from, next) => {
-  window._cancel.forEach((item, index) => {
-    item.cancel();
-    delete window._cancel[index];
-    console.log(window._cancel)
-  })
+  if (window._cancel) {
+    window._cancel.forEach((item, index) => {
+      item.cancel();
+      delete window._cancel[index];
+      console.log(window._cancel)
+    })
+  }
+  console.log(window._cancel)
   next();
 })
 
