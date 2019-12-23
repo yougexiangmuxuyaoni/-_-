@@ -123,5 +123,15 @@ const vueRouter = new Router({
     }
   ]
 });
+window._cancel = [];
+
+vueRouter.beforeEach((to, from, next) => {
+  window._cancel.forEach((item, index) => {
+    item.cancel();
+    delete window._cancel[index];
+    console.log(window._cancel)
+  })
+  next();
+})
 
 export default vueRouter;
